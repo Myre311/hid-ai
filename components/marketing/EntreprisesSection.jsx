@@ -1,110 +1,86 @@
 import Link from "next/link";
-import {
-  Zap,
-  ShieldCheck,
-  Lock,
-  BarChart3,
-  ArrowRight,
-} from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Reveal } from "./Reveal";
 
 const POINTS = [
-  { Icon: Zap, label: "Matching prédictif en moins de 5 secondes" },
-  { Icon: ShieldCheck, label: "Scoring vérifié par notre Chatbot Gatekeeper" },
-  { Icon: Lock, label: "Anonymisation RGPD automatique" },
-  { Icon: BarChart3, label: "Dashboard BI temps réel" },
-];
-
-const STATS = [
-  { value: "48", label: "Critères techniques évalués" },
-  { value: "5s", label: "Temps de matching" },
-  { value: "48h", label: "Validation KYB" },
+  {
+    title: "Matching prédictif sous 5 secondes",
+    body: "Nos modèles internes pré-sélectionnent les profils correspondant à votre brief sur les 48 critères techniques et comportementaux.",
+  },
+  {
+    title: "Scoring Chatbot Gatekeeper",
+    body: "Chaque AI Engineer est évalué sur 5 dimensions techniques avant d'apparaître dans vos résultats.",
+  },
+  {
+    title: "Anonymisation RGPD automatique",
+    body: "Visages, plaques, NER : suppression à la volée par notre Data Gateway. Aucune donnée personnelle ne sort sans filtre.",
+  },
+  {
+    title: "Dashboard BI temps réel",
+    body: "Suivi des missions, qualité par annotateur, latence — données exportables, format ouvert.",
+  },
 ];
 
 export function EntreprisesSection() {
   return (
     <Section id="entreprises" className="border-t border-border">
-      <Container>
-        <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
-          {/* Texte — gauche */}
-          <Reveal>
-            <div className="flex flex-col gap-6">
+      <Container className="flex flex-col gap-14 md:gap-20">
+        {/* En-tête éditorial */}
+        <Reveal>
+          <div className="grid md:grid-cols-[1fr_1.4fr] gap-8 md:gap-16 items-end">
+            <div className="flex flex-col gap-3">
               <p className="text-sm text-muted">Pour les entreprises</p>
               <h2 className="font-serif text-4xl md:text-6xl tracking-tighter leading-[1.05] text-balance">
-                Accédez à un vivier certifié.
+                Un vivier <em className="italic">certifié</em>,<br />
+                des livrables <em className="italic">auditables</em>.
               </h2>
-              <p className="text-base md:text-lg text-muted max-w-xl leading-relaxed">
-                Vos projets d&rsquo;annotation, RLHF, fine-tuning ou
-                recrutement, exécutés par des talents évalués sur 48 critères
-                techniques et comportementaux.
-              </p>
-              <ul className="flex flex-col gap-3 mt-2">
-                {POINTS.map(({ Icon, label }) => (
-                  <li
-                    key={label}
-                    className="flex items-start gap-3 text-sm md:text-base text-foreground/90"
-                  >
-                    <Icon className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
-                    <span>{label}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-wrap gap-3 mt-4">
-                <Link
-                  href="/entreprises"
-                  className="inline-flex h-11 items-center justify-center gap-2 rounded-md bg-accent px-5 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
-                >
-                  Découvrir l&rsquo;offre
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-                <Link
-                  href="/signup?as=business"
-                  className="inline-flex h-11 items-center justify-center rounded-md border border-border bg-transparent px-5 text-sm font-medium text-foreground hover:border-border-strong transition-colors duration-200"
-                >
-                  Demander une démo
-                </Link>
-              </div>
             </div>
-          </Reveal>
+            <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
+              Vos projets d&rsquo;annotation, RLHF, fine-tuning et recrutement,
+              exécutés par des talents évalués sur 48 critères. Une plateforme
+              unifiée, conforme RGPD, intégrable à vos pipelines existants.
+            </p>
+          </div>
+        </Reveal>
 
-          {/* Visuel — droite : carte stats */}
-          <Reveal delay={0.1}>
-            <div className="relative">
-              <div
-                aria-hidden="true"
-                className="absolute -inset-6 bg-[radial-gradient(circle_at_70%_30%,rgba(244,180,26,0.08),transparent_60%)] pointer-events-none"
-              />
-              <div className="relative bg-surface border border-border rounded-lg p-8 md:p-10 flex flex-col gap-8">
-                <p className="text-xs uppercase tracking-[0.18em] text-muted-strong">
-                  Engagement plateforme
+        {/* Grille éditoriale 2x2 — pas de cards, pas de gradient, juste typo */}
+        <div className="grid md:grid-cols-2 gap-x-12 md:gap-x-20 gap-y-12 border-t border-border pt-14">
+          {POINTS.map((p, i) => (
+            <Reveal key={p.title} delay={0.06 + i * 0.06}>
+              <article className="flex flex-col gap-3 max-w-md">
+                <h3 className="text-lg md:text-xl font-medium tracking-tight">
+                  {p.title}
+                </h3>
+                <p className="text-sm md:text-base text-muted leading-relaxed">
+                  {p.body}
                 </p>
-                <div className="grid grid-cols-3 gap-6">
-                  {STATS.map((s) => (
-                    <div key={s.label} className="flex flex-col gap-1">
-                      <div className="font-serif text-4xl md:text-5xl tracking-tighter text-accent leading-none">
-                        {s.value}
-                      </div>
-                      <div className="text-xs text-muted leading-snug">
-                        {s.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="border-t border-border pt-6 flex flex-col gap-2">
-                  <p className="text-sm font-medium">
-                    Annotation · RLHF · Fine-tuning · Recrutement
-                  </p>
-                  <p className="text-xs text-muted leading-relaxed">
-                    Une plateforme unifiée pour vos missions de production de
-                    données et vos campagnes de recrutement spécialisées.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Reveal>
+              </article>
+            </Reveal>
+          ))}
         </div>
+
+        {/* CTAs en bas, sobres */}
+        <Reveal delay={0.2}>
+          <div className="flex flex-wrap items-center gap-6 border-t border-border pt-10">
+            <Link
+              href="/entreprises"
+              className="inline-flex items-center gap-2 text-base font-medium text-foreground hover:gap-3 transition-all duration-200"
+            >
+              <span className="border-b border-foreground pb-0.5">
+                Découvrir l&rsquo;offre entreprises
+              </span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href="/signup?as=business"
+              className="text-base text-muted hover:text-foreground transition-colors"
+            >
+              Demander une démo
+            </Link>
+          </div>
+        </Reveal>
       </Container>
     </Section>
   );
