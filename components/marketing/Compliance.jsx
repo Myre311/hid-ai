@@ -15,14 +15,9 @@ export function Compliance() {
     <section className="bg-surface border-y border-border py-16">
       <Container className="flex flex-col gap-8">
         <Reveal>
-          <div className="flex flex-col gap-2 max-w-3xl">
-            <span className="text-xs uppercase tracking-[0.2em] text-accent">
-              Sécurité & conformité
-            </span>
-            <h2 className="font-serif text-2xl md:text-3xl tracking-tight">
-              Conçu pour les exigences réglementaires les plus strictes.
-            </h2>
-          </div>
+          <h2 className="font-serif text-2xl md:text-3xl tracking-tight max-w-3xl">
+            Conçu pour les exigences réglementaires les plus strictes.
+          </h2>
         </Reveal>
         <Reveal delay={0.08}>
           <div className="flex flex-wrap gap-3">

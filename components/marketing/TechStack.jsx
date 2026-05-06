@@ -31,8 +31,7 @@ export function TechStack() {
     <Section id="recherche">
       <Container className="flex flex-col gap-12">
         <Reveal>
-          <div className="flex flex-col gap-3 max-w-3xl">
-            <span className="text-xs uppercase tracking-[0.2em] text-accent">Technologie</span>
+          <div className="flex flex-col gap-4 max-w-3xl">
             <h2 className="font-serif text-3xl md:text-5xl tracking-tighter leading-[1.05]">
               Quatre briques différenciantes.
             </h2>

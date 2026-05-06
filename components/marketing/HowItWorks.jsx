@@ -25,14 +25,9 @@ export function HowItWorks() {
     <Section className="border-t border-border bg-surface/30">
       <Container className="flex flex-col gap-14">
         <Reveal>
-          <div className="flex flex-col gap-3 max-w-3xl">
-            <span className="text-xs uppercase tracking-[0.2em] text-accent">
-              Comment ça marche
-            </span>
-            <h2 className="font-serif text-3xl md:text-5xl tracking-tighter leading-[1.05]">
-              Du brief à la rémunération, en trois temps.
-            </h2>
-          </div>
+          <h2 className="font-serif text-3xl md:text-5xl tracking-tighter leading-[1.05] max-w-3xl">
+            Du brief à la rémunération, en trois temps.
+          </h2>
         </Reveal>
 
         <div className="relative grid md:grid-cols-3 gap-10 md:gap-8">

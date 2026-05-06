@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
-import { Badge } from "@/components/ui/Badge";
 import { Reveal } from "./Reveal";
 
 const STATS = [
@@ -17,7 +16,7 @@ export function Hero() {
       <div aria-hidden="true" className="absolute inset-0 hid-grid opacity-60" />
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(244,180,26,0.10),transparent_55%)]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(244,180,26,0.08),transparent_55%)]"
       />
       <div
         aria-hidden="true"
@@ -26,18 +25,12 @@ export function Hero() {
 
       <Container className="relative z-10 flex flex-col gap-8 md:gap-10">
         <Reveal>
-          <Badge variant="accent" pulse>
-            Hub NEO Bonoua · Lancement pilote 2026
-          </Badge>
-        </Reveal>
-
-        <Reveal delay={0.08}>
           <h1 className="font-serif text-5xl md:text-7xl tracking-tighter leading-[1.02] max-w-5xl text-balance">
             L&rsquo;infrastructure humaine de l&rsquo;IA, depuis l&rsquo;Afrique.
           </h1>
         </Reveal>
 
-        <Reveal delay={0.16}>
+        <Reveal delay={0.1}>
           <p className="text-base md:text-lg text-muted max-w-2xl leading-relaxed">
             Hidea Solution connecte les meilleurs AI Specialists et AI Engineers
             du continent avec les laboratoires et entreprises qui construisent
@@ -45,7 +38,7 @@ export function Hero() {
           </p>
         </Reveal>
 
-        <Reveal delay={0.24}>
+        <Reveal delay={0.2}>
           <div className="flex flex-wrap gap-3">
             <Link
               href="/signup"
@@ -62,7 +55,7 @@ export function Hero() {
           </div>
         </Reveal>
 
-        <Reveal delay={0.4}>
+        <Reveal delay={0.36}>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 md:gap-x-12 gap-y-8 mt-12 pt-8 border-t border-border max-w-4xl">
             {STATS.map((s) => (
               <div key={s.label} className="flex flex-col gap-1">

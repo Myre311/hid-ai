@@ -8,11 +8,11 @@ import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_LINKS = [
-  { href: "/#plateforme", label: "Plateforme" },
-  { href: "/#entreprises", label: "Pour les entreprises" },
-  { href: "/#talents", label: "Pour les talents" },
-  { href: "/#recherche", label: "Recherche" },
-  { href: "/#a-propos", label: "À propos" },
+  { href: "/plateforme", label: "Plateforme" },
+  { href: "/entreprises", label: "Pour les entreprises" },
+  { href: "/talents", label: "Pour les talents" },
+  { href: "/recherche", label: "Recherche" },
+  { href: "/a-propos", label: "À propos" },
 ];
 
 export function Nav() {

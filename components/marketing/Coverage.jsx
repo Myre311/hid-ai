@@ -90,9 +90,6 @@ export function Coverage() {
 
           <Reveal delay={0.12}>
             <div className="flex flex-col gap-5">
-              <span className="text-xs uppercase tracking-[0.2em] text-accent">
-                Présence africaine
-              </span>
               <h2 className="font-serif text-3xl md:text-5xl tracking-tighter leading-[1.05]">
                 Présents là où le talent émerge.
               </h2>
