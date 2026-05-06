@@ -30,26 +30,19 @@ export function HowItWorks() {
           </h2>
         </Reveal>
 
-        <div className="relative grid md:grid-cols-3 gap-10 md:gap-8">
-          {/* Vertical connector for mobile */}
-          <div
-            aria-hidden="true"
-            className="absolute left-6 top-0 bottom-0 w-px bg-border md:hidden"
-          />
+        <div className="grid md:grid-cols-3 gap-12 md:gap-8">
           {STEPS.map((s, i) => (
             <Reveal key={s.n} delay={0.08 + i * 0.08}>
-              <div className="relative pl-16 md:pl-0">
-                <div className="absolute md:static left-0 top-0 font-serif text-7xl text-muted-strong leading-none">
+              <div className="flex flex-col gap-3 md:gap-4">
+                <span className="font-serif text-5xl md:text-7xl text-muted-strong leading-none">
                   {s.n}
-                </div>
-                <div className="md:mt-8 flex flex-col gap-3">
-                  <h3 className="text-xl md:text-2xl font-medium tracking-tight">
-                    {s.title}
-                  </h3>
-                  <p className="text-sm md:text-base text-muted leading-relaxed max-w-md">
-                    {s.body}
-                  </p>
-                </div>
+                </span>
+                <h3 className="mt-3 md:mt-6 text-xl md:text-2xl font-medium tracking-tight">
+                  {s.title}
+                </h3>
+                <p className="text-sm md:text-base text-muted leading-relaxed max-w-md">
+                  {s.body}
+                </p>
               </div>
             </Reveal>
           ))}

@@ -125,14 +125,13 @@ export function OtpInput({
             handlePaste(e.clipboardData.getData("text"), i);
           }}
           className={cn(
-            "w-11 h-13 sm:w-12 sm:h-14 rounded-md text-center text-xl font-medium",
+            "w-11 h-12 sm:w-12 sm:h-14 rounded-md text-center text-xl font-medium",
             "bg-surface text-foreground border border-border",
             "focus:border-accent focus:outline-none focus:shadow-glow-accent",
             "transition-all duration-200",
             error && "border-danger focus:border-danger focus:shadow-none",
             disabled && "opacity-50 cursor-not-allowed"
           )}
-          style={{ height: "3.25rem" }}
         />
       ))}
     </div>

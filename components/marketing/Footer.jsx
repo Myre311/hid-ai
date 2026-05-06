@@ -69,7 +69,8 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-background pt-16 pb-10">
       <Container>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+        {/* Desktop: 4-column grid. Mobile: native <details> accordions. */}
+        <div className="hidden md:grid md:grid-cols-4 md:gap-12">
           {COLUMNS.map((col) => (
             <div key={col.title} className="flex flex-col gap-3">
               <div className="text-xs uppercase tracking-[0.2em] text-muted-strong">
@@ -88,6 +89,43 @@ export function Footer() {
                 ))}
               </ul>
             </div>
+          ))}
+        </div>
+
+        <div className="md:hidden flex flex-col">
+          {COLUMNS.map((col) => (
+            <details
+              key={col.title}
+              className="group border-b border-border [&_svg]:open:rotate-45"
+            >
+              <summary className="flex items-center justify-between cursor-pointer py-4 list-none">
+                <span className="text-xs uppercase tracking-[0.2em] text-muted-strong">
+                  {col.title}
+                </span>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  className="h-4 w-4 text-muted transition-transform duration-200"
+                  aria-hidden="true"
+                >
+                  <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+                </svg>
+              </summary>
+              <ul className="flex flex-col gap-2 pb-4">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link
+                      href={l.href}
+                      className="text-sm text-muted hover:text-foreground transition-colors duration-200"
+                    >
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </details>
           ))}
         </div>
 

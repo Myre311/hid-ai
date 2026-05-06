@@ -5,6 +5,8 @@ import { useState } from "react";
 import { LayoutGrid, User, Settings, Menu, X, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
+import { useAuthStore } from "@/stores/authStore";
+import { Badge } from "@/components/ui/Badge";
 
 const NAV = [
   { href: "/dashboard", label: "Vue d'ensemble", Icon: LayoutGrid },
@@ -12,9 +14,24 @@ const NAV = [
   { href: "/dashboard/settings", label: "Paramètres", Icon: Settings },
 ];
 
+const BRANCH_LABEL = {
+  specialist: "AI Specialist",
+  engineer: "AI Engineer",
+  business: "Entreprise",
+};
+
 export default function DashboardLayout({ children }) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
+  const branch = useAuthStore((s) => s.branch);
+  const profileDraft = useAuthStore((s) => s.profileDraft);
+  const businessDraft = useAuthStore((s) => s.businessDraft);
+
+  const displayName =
+    profileDraft?.firstName ||
+    businessDraft?.companyName ||
+    "Talent";
+  const branchLabel = branch ? BRANCH_LABEL[branch] : null;
 
   const logout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -95,7 +112,7 @@ export default function DashboardLayout({ children }) {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 px-4 md:px-8 border-b border-border flex items-center justify-between">
+        <header className="h-16 px-4 md:px-8 border-b border-border flex items-center gap-3">
           <button
             type="button"
             className="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-md hover:bg-surface"
@@ -108,7 +125,25 @@ export default function DashboardLayout({ children }) {
             <span className="text-foreground">HID</span>
             <span className="text-accent ml-1">AI</span>
           </div>
-          <div className="ml-auto flex items-center gap-3" />
+
+          <div className="ml-auto flex items-center gap-3">
+            <span className="hidden sm:inline text-sm text-foreground/90 truncate max-w-[160px]">
+              {displayName}
+            </span>
+            {branchLabel && (
+              <Badge variant="accent" className="hidden sm:inline-flex">
+                {branchLabel}
+              </Badge>
+            )}
+            <button
+              type="button"
+              onClick={logout}
+              aria-label="Se déconnecter"
+              className="inline-flex items-center justify-center h-10 w-10 rounded-md text-muted hover:text-foreground hover:bg-surface transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </header>
         <main className="flex-1 px-4 md:px-8 py-8 md:py-12">{children}</main>
       </div>
