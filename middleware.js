@@ -11,7 +11,13 @@ export async function middleware(request) {
     (p) => pathname === p || pathname.startsWith(p + "/")
   );
 
-  if (isProtected && !user) {
+  // Dev-only bypass: when Supabase isn't wired yet, allow /dashboard previews.
+  const supabaseConfigured = Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  );
+
+  if (isProtected && !user && supabaseConfigured) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
     url.searchParams.set("next", pathname);

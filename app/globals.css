@@ -69,3 +69,64 @@ body {
 @layer utilities {
   .text-balance { text-wrap: balance; }
 }
+
+/* react-phone-number-input — dark theme overrides */
+.hid-phone-input .PhoneInput {
+  display: flex;
+  align-items: center;
+  height: 2.75rem;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 0.375rem;
+  padding-left: 0.75rem;
+  transition: border-color 200ms;
+}
+.hid-phone-input .PhoneInput:focus-within {
+  border-color: var(--accent);
+  outline: none;
+}
+.hid-phone-input .PhoneInputCountry {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-right: 0.5rem;
+  border-right: 1px solid var(--border);
+  margin-right: 0.5rem;
+}
+.hid-phone-input .PhoneInputCountrySelect {
+  background: transparent;
+  color: var(--foreground);
+  border: 0;
+  font-size: 0.875rem;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 1rem;
+}
+.hid-phone-input .PhoneInputCountrySelect option {
+  background: var(--surface-elevated);
+  color: var(--foreground);
+}
+.hid-phone-input .PhoneInputCountryIcon {
+  width: 1.5rem;
+  height: 1rem;
+  border-radius: 2px;
+  overflow: hidden;
+}
+.hid-phone-input .PhoneInputCountrySelectArrow {
+  color: var(--muted);
+  margin-left: 0.25rem;
+}
+.hid-phone-input .PhoneInputInput {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  outline: none;
+  height: 100%;
+  color: var(--foreground);
+  font-size: 0.875rem;
+  padding: 0 0.75rem;
+}
+.hid-phone-input .PhoneInputInput::placeholder {
+  color: var(--muted-strong);
+}
