@@ -1,15 +1,43 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./app/**/*.{js,jsx}",
+    "./components/**/*.{js,jsx}",
+    "./hooks/**/*.{js,jsx}",
+    "./stores/**/*.{js,jsx}",
+    "./lib/**/*.{js,jsx}",
   ],
   theme: {
     extend: {
       colors: {
         background: "var(--background)",
+        surface: "var(--surface)",
+        "surface-elevated": "var(--surface-elevated)",
+        border: "var(--border)",
+        "border-strong": "var(--border-strong)",
         foreground: "var(--foreground)",
+        muted: "var(--muted)",
+        "muted-strong": "var(--muted-strong)",
+        accent: "var(--accent)",
+        "accent-hover": "var(--accent-hover)",
+        "accent-muted": "var(--accent-muted)",
+        success: "var(--success)",
+        danger: "var(--danger)",
+      },
+      fontFamily: {
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        serif: ["var(--font-instrument)", "Georgia", "serif"],
+      },
+      letterSpacing: {
+        tighter: "-0.04em",
+        tight: "-0.02em",
+      },
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      boxShadow: {
+        "glow-accent": "0 0 24px rgba(244, 180, 26, 0.15)",
+        "glow-accent-strong": "0 0 36px rgba(244, 180, 26, 0.25)",
       },
     },
   },
