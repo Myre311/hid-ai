@@ -1,6 +1,7 @@
 import { Hero } from "@/components/marketing/Hero";
 import { TrustedBy } from "@/components/marketing/TrustedBy";
-import { DualAudience } from "@/components/marketing/DualAudience";
+import { EntreprisesSection } from "@/components/marketing/EntreprisesSection";
+import { ExpertsSection } from "@/components/marketing/ExpertsSection";
 import { Compliance } from "@/components/marketing/Compliance";
 import { FinalCta } from "@/components/marketing/FinalCta";
 
@@ -15,7 +16,8 @@ export default function HomePage() {
     <>
       <Hero />
       <TrustedBy />
-      <DualAudience />
+      <EntreprisesSection />
+      <ExpertsSection />
       <Compliance />
       <FinalCta />
     </>
