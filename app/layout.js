@@ -1,16 +1,27 @@
-import { Inter, Instrument_Serif } from "next/font/google";
+import {
+  Plus_Jakarta_Sans,
+  JetBrains_Mono,
+  Instrument_Serif,
+} from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
+const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["300", "400", "500", "600"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600", "700"],
+  display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono",
+  weight: ["400", "500"],
   display: "swap",
 });
 
 const instrumentSerif = Instrument_Serif({
   subsets: ["latin"],
-  variable: "--font-instrument",
+  variable: "--font-serif",
   weight: "400",
   style: ["normal", "italic"],
   display: "swap",
@@ -41,7 +52,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr" className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html
+      lang="fr"
+      className={`${sans.variable} ${mono.variable} ${instrumentSerif.variable}`}
+    >
       <body className="font-sans antialiased min-h-screen bg-background text-foreground">
         {children}
       </body>
