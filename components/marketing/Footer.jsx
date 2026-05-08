@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/components/ui/Container";
+import { Logo } from "@/components/marketing/Logo";
 
 function LinkedInIcon(props) {
   return (
@@ -131,10 +132,8 @@ export function Footer() {
 
         <div className="mt-14 pt-8 border-t border-border flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-sm text-muted">
           <div className="flex items-center gap-3">
-            <span className="font-medium tracking-tight text-foreground">
-              <span className="text-foreground">HID</span>
-              <span className="text-accent ml-1">AI</span>
-            </span>
+            <Logo className="h-5 w-auto text-foreground" aria-label="HID AI" />
+
             <span>© 2026 Hidea Solution. Tous droits réservés.</span>
           </div>
           <div className="text-center text-xs">

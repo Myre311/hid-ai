@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Logo } from "@/components/marketing/Logo";
 
 export default function AuthLayout({ children }) {
   return (
@@ -6,11 +7,10 @@ export default function AuthLayout({ children }) {
       <header className="px-6 md:px-8 py-6 flex items-center justify-between border-b border-border">
         <Link
           href="/"
-          className="font-medium tracking-tight"
+          className="text-foreground"
           aria-label="HID AI — accueil"
         >
-          <span className="text-foreground">HID</span>
-          <span className="text-accent ml-1">AI</span>
+          <Logo className="h-5 w-auto" />
         </Link>
         <Link
           href="/login"

@@ -5,13 +5,13 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
+import { Logo } from "@/components/marketing/Logo";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_LINKS = [
-  { href: "/plateforme", label: "Plateforme" },
-  { href: "/entreprises", label: "Pour les entreprises" },
-  { href: "/talents", label: "Pour les talents" },
-  { href: "/recherche", label: "Recherche" },
+  { href: "/entreprises", label: "Entreprises" },
+  { href: "/talents", label: "Talents" },
+  { href: "/infrastructure", label: "Infrastructure" },
   { href: "/a-propos", label: "À propos" },
 ];
 
@@ -47,11 +47,10 @@ export function Nav() {
         <Container className="flex h-16 items-center justify-between">
           <Link
             href="/"
-            className="font-medium tracking-tight text-foreground"
+            className="text-foreground hover:text-foreground/90 transition-colors"
             aria-label="HID AI — accueil"
           >
-            <span className="text-foreground">HID</span>
-            <span className="text-accent ml-1">AI</span>
+            <Logo className="h-5 md:h-6 w-auto" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-8" aria-label="Navigation principale">
@@ -101,11 +100,11 @@ export function Nav() {
         <div className="flex h-16 items-center justify-between px-4">
           <Link
             href="/"
-            className="font-medium tracking-tight"
+            className="text-foreground"
             onClick={() => setOpen(false)}
+            aria-label="HID AI — accueil"
           >
-            <span className="text-foreground">HID</span>
-            <span className="text-accent ml-1">AI</span>
+            <Logo className="h-5 w-auto" />
           </Link>
           <button
             type="button"

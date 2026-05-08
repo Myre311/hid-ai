@@ -1,0 +1,42 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 395 100" role="img" aria-label="HID AI">
+  <title>HID AI</title>
+  <!-- HID -->
+  <g fill="currentColor">
+    <!-- H -->
+    <rect x="0" y="0" width="14" height="100"/>
+    <rect x="0" y="43" width="70" height="14"/>
+    <rect x="70" y="0" width="14" height="100"/>
+    <!-- I -->
+    <rect x="110" y="0" width="14" height="100"/>
+    <!-- D triangular outline + compass rose -->
+    <g transform="translate(160, 0)">
+      <rect x="0" y="0" width="14" height="100"/>
+      <line x1="14" y1="0" x2="100" y2="50" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+      <line x1="14" y1="100" x2="100" y2="50" stroke="currentColor" stroke-width="3" stroke-linecap="square"/>
+      <!-- compass rose, amber east arrow -->
+      <g transform="translate(38, 50)">
+        <polygon points="0,-22 3,0 -3,0"/>
+        <polygon points="0,22 3,0 -3,0"/>
+        <polygon points="-12,0 0,-3 0,3"/>
+        <polygon points="32,0 0,-3 0,3" fill="#F4B41A"/>
+        <circle cx="0" cy="0" r="2.2" fill="currentColor"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- AI -->
+  <g transform="translate(295, 0)" fill="currentColor">
+    <!-- A left leg -->
+    <polygon points="0,100 28,0 32,0 4,100"/>
+    <!-- A right leg -->
+    <polygon points="56,100 28,0 32,0 60,100"/>
+    <!-- A apex correction -->
+    <polygon points="28,0 32,0 30,8"/>
+    <!-- A crossbar -->
+    <rect x="14" y="62" width="32" height="12"/>
+    <!-- I -->
+    <rect x="86" y="0" width="14" height="100"/>
+  </g>
+</svg>

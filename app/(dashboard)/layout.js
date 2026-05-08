@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { useAuthStore } from "@/stores/authStore";
 import { Badge } from "@/components/ui/Badge";
+import { Logo } from "@/components/marketing/Logo";
 
 const NAV = [
   { href: "/dashboard", label: "Vue d'ensemble", Icon: LayoutGrid },
@@ -42,9 +43,8 @@ export default function DashboardLayout({ children }) {
     <div className="min-h-screen bg-background flex">
       {/* Sidebar (desktop) */}
       <aside className="hidden md:flex md:flex-col w-64 border-r border-border bg-surface/40 px-5 py-7 sticky top-0 h-screen">
-        <Link href="/" className="font-medium tracking-tight mb-10">
-          <span className="text-foreground">HID</span>
-          <span className="text-accent ml-1">AI</span>
+        <Link href="/" className="text-foreground mb-10" aria-label="HID AI — accueil">
+          <Logo className="h-5 w-auto" />
         </Link>
         <nav className="flex-1 flex flex-col gap-1">
           {NAV.map((n) => (
@@ -72,11 +72,11 @@ export default function DashboardLayout({ children }) {
         <div className="flex h-16 items-center justify-between px-4 border-b border-border">
           <Link
             href="/"
-            className="font-medium tracking-tight"
+            className="text-foreground"
             onClick={() => setOpen(false)}
+            aria-label="HID AI — accueil"
           >
-            <span className="text-foreground">HID</span>
-            <span className="text-accent ml-1">AI</span>
+            <Logo className="h-5 w-auto" />
           </Link>
           <button
             type="button"
@@ -121,9 +121,8 @@ export default function DashboardLayout({ children }) {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <div className="md:hidden font-medium tracking-tight">
-            <span className="text-foreground">HID</span>
-            <span className="text-accent ml-1">AI</span>
+          <div className="md:hidden text-foreground">
+            <Logo className="h-5 w-auto" />
           </div>
 
           <div className="ml-auto flex items-center gap-3">
