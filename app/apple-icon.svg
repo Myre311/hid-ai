@@ -1,0 +1,17 @@
+
+
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180">
+  <rect width="180" height="180" fill="#0A0A0B" rx="36"/>
+  <g transform="translate(28, 28) scale(1.24)">
+    <rect x="0" y="0" width="14" height="100" fill="#FAFAFA"/>
+    <line x1="14" y1="0" x2="100" y2="50" stroke="#FAFAFA" stroke-width="3" stroke-linecap="square"/>
+    <line x1="14" y1="100" x2="100" y2="50" stroke="#FAFAFA" stroke-width="3" stroke-linecap="square"/>
+    <g transform="translate(42.66, 50)">
+      <polygon points="0,-22 3,0 -3,0" fill="#FAFAFA"/>
+      <polygon points="0,22 3,0 -3,0" fill="#FAFAFA"/>
+      <polygon points="-12,0 0,-3 0,3" fill="#FAFAFA"/>
+      <polygon points="32,0 0,-3 0,3" fill="#F4B41A"/>
+      <circle cx="0" cy="0" r="2.6" fill="#FAFAFA"/>
+    </g>
+  </g>
+</svg>
