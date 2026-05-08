@@ -22,7 +22,7 @@ export function DualCTABlock({
       className={cn(
         "flex flex-col gap-6 p-8 md:p-12 rounded-lg border transition-colors",
         isPrimary
-          ? "bg-accent border-accent text-background"
+          ? "bg-black border-white/25 text-foreground"
           : "bg-surface border-border hover:border-border-strong text-foreground",
         className
       )}
@@ -59,7 +59,7 @@ export function DualCTABlock({
           "inline-flex items-center gap-2 mt-auto self-start h-11 rounded-md px-5 text-sm font-medium transition-colors",
           isPrimary
             ? "bg-background text-foreground hover:bg-foreground hover:text-background"
-            : "bg-accent text-background hover:bg-accent-hover hover:shadow-glow-accent"
+            : "bg-black text-foreground border border-white/25 hover:border-white/60 hover:bg-surface-elevated"
         )}
       >
         {ctaLabel}

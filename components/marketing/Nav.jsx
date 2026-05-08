@@ -72,7 +72,7 @@ export function Nav() {
             </Button>
             <Link
               href="/signup"
-              className="inline-flex h-9 items-center justify-center rounded-md bg-accent px-4 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-black border border-white/25 px-4 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
             >
               Commencer
             </Link>
@@ -138,7 +138,7 @@ export function Nav() {
             <Link
               href="/signup"
               onClick={() => setOpen(false)}
-              className="inline-flex h-11 items-center justify-center rounded-md bg-accent text-sm font-medium text-background"
+              className="inline-flex h-11 items-center justify-center rounded-md bg-black text-sm font-medium text-foreground border border-white/25"
             >
               Commencer
             </Link>

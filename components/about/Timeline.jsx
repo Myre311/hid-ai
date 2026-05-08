@@ -37,7 +37,7 @@ export function Timeline() {
           key={e.year}
           className="grid grid-cols-[88px_1fr] md:grid-cols-[140px_1fr] gap-6 items-baseline"
         >
-          <span className="font-serif text-3xl md:text-4xl tracking-tight text-accent">
+          <span className="font-sans text-3xl md:text-4xl tracking-tight text-accent">
             {e.year}
           </span>
           <p className="text-base md:text-lg text-foreground/90 leading-relaxed">

@@ -4,6 +4,7 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { ServiceTabs } from "@/components/shared/ServiceTabs";
 import { TalentSignupForm } from "@/components/talents/TalentSignupForm";
+import { ComplianceSection } from "@/components/home/ComplianceSection";
 
 export const metadata = {
   title: "Pour les talents",
@@ -23,7 +24,7 @@ const ROLE_TABS = [
         subtitle="Annotation · Labellisation · RLHF"
         description="Démarrez sans prérequis technique avancé. Le Flow Manager IA surveille votre progression et débloque automatiquement les niveaux de mission au fil de votre montée en qualité."
         skills={SPECIALIST_SKILLS}
-        ctaLabel="S'inscrire comme AI Specialist"
+        ctaLabel="S'inscrire comme Specialist"
       />
     ),
   },
@@ -35,7 +36,7 @@ const ROLE_TABS = [
         subtitle="NLP · Vision · Optimisation"
         description="Missions techniques avancées sur des projets de fine-tuning, de mise en production et d'optimisation. Validation de votre profil par le Chatbot Gatekeeper avant accès aux missions."
         skills={ENGINEER_SKILLS}
-        ctaLabel="S'inscrire comme AI Engineer"
+        ctaLabel="S'inscrire comme Engineer"
       />
     ),
   },
@@ -45,7 +46,7 @@ function RoleContent({ subtitle, description, skills, ctaLabel }) {
   return (
     <div className="grid md:grid-cols-[1.4fr_1fr] gap-10 md:gap-16 items-start">
       <div className="flex flex-col gap-6">
-        <h3 className="font-serif text-3xl md:text-4xl tracking-tighter leading-[1.05]">
+        <h3 className="font-sans text-3xl md:text-4xl tracking-tight leading-[1.05]">
           {subtitle}
         </h3>
         <p className="t-lead max-w-xl">
@@ -65,7 +66,7 @@ function RoleContent({ subtitle, description, skills, ctaLabel }) {
 
         <a
           href="#inscription"
-          className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-accent px-5 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
+          className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
         >
           {ctaLabel}
           <ArrowRight className="h-4 w-4" />
@@ -84,7 +85,7 @@ function RoleContent({ subtitle, description, skills, ctaLabel }) {
 export default function TalentsPage() {
   return (
     <>
-      <section className="relative pt-32 pb-16 md:pb-20 bg-background border-b border-border/40">
+      <section className="relative pt-32 pb-16 md:pb-20 bg-background">
         <Container className="flex flex-col gap-5 max-w-4xl">
           <p className="text-xs uppercase tracking-[0.22em] text-muted">
             Pour les talents
@@ -106,7 +107,7 @@ export default function TalentsPage() {
         </Container>
       </Section>
 
-      <Section id="inscription" className="bg-surface/40 border-t border-border/40">
+      <Section id="inscription" className="bg-surface/40">
         <Container className="max-w-3xl flex flex-col gap-8">
           <div className="flex flex-col gap-3">
             <h2 className="t-h3">
@@ -122,10 +123,12 @@ export default function TalentsPage() {
         </Container>
       </Section>
 
-      <Section className="bg-background border-t border-border/40">
+      <ComplianceSection />
+
+      <Section className="bg-background">
         <Container className="flex flex-col items-start gap-6 max-w-3xl">
           <h2 className="t-h2">
-            Une question avant de vous inscrire ?
+            Prêt à rejoindre l&rsquo;infrastructure humaine de l&rsquo;IA ?
           </h2>
           <p className="t-lead max-w-xl">
             Notre équipe peut vous éclairer sur le parcours, les missions
@@ -133,7 +136,7 @@ export default function TalentsPage() {
           </p>
           <Link
             href="mailto:contact@hidea-solution.fr"
-            className="inline-flex items-center gap-2 mt-2 h-12 rounded-md bg-accent px-6 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
+            className="inline-flex items-center gap-2 mt-2 h-12 rounded-md bg-black border border-white/25 px-6 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
           >
             Parler à notre équipe
             <ArrowRight className="h-4 w-4" />

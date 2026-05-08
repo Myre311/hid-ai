@@ -13,11 +13,11 @@ export default function InfrastructurePage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative pt-32 pb-20 md:pb-28 bg-background border-b border-border/40">
+      <section className="relative pt-32 pb-20 md:pb-28 bg-background">
         <Container className="max-w-5xl">
           <h1 className="t-display">
             HID AI conçues pour produire de la donnée d&rsquo;entraînement à
-            grande échelle.
+            grande échelle
           </h1>
         </Container>
       </section>
@@ -40,10 +40,10 @@ export default function InfrastructurePage() {
       </Section>
 
       {/* Carte du monde */}
-      <Section className="bg-surface/40 border-t border-border/40">
+      <Section className="bg-surface/40">
         <Container className="flex flex-col gap-10">
           <div className="flex flex-col gap-3 max-w-3xl">
-            <h2 className="font-serif text-3xl md:text-4xl tracking-tighter leading-[1.05]">
+            <h2 className="font-sans text-3xl md:text-4xl tracking-tight leading-[1.05]">
               Une présence en Europe et en Afrique.
             </h2>
             <p className="text-base text-muted leading-relaxed">

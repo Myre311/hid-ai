@@ -6,7 +6,7 @@ import { ServiceCard } from "@/components/shared/ServiceCard";
 
 export function EntreprisesSection() {
   return (
-    <Section id="entreprises" className="bg-background border-t border-border/40">
+    <Section id="entreprises" className="bg-background">
       <Container className="flex flex-col gap-12">
         <div className="grid md:grid-cols-[1fr_1.4fr] gap-8 md:gap-16 items-end">
           <h2 className="t-h2">
@@ -34,7 +34,7 @@ Deux services complémentaires pour vos pipelines IA : production de données d&
         <div>
           <Link
             href="mailto:contact@hidea-solution.fr"
-            className="inline-flex items-center gap-2 h-11 rounded-md bg-accent px-5 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
+            className="inline-flex items-center gap-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
           >
             Réserver une démo
             <ArrowRight className="h-4 w-4" />

@@ -46,7 +46,7 @@ export function HomeHero() {
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/entreprises"
-                className="inline-flex items-center gap-2 h-12 rounded-md bg-accent px-6 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
+                className="inline-flex items-center gap-2 h-12 rounded-md bg-black border border-white/25 px-6 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
               >
                 Pour les entreprises
                 <ArrowRight className="h-4 w-4" />

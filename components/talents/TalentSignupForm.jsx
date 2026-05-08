@@ -129,7 +129,7 @@ export function TalentSignupForm() {
       <button
         type="submit"
         disabled={submitting}
-        className="inline-flex items-center justify-center mt-2 h-11 px-5 rounded-md bg-accent text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200 disabled:opacity-60"
+        className="inline-flex items-center justify-center mt-2 h-11 px-5 rounded-md bg-black text-sm font-medium text-foreground border border-white/25 hover:border-white/60 hover:bg-surface-elevated transition-all duration-200 disabled:opacity-60"
       >
         {submitting ? "Envoi en cours…" : "Créer mon profil"}
       </button>

@@ -15,10 +15,10 @@ export default function AProposPage() {
   return (
     <>
       {/* Hero */}
-      <section className="relative pt-32 pb-20 md:pb-28 bg-background border-b border-border/40">
+      <section className="relative pt-32 pb-20 md:pb-28 bg-background">
         <Container className="max-w-5xl">
           <h1 className="t-display">
-            Une plateforme d&rsquo;infrastructure IA.
+            Une plateforme d&rsquo;infrastructure IA
           </h1>
         </Container>
       </section>
@@ -42,7 +42,7 @@ export default function AProposPage() {
       </Section>
 
       {/* Notre vision (renamed from "Notre conviction", Hub mention removed) */}
-      <Section className="bg-surface/40 border-t border-border/40">
+      <Section className="bg-surface/40">
         <Container className="max-w-3xl">
           <div className="flex flex-col gap-5">
             <p className="text-xs uppercase tracking-[0.22em] text-muted">
@@ -66,7 +66,7 @@ export default function AProposPage() {
       </Section>
 
       {/* Timeline */}
-      <Section className="bg-background border-t border-border/40">
+      <Section className="bg-background">
         <Container className="max-w-3xl flex flex-col gap-10">
           <h2 className="t-h2-md">
             Trois années de construction.
@@ -76,7 +76,7 @@ export default function AProposPage() {
       </Section>
 
       {/* Médias */}
-      <Section className="bg-surface/40 border-t border-border/40">
+      <Section className="bg-surface/40">
         <Container className="max-w-5xl flex flex-col gap-8">
           <div className="flex flex-col gap-3 max-w-2xl">
             <h2 className="t-h2-md">
@@ -92,7 +92,7 @@ export default function AProposPage() {
       </Section>
 
       {/* Contact */}
-      <Section className="bg-background border-t border-border/40">
+      <Section className="bg-background">
         <Container className="flex flex-col items-start gap-6 max-w-3xl">
           <h2 className="t-h3">
             Travailler ensemble.
@@ -102,7 +102,7 @@ export default function AProposPage() {
           </p>
           <Link
             href="mailto:contact@hidea-solution.fr"
-            className="inline-flex items-center gap-2 mt-2 h-11 rounded-md bg-accent px-5 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
+            className="inline-flex items-center gap-2 mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
           >
             Parler à notre équipe
             <ArrowRight className="h-4 w-4" />

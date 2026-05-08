@@ -2,7 +2,7 @@ import { HomeHero } from "@/components/home/HomeHero";
 import { PartnersMarquee } from "@/components/home/PartnersMarquee";
 import { EntreprisesSection } from "@/components/home/EntreprisesSection";
 import { TalentsSection } from "@/components/home/TalentsSection";
-import { ComplianceSection } from "@/components/home/ComplianceSection";
+import { LeadersTrustBar } from "@/components/home/LeadersTrustBar";
 import { CertificationsBadges } from "@/components/shared/CertificationsBadges";
 import { RoleSection } from "@/components/home/RoleSection";
 import { HomeFinalCTA } from "@/components/home/HomeFinalCTA";
@@ -20,7 +20,7 @@ export default function HomePage() {
       <PartnersMarquee />
       <EntreprisesSection />
       <TalentsSection />
-      <ComplianceSection />
+      <LeadersTrustBar />
       <CertificationsBadges />
       <RoleSection />
       <HomeFinalCTA />

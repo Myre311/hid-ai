@@ -8,7 +8,7 @@ const ENGINEER_SKILLS = ["NLP", "Vision", "Optimisation", "Fine-tuning", "MLOps"
 
 export function TalentsSection() {
   return (
-    <Section id="talents" className="bg-surface/30 border-t border-border/40">
+    <Section id="talents" className="bg-surface/30">
       <Container className="flex flex-col gap-12">
         <div className="grid md:grid-cols-[1fr_1.4fr] gap-8 md:gap-16 items-end">
           <h2 className="t-h2">
@@ -27,7 +27,7 @@ Deux parcours selon votre profil : AI Specialist pour l&rsquo;annotation et le R
           />
           <ProfileBlock
             role="AI Engineer"
-            tagline="NLP · Vision · Optimisation · MLOps"
+            tagline="NLP · Vision · Optimisation"
             skills={ENGINEER_SKILLS}
           />
         </div>
@@ -35,7 +35,7 @@ Deux parcours selon votre profil : AI Specialist pour l&rsquo;annotation et le R
         <div>
           <Link
             href="/talents"
-            className="inline-flex items-center gap-2 h-11 rounded-md bg-accent px-5 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
+            className="inline-flex items-center gap-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
           >
             Inscription
             <ArrowRight className="h-4 w-4" />

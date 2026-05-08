@@ -3,7 +3,7 @@ import { Section } from "@/components/ui/Section";
 
 export function RoleSection() {
   return (
-    <Section className="bg-background border-t border-border/40">
+    <Section className="bg-background">
       <Container>
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
           <div className="flex flex-col gap-6 max-w-xl">

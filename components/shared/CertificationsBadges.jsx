@@ -14,7 +14,7 @@ const ITEMS = [
  */
 export function CertificationsBadges() {
   return (
-    <section className="bg-background border-y border-border/40 py-24 md:py-32">
+    <section className="bg-background py-24 md:py-32">
       <Container className="flex flex-col items-center gap-12 max-w-4xl">
         <p className="text-center text-[11px] md:text-xs uppercase tracking-[0.22em] text-foreground/60 leading-relaxed max-w-3xl">
           L&rsquo;infrastructure et les opérations de notre plate-forme cloud

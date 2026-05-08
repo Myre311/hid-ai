@@ -4,7 +4,6 @@ import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { ServiceTabs } from "@/components/shared/ServiceTabs";
 import { ServiceContent } from "@/components/entreprises/ServiceContent";
-import { CertificationsBadges } from "@/components/shared/CertificationsBadges";
 
 export const metadata = {
   title: "Pour les entreprises",
@@ -50,7 +49,7 @@ const SERVICES = [
 export default function EntreprisesPage() {
   return (
     <>
-      <section className="relative pt-32 pb-16 md:pb-20 bg-background border-b border-border/40">
+      <section className="relative pt-32 pb-16 md:pb-20 bg-background">
         <Container className="flex flex-col gap-5 max-w-4xl">
           <p className="text-xs uppercase tracking-[0.22em] text-muted">
             Pour les entreprises
@@ -72,30 +71,7 @@ export default function EntreprisesPage() {
         </Container>
       </Section>
 
-      <Section className="bg-surface/40 border-t border-border/40">
-        <Container className="flex flex-col items-start gap-6 max-w-3xl">
-          <h2 className="t-h3">
-            Validation KYB sous 48 heures.
-          </h2>
-          <p className="text-base text-muted leading-relaxed">
-            Création de compte, dépôt de votre numéro d&rsquo;enregistrement,
-            vérification manuelle par notre équipe puis activation de votre
-            espace projet. Vous recevez votre accès en moins de deux jours
-            ouvrés.
-          </p>
-          <Link
-            href="/signup?as=business"
-            className="inline-flex items-center gap-2 h-11 rounded-md bg-accent px-5 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
-          >
-            Démarrer l&rsquo;onboarding entreprise
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-        </Container>
-      </Section>
-
-      <CertificationsBadges />
-
-      <Section className="bg-background border-t border-border/40">
+      <Section className="bg-background">
         <Container className="flex flex-col items-start gap-6 max-w-3xl">
           <h2 className="t-h2">
             Prêt à structurer vos pipelines de données ?
@@ -106,7 +82,7 @@ export default function EntreprisesPage() {
           </p>
           <Link
             href="mailto:contact@hidea-solution.fr"
-            className="inline-flex items-center gap-2 mt-2 h-12 rounded-md bg-accent px-6 text-sm font-medium text-background hover:bg-accent-hover hover:shadow-glow-accent transition-all duration-200"
+            className="inline-flex items-center gap-2 mt-2 h-12 rounded-md bg-black border border-white/25 px-6 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
           >
             Parler à notre équipe
             <ArrowRight className="h-4 w-4" />

@@ -33,7 +33,7 @@ export function ServiceTabs({ services, defaultId }) {
               className={cn(
                 "h-10 px-5 md:px-7 rounded-md text-sm font-medium transition-colors",
                 isActive
-                  ? "bg-accent text-background"
+                  ? "bg-black text-foreground border border-white/25"
                   : "text-muted hover:text-foreground hover:bg-surface-elevated"
               )}
             >

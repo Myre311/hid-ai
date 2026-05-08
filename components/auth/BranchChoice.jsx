@@ -48,7 +48,7 @@ export function BranchChoice() {
           className={cn(
             "group flex flex-col gap-5 text-left bg-surface border border-border rounded-lg p-7 md:p-8",
             "transition-all duration-300 ease-out-expo",
-            "hover:border-accent hover:-translate-y-1 hover:shadow-glow-accent",
+            "hover:border-accent hover:-translate-y-1",
             "focus-visible:outline-none focus-visible:border-accent focus-visible:shadow-glow-accent"
           )}
           aria-label={`Choisir ${opt.title}`}

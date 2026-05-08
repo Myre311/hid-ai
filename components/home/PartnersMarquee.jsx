@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils/cn";
 
+// Écoles & hubs tech partenaires — placeholders neutres tant que la liste
+// définitive n'a pas été fournie par le client (cf. TODO).
 const PARTNERS = [
-  { name: "ATELIER" },
-  { name: "NEXUS" },
-  { name: "LATTICE" },
-  { name: "PRISM" },
-  { name: "AXIOM" },
-  { name: "VERTEX" },
-  { name: "AURORA" },
-  { name: "QUANTA" },
+  { name: "École · 01" },
+  { name: "Hub Tech · 02" },
+  { name: "École · 03" },
+  { name: "Hub Tech · 04" },
+  { name: "École · 05" },
+  { name: "Hub Tech · 06" },
 ];
 
 /**
@@ -27,7 +27,7 @@ export function PartnersMarquee() {
 
   return (
     <section
-      className="relative overflow-hidden border-y border-border/40 bg-background py-12 md:py-16"
+      className="relative overflow-hidden bg-background py-12 md:py-16"
       aria-label="Écoles & hubs tech partenaires"
     >
       <div className="text-center">

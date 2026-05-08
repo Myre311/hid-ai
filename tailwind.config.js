@@ -38,8 +38,8 @@ module.exports = {
         "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
       },
       boxShadow: {
-        "glow-accent": "0 0 24px rgba(244, 180, 26, 0.15)",
-        "glow-accent-strong": "0 0 36px rgba(244, 180, 26, 0.25)",
+        "glow-accent": "0 0 24px rgba(200, 149, 48, 0.15)",
+        "glow-accent-strong": "0 0 36px rgba(200, 149, 48, 0.25)",
       },
     },
   },

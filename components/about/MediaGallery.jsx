@@ -7,9 +7,9 @@ export function MediaGallery({ photos = [], videoUrl }) {
     photos.length > 0
       ? photos
       : [
-          { label: "Formation Bonoua · Session annotation" },
+          { label: "Photo formation · à venir" },
           { label: "Atelier RLHF" },
-          { label: "Hub Casablanca · Onboarding" },
+          { label: "Photo formation · à venir" },
           { label: "Restitution équipe" },
         ];
 

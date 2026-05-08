@@ -4,7 +4,7 @@ import { DualCTABlock } from "@/components/shared/DualCTABlock";
 
 export function HomeFinalCTA() {
   return (
-    <Section className="bg-background border-t border-border/40">
+    <Section className="bg-background">
       <Container>
         <div className="grid md:grid-cols-2 gap-5 md:gap-6">
           <DualCTABlock
