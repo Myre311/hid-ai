@@ -10,13 +10,21 @@ import { HeroFloating3DLoader } from "@/components/3d/HeroFloating3DLoader";
 export function HomeHero() {
   return (
     <section className="relative min-h-[80vh] md:min-h-[90vh] flex flex-col justify-center overflow-hidden bg-black pt-32 pb-20">
-      {/* Background — 3D floating triangle */}
-      <HeroFloating3DLoader className="absolute inset-0 w-full h-full" />
-
-      {/* Subtle radial accent — barely visible */}
+      {/* Background — radial accent (mobile dominant) */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(244,180,26,0.06),transparent_55%)]"
+        className="absolute inset-0 bg-[radial-gradient(circle_at_75%_45%,rgba(244,180,26,0.18),transparent_55%)] md:bg-[radial-gradient(circle_at_75%_50%,rgba(244,180,26,0.12),transparent_45%)]"
+      />
+
+      {/* 3D triangle — right half on desktop, full bg behind text on mobile */}
+      <HeroFloating3DLoader
+        className="absolute inset-0 md:inset-y-0 md:right-0 md:left-1/2 md:w-1/2 md:h-full opacity-50 md:opacity-100"
+      />
+
+      {/* Bottom fade for smooth section hand-off */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black to-transparent pointer-events-none"
       />
 
       <Container className="relative z-10 flex flex-col items-start gap-8 md:gap-10 max-w-5xl">
