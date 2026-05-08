@@ -55,7 +55,7 @@ export function BranchChoice() {
         >
           <opt.Icon className="h-7 w-7 text-accent" aria-hidden="true" />
           <div className="flex flex-col gap-2">
-            <h2 className="font-serif text-2xl md:text-3xl tracking-tight">
+            <h2 className="t-h3">
               {opt.title}
             </h2>
             <p className="text-sm md:text-base text-muted leading-relaxed">

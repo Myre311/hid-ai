@@ -11,10 +11,10 @@ export function TalentsSection() {
     <Section id="talents" className="bg-surface/30 border-t border-border/40">
       <Container className="flex flex-col gap-12">
         <div className="grid md:grid-cols-[1fr_1.4fr] gap-8 md:gap-16 items-end">
-          <h2 className="font-serif text-4xl md:text-6xl tracking-tighter leading-[1.05]">
+          <h2 className="t-h2">
             HID AI pour les talents
           </h2>
-          <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
+          <p className="t-lead max-w-xl">
 Deux parcours selon votre profil : AI Specialist pour l&rsquo;annotation et le RLHF, AI Engineer pour les missions techniques avancées. Sans frais d&rsquo;inscription, paiement Mobile Money sous 5 minutes.
           </p>
         </div>
@@ -51,7 +51,7 @@ function ProfileBlock({ role, tagline, skills }) {
     <article className="flex flex-col gap-5 p-7 md:p-8 rounded-lg bg-surface border border-border hover:border-border-strong transition-colors duration-300">
       <div className="flex flex-col gap-1.5">
         <p className="text-xs uppercase tracking-[0.18em] text-muted">{tagline}</p>
-        <h3 className="font-serif text-2xl md:text-[1.65rem] tracking-tight">{role}</h3>
+        <h3 className="t-h3">{role}</h3>
       </div>
       <ul className="flex flex-wrap gap-2">
         {skills.map((s) => (

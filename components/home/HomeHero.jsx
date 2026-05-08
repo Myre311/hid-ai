@@ -35,10 +35,10 @@ export function HomeHero() {
         <div className="grid md:grid-cols-[1.15fr_1fr] gap-12 md:gap-16 items-center">
           {/* Text column */}
           <div className="flex flex-col items-start gap-7 md:gap-9 max-w-2xl">
-            <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl tracking-tighter leading-[1.02] text-balance text-foreground">
+            <h1 className="t-h1 text-foreground">
               L&rsquo;infrastructure humaine de l&rsquo;IA, depuis l&rsquo;Afrique.
             </h1>
-            <p className="text-base md:text-lg text-muted leading-relaxed">
+            <p className="t-lead">
               HID AI relie les entreprises qui construisent l&rsquo;IA aux
               talents africains certifiés qui produisent leurs données
               d&rsquo;entraînement et opèrent leurs missions techniques.

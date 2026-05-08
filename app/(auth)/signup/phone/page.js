@@ -17,7 +17,7 @@ export default function PhoneSignupPage() {
             <ArrowLeft className="h-4 w-4" />
             Choix du profil
           </Link>
-          <h1 className="font-serif text-3xl md:text-4xl tracking-tighter leading-tight">
+          <h1 className="t-h3">
             Vérifions votre numéro.
           </h1>
           <p className="text-base text-muted leading-relaxed">

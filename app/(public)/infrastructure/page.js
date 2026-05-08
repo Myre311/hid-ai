@@ -15,7 +15,7 @@ export default function InfrastructurePage() {
       {/* Hero */}
       <section className="relative pt-32 pb-20 md:pb-28 bg-background border-b border-border/40">
         <Container className="max-w-5xl">
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-[1.02] text-balance">
+          <h1 className="t-display">
             HID AI conçues pour produire de la donnée d&rsquo;entraînement à
             grande échelle.
           </h1>
@@ -26,10 +26,10 @@ export default function InfrastructurePage() {
       <Section className="bg-background">
         <Container className="flex flex-col gap-12">
           <div className="flex flex-col gap-3 max-w-3xl">
-            <h2 className="font-serif text-4xl md:text-5xl tracking-tighter leading-[1.05]">
+            <h2 className="t-h2-md">
               Les systèmes HID AI
             </h2>
-            <p className="text-base md:text-lg text-muted leading-relaxed">
+            <p className="t-lead">
               Une infrastructure pensée pour la conformité européenne, la
               transparence et la qualité des données traitées.
             </p>

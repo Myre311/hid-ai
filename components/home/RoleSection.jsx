@@ -7,10 +7,10 @@ export function RoleSection() {
       <Container>
         <div className="grid md:grid-cols-2 gap-12 md:gap-20 items-start">
           <div className="flex flex-col gap-6 max-w-xl">
-            <h2 className="font-serif text-4xl md:text-5xl tracking-tighter leading-[1.05]">
+            <h2 className="t-h2-md">
               Notre rôle.
             </h2>
-            <p className="text-base md:text-lg text-muted leading-relaxed">
+            <p className="t-lead">
 Du brief client à la livraison de la donnée d&rsquo;entraînement, nos équipes prennent en charge l&rsquo;ensemble de la chaîne — annotation, validation qualité, RLHF, fine-tuning, et certification continue des talents qui réalisent les missions.
             </p>
           </div>

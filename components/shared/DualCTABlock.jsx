@@ -37,7 +37,7 @@ export function DualCTABlock({
       </p>
       <h3
         className={cn(
-          "font-serif text-3xl md:text-4xl tracking-tighter leading-[1.05]",
+          "t-h3",
           isPrimary ? "text-background" : "text-foreground"
         )}
       >

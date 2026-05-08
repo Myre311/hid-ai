@@ -25,7 +25,7 @@ export function ServiceCard({ icon: Icon, title, description, highlight = false,
           <Icon className="h-5 w-5" />
         </span>
       )}
-      <h3 className="font-serif text-2xl md:text-[1.65rem] tracking-tight leading-tight">
+      <h3 className="t-h3">
         {title}
       </h3>
       <p className="text-sm md:text-base text-muted leading-relaxed">

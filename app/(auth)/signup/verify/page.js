@@ -17,7 +17,7 @@ export default function VerifySignupPage() {
             <ArrowLeft className="h-4 w-4" />
             Modifier le numéro
           </Link>
-          <h1 className="font-serif text-3xl md:text-4xl tracking-tighter leading-tight">
+          <h1 className="t-h3">
             Entrez le code reçu par SMS.
           </h1>
           <p className="text-base text-muted leading-relaxed">

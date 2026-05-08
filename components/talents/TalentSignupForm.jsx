@@ -61,7 +61,7 @@ export function TalentSignupForm() {
     return (
       <div className="flex flex-col items-start gap-3 p-8 rounded-lg bg-success/10 border border-success/30">
         <CheckCircle2 className="h-7 w-7 text-success" aria-hidden="true" />
-        <h3 className="font-serif text-2xl tracking-tight text-foreground">
+        <h3 className="t-h3 text-foreground">
           Demande envoyée.
         </h3>
         <p className="text-sm text-muted leading-relaxed max-w-md">

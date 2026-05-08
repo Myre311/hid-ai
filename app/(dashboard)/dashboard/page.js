@@ -36,7 +36,7 @@ export default function DashboardPage() {
     <div className="flex flex-col gap-10 max-w-5xl">
       <header className="flex flex-col gap-2">
         <p className="text-sm text-muted">Tableau de bord</p>
-        <h1 className="font-serif text-3xl md:text-5xl tracking-tighter leading-tight">
+        <h1 className="t-h2-md">
           Bienvenue, {user.firstName}.
         </h1>
       </header>

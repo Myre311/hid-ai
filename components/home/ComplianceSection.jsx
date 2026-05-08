@@ -13,7 +13,7 @@ export function ComplianceSection() {
   return (
     <section className="bg-surface/40 border-y border-border/40 py-20 md:py-28">
       <Container className="flex flex-col gap-8 max-w-5xl">
-        <h2 className="font-serif text-3xl md:text-5xl tracking-tighter leading-[1.05] max-w-3xl">
+        <h2 className="t-h2-md max-w-3xl">
           Conçu pour les exigences réglementaires les plus strictes.
         </h2>
         <ul className="flex flex-wrap gap-3">

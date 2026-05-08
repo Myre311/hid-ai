@@ -39,7 +39,7 @@ export function SystemsGrid() {
           <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-surface-elevated text-accent">
             <s.Icon className="h-5 w-5" aria-hidden="true" />
           </span>
-          <h3 className="mt-5 font-serif text-2xl md:text-[1.65rem] tracking-tight leading-tight">
+          <h3 className="mt-5 t-h3 leading-tight">
             {s.title}
           </h3>
           <p className="mt-3 text-sm md:text-base text-muted leading-relaxed">

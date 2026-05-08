@@ -55,10 +55,10 @@ export default function EntreprisesPage() {
           <p className="text-xs uppercase tracking-[0.22em] text-muted">
             Pour les entreprises
           </p>
-          <h1 className="font-serif text-5xl md:text-7xl tracking-tighter leading-[1.05] text-balance">
+          <h1 className="t-h1">
             HID AI pour les entreprises
           </h1>
-          <p className="text-base md:text-lg text-muted leading-relaxed max-w-2xl">
+          <p className="t-lead max-w-2xl">
             Deux services pour vos besoins IA. AI Data : production de
             données d&rsquo;entraînement à grande échelle. Recrutement :
             accès direct à un vivier de talents certifiés.
@@ -74,7 +74,7 @@ export default function EntreprisesPage() {
 
       <Section className="bg-surface/40 border-t border-border/40">
         <Container className="flex flex-col items-start gap-6 max-w-3xl">
-          <h2 className="font-serif text-3xl md:text-4xl tracking-tighter leading-tight">
+          <h2 className="t-h3">
             Validation KYB sous 48 heures.
           </h2>
           <p className="text-base text-muted leading-relaxed">
@@ -97,10 +97,10 @@ export default function EntreprisesPage() {
 
       <Section className="bg-background border-t border-border/40">
         <Container className="flex flex-col items-start gap-6 max-w-3xl">
-          <h2 className="font-serif text-4xl md:text-6xl tracking-tighter leading-[1.05] text-balance">
+          <h2 className="t-h2">
             Prêt à structurer vos pipelines de données ?
           </h2>
-          <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
+          <p className="t-lead max-w-xl">
             Démo, devis ou cadrage projet — un échange de 30 minutes pour
             identifier la meilleure approche pour votre besoin.
           </p>

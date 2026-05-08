@@ -48,7 +48,7 @@ function RoleContent({ subtitle, description, skills, ctaLabel }) {
         <h3 className="font-serif text-3xl md:text-4xl tracking-tighter leading-[1.05]">
           {subtitle}
         </h3>
-        <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
+        <p className="t-lead max-w-xl">
           {description}
         </p>
 
@@ -89,10 +89,10 @@ export default function TalentsPage() {
           <p className="text-xs uppercase tracking-[0.22em] text-muted">
             Pour les talents
           </p>
-          <h1 className="font-serif text-5xl md:text-7xl tracking-tighter leading-[1.05] text-balance">
+          <h1 className="t-h1">
             HID AI pour les talents
           </h1>
-          <p className="text-base md:text-lg text-muted leading-relaxed max-w-2xl">
+          <p className="t-lead max-w-2xl">
             Deux métiers sur la plateforme. AI Specialist pour démarrer sans
             prérequis avancé. AI Engineer pour les missions techniques.
             Mission après mission, votre profil monte en niveau.
@@ -109,7 +109,7 @@ export default function TalentsPage() {
       <Section id="inscription" className="bg-surface/40 border-t border-border/40">
         <Container className="max-w-3xl flex flex-col gap-8">
           <div className="flex flex-col gap-3">
-            <h2 className="font-serif text-3xl md:text-4xl tracking-tighter leading-tight">
+            <h2 className="t-h3">
               Inscription.
             </h2>
             <p className="text-base text-muted leading-relaxed max-w-xl">
@@ -124,10 +124,10 @@ export default function TalentsPage() {
 
       <Section className="bg-background border-t border-border/40">
         <Container className="flex flex-col items-start gap-6 max-w-3xl">
-          <h2 className="font-serif text-4xl md:text-6xl tracking-tighter leading-[1.05] text-balance">
+          <h2 className="t-h2">
             Une question avant de vous inscrire ?
           </h2>
-          <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
+          <p className="t-lead max-w-xl">
             Notre équipe peut vous éclairer sur le parcours, les missions
             disponibles ou les modalités de rémunération.
           </p>

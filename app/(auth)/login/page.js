@@ -9,7 +9,7 @@ export default function LoginPage() {
     <AuthShell>
       <div className="flex flex-col gap-8">
         <div className="flex flex-col gap-3">
-          <h1 className="font-serif text-3xl md:text-4xl tracking-tighter leading-tight">
+          <h1 className="t-h3">
             Connexion.
           </h1>
           <p className="text-base text-muted leading-relaxed">

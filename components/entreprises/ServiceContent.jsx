@@ -16,10 +16,10 @@ export function ServiceContent({
   return (
     <div className="grid md:grid-cols-[1.4fr_1fr] gap-10 md:gap-16 items-start">
       <div className="flex flex-col gap-6">
-        <h3 className="font-serif text-3xl md:text-4xl tracking-tighter leading-[1.05]">
+        <h3 className="t-h3">
           {subtitle}
         </h3>
-        <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
+        <p className="t-lead max-w-xl">
           {description}
         </p>
 

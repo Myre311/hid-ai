@@ -10,7 +10,7 @@ export default function SignupPage() {
     <section className="flex-1 flex flex-col py-16 md:py-24">
       <Container className="max-w-5xl flex flex-col gap-12">
         <header className="flex flex-col gap-4 max-w-3xl">
-          <h1 className="font-serif text-4xl md:text-6xl tracking-tighter leading-[1.05] text-balance">
+          <h1 className="t-h2">
             Comment souhaitez-vous rejoindre HID AI ?
           </h1>
           <p className="text-base md:text-lg text-muted leading-relaxed">

@@ -9,10 +9,10 @@ export function EntreprisesSection() {
     <Section id="entreprises" className="bg-background border-t border-border/40">
       <Container className="flex flex-col gap-12">
         <div className="grid md:grid-cols-[1fr_1.4fr] gap-8 md:gap-16 items-end">
-          <h2 className="font-serif text-4xl md:text-6xl tracking-tighter leading-[1.05]">
+          <h2 className="t-h2">
             HID AI pour les entreprises
           </h2>
-          <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
+          <p className="t-lead max-w-xl">
 Deux services complémentaires pour vos pipelines IA : production de données d&rsquo;entraînement à grande échelle, et accès direct à un vivier de talents certifiés sur 48 critères techniques et comportementaux.
           </p>
         </div>

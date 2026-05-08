@@ -70,6 +70,57 @@ body {
   .text-balance { text-wrap: balance; }
 }
 
+/* ─────────────────────────────────────────────────────────────────────────
+   TYPE SCALE — unified typography across the project.
+   Stack:
+     - Plus Jakarta Sans (sans, body & UI)
+     - Instrument Serif (serif, all headings — Big Caslon-like)
+     - JetBrains Mono (mono, code & uppercase tags)
+
+   Six classes cover every heading + 3 body sizes. Use `t-*` instead of
+   ad-hoc Tailwind size combos so we stay consistent across pages.
+   ───────────────────────────────────────────────────────────────────────── */
+@layer components {
+  /* Headings (all serif) */
+  .t-display {
+    @apply font-serif text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-[1.02] text-balance;
+  }
+  .t-h1 {
+    @apply font-serif text-5xl md:text-7xl tracking-tighter leading-[1.05] text-balance;
+  }
+  .t-h2 {
+    @apply font-serif text-4xl md:text-6xl tracking-tighter leading-[1.05] text-balance;
+  }
+  .t-h2-md {
+    @apply font-serif text-3xl md:text-5xl tracking-tighter leading-[1.05];
+  }
+  .t-h3 {
+    @apply font-serif text-2xl md:text-3xl tracking-tight leading-[1.15];
+  }
+  .t-h4 {
+    @apply font-sans text-lg md:text-xl font-medium tracking-tight leading-snug;
+  }
+
+  /* Body */
+  .t-lead {
+    @apply font-sans text-base md:text-lg text-muted leading-relaxed;
+  }
+  .t-body {
+    @apply font-sans text-sm md:text-base text-muted leading-relaxed;
+  }
+  .t-small {
+    @apply font-sans text-sm text-muted leading-relaxed;
+  }
+
+  /* Eyebrow & micro labels */
+  .t-eyebrow {
+    @apply font-sans text-xs uppercase tracking-[0.22em] text-muted;
+  }
+  .t-mono {
+    @apply font-mono text-xs uppercase tracking-[0.18em] text-muted;
+  }
+}
+
 /* react-phone-number-input — dark theme overrides */
 .hid-phone-input .PhoneInput {
   display: flex;

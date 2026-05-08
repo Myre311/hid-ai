@@ -17,7 +17,7 @@ export default function AProposPage() {
       {/* Hero */}
       <section className="relative pt-32 pb-20 md:pb-28 bg-background border-b border-border/40">
         <Container className="max-w-5xl">
-          <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-[1.02] text-balance">
+          <h1 className="t-display">
             Une plateforme d&rsquo;infrastructure IA.
           </h1>
         </Container>
@@ -30,10 +30,10 @@ export default function AProposPage() {
             <p className="text-xs uppercase tracking-[0.22em] text-muted">
               Hidea Solution
             </p>
-            <h2 className="font-serif text-4xl md:text-5xl tracking-tighter leading-[1.05]">
+            <h2 className="t-h2-md">
               Une société française, des hubs africains.
             </h2>
-            <p className="text-base md:text-lg text-muted leading-relaxed">
+            <p className="t-lead">
               HID AI est géré depuis la France avec des opérateurs en
               Côte d&rsquo;Ivoire, au Maroc et Congo Brazzaville.
             </p>
@@ -48,11 +48,11 @@ export default function AProposPage() {
             <p className="text-xs uppercase tracking-[0.22em] text-muted">
               Notre vision
             </p>
-            <h2 className="font-serif text-4xl md:text-5xl tracking-tighter leading-[1.05]">
+            <h2 className="t-h2-md">
               Le talent est partout. L&rsquo;infrastructure pour le mettre au
               travail, beaucoup moins.
             </h2>
-            <p className="text-base md:text-lg text-muted leading-relaxed">
+            <p className="t-lead">
               HID AI construit cette infrastructure là où le talent émerge —
               pas où le capital se concentre. On ne vend pas de promesse de
               prospérité par l&rsquo;IA. On fournit aux laboratoires
@@ -68,7 +68,7 @@ export default function AProposPage() {
       {/* Timeline */}
       <Section className="bg-background border-t border-border/40">
         <Container className="max-w-3xl flex flex-col gap-10">
-          <h2 className="font-serif text-4xl md:text-5xl tracking-tighter leading-[1.05]">
+          <h2 className="t-h2-md">
             Trois années de construction.
           </h2>
           <Timeline />
@@ -79,7 +79,7 @@ export default function AProposPage() {
       <Section className="bg-surface/40 border-t border-border/40">
         <Container className="max-w-5xl flex flex-col gap-8">
           <div className="flex flex-col gap-3 max-w-2xl">
-            <h2 className="font-serif text-4xl md:text-5xl tracking-tighter leading-[1.05]">
+            <h2 className="t-h2-md">
               Sur le terrain.
             </h2>
             <p className="text-base text-muted leading-relaxed">
@@ -94,7 +94,7 @@ export default function AProposPage() {
       {/* Contact */}
       <Section className="bg-background border-t border-border/40">
         <Container className="flex flex-col items-start gap-6 max-w-3xl">
-          <h2 className="font-serif text-3xl md:text-4xl tracking-tighter">
+          <h2 className="t-h3">
             Travailler ensemble.
           </h2>
           <p className="text-base text-muted leading-relaxed">
