@@ -93,7 +93,9 @@ export default function TalentsPage() {
             HID AI pour les talents
           </h1>
           <p className="text-base md:text-lg text-muted leading-relaxed max-w-2xl">
-            {"{{TALENTS_HERO_TEXT}}"}
+            Deux métiers sur la plateforme. AI Specialist pour démarrer sans
+            prérequis avancé. AI Engineer pour les missions techniques.
+            Mission après mission, votre profil monte en niveau.
           </p>
         </Container>
       </section>

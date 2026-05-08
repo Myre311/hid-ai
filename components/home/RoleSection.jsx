@@ -11,7 +11,7 @@ export function RoleSection() {
               Notre rôle.
             </h2>
             <p className="text-base md:text-lg text-muted leading-relaxed">
-              {"{{NOTRE_ROLE_TEXT}}"}
+Du brief client à la livraison de la donnée d&rsquo;entraînement, nos équipes prennent en charge l&rsquo;ensemble de la chaîne — annotation, validation qualité, RLHF, fine-tuning, et certification continue des talents qui réalisent les missions.
             </p>
           </div>
 

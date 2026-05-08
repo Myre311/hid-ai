@@ -13,7 +13,7 @@ export function EntreprisesSection() {
             HID AI pour les entreprises
           </h2>
           <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
-            {"{{ENTREPRISES_INTRO}}"}
+Deux services complémentaires pour vos pipelines IA : production de données d&rsquo;entraînement à grande échelle, et accès direct à un vivier de talents certifiés sur 48 critères techniques et comportementaux.
           </p>
         </div>
 

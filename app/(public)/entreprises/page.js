@@ -59,7 +59,9 @@ export default function EntreprisesPage() {
             HID AI pour les entreprises
           </h1>
           <p className="text-base md:text-lg text-muted leading-relaxed max-w-2xl">
-            {"{{ENTREPRISES_HERO_TEXT}}"}
+            Deux services pour vos besoins IA. AI Data : production de
+            données d&rsquo;entraînement à grande échelle. Recrutement :
+            accès direct à un vivier de talents certifiés.
           </p>
         </Container>
       </section>

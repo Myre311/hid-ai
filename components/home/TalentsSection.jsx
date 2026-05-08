@@ -15,7 +15,7 @@ export function TalentsSection() {
             HID AI pour les talents
           </h2>
           <p className="text-base md:text-lg text-muted leading-relaxed max-w-xl">
-            {"{{TALENTS_INTRO}}"}
+Deux parcours selon votre profil : AI Specialist pour l&rsquo;annotation et le RLHF, AI Engineer pour les missions techniques avancées. Sans frais d&rsquo;inscription, paiement Mobile Money sous 5 minutes.
           </p>
         </div>
 

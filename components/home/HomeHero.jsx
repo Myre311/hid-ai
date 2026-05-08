@@ -21,10 +21,12 @@ export function HomeHero() {
 
       <Container className="relative z-10 flex flex-col items-start gap-8 md:gap-10 max-w-5xl">
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl tracking-tighter leading-[1.02] text-balance text-foreground">
-          {"{{HERO_HEADLINE}}"}
+          L&rsquo;infrastructure humaine de l&rsquo;IA, depuis l&rsquo;Afrique.
         </h1>
         <p className="text-lg md:text-xl text-muted leading-relaxed max-w-2xl">
-          {"{{HERO_SUBTEXT}}"}
+          HID AI relie les entreprises qui construisent l&rsquo;IA aux
+          talents africains certifiés qui produisent leurs données
+          d&rsquo;entraînement et opèrent leurs missions techniques.
         </p>
         <div className="flex flex-wrap gap-3">
           <Link
