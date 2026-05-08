@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { HeroFloating3DLoader } from "@/components/3d/HeroFloating3DLoader";
+import { HeroLogoAnimation } from "@/components/3d/HeroLogoAnimation";
 
 /**
  * Hero principal — Scale AI style.
@@ -16,9 +16,9 @@ export function HomeHero() {
         className="absolute inset-0 bg-[radial-gradient(circle_at_75%_45%,rgba(244,180,26,0.18),transparent_55%)] md:bg-[radial-gradient(circle_at_75%_50%,rgba(244,180,26,0.12),transparent_45%)]"
       />
 
-      {/* 3D triangle — right half on desktop, full bg behind text on mobile */}
-      <HeroFloating3DLoader
-        className="absolute inset-0 md:inset-y-0 md:right-0 md:left-1/2 md:w-1/2 md:h-full opacity-50 md:opacity-100"
+      {/* Logo animation — D triangulaire qui vrille + boussole qui tourne */}
+      <HeroLogoAnimation
+        className="absolute inset-0 md:inset-y-0 md:right-0 md:left-1/2 md:w-1/2 md:h-full opacity-40 md:opacity-100"
       />
 
       {/* Bottom fade for smooth section hand-off */}
