@@ -2,14 +2,22 @@
 
 /**
  * Hero brand animation — pas de WebGL.
- * Le D triangulaire du logo HID AI s'anime en 3D (perspective + rotateY oscillant)
- * tandis que la boussole intérieure tourne en continu autour du centroïde du triangle.
+ * Le D triangulaire du logo s'anime en 3D (perspective + rotateY oscillant)
+ * tandis que la boussole tourne sur elle-même au centroïde du triangle.
  *
- * Centroide du triangle (14,0)–(14,100)–(100,50) ≈ (42.66, 50) → compass x=42.66.
+ * Centroïde du triangle (14,0)–(14,100)–(100,50) ≈ (42.66, 50).
  *
- * Tout en CSS keyframes + SVG inline.
- * Respecte prefers-reduced-motion (animations off).
+ * Implémentation:
+ *   - Les arms de la boussole sont placés en coordonnées absolues du viewBox
+ *     (pas de translate parent), pour que la rotation pivote vraiment autour
+ *     du centroïde via `transform-box: view-box; transform-origin: 42.66px 50px`.
+ *   - L'asymétrie de la flèche est (32px) ne déplace plus la rotation.
+ *
+ * Respecte prefers-reduced-motion.
  */
+const CX = 42.66;
+const CY = 50;
+
 export function HeroLogoAnimation({ className }) {
   return (
     <div
@@ -18,7 +26,7 @@ export function HeroLogoAnimation({ className }) {
       style={{ pointerEvents: "none", perspective: "1100px" }}
     >
       <div className="hidai-twist relative h-full w-full flex items-center justify-center">
-        {/* Soft amber halo behind the logo for depth */}
+        {/* Soft amber halo behind the logo */}
         <div
           aria-hidden="true"
           className="absolute h-[60%] w-[60%] max-h-[420px] max-w-[420px] rounded-full bg-[radial-gradient(circle,rgba(244,180,26,0.20)_0%,transparent_65%)] blur-2xl"
@@ -40,30 +48,41 @@ export function HeroLogoAnimation({ className }) {
           <line x1="14" y1="0" x2="100" y2="50" stroke="#F4B41A" strokeWidth="1.4" strokeLinecap="square" opacity="0.7" />
           <line x1="14" y1="100" x2="100" y2="50" stroke="#F4B41A" strokeWidth="1.4" strokeLinecap="square" opacity="0.7" />
 
-          {/* Compass rose — centered on the triangle centroid (42.66, 50) */}
+          {/* Compass rose — children in viewBox absolute coords, rotates around (42.66, 50) */}
           <g
-            transform="translate(42.66, 50)"
             className="hidai-compass"
             style={{
-              transformBox: "fill-box",
-              transformOrigin: "center",
+              transformBox: "view-box",
+              transformOrigin: `${CX}px ${CY}px`,
             }}
           >
-            {/* Outer ring — subtle */}
-            <circle cx="0" cy="0" r="22" fill="none" stroke="currentColor" strokeWidth="0.4" opacity="0.18" />
+            {/* Outer ring */}
+            <circle cx={CX} cy={CY} r="22" fill="none" stroke="currentColor" strokeWidth="0.4" opacity="0.18" />
 
-            {/* Cardinal arms — N, S, W in white */}
-            <polygon points="0,-22 3,0 -3,0" fill="currentColor" />
-            <polygon points="0,22 3,0 -3,0" fill="currentColor" />
-            <polygon points="-12,0 0,-3 0,3" fill="currentColor" />
+            {/* Cardinal arms — N, S, W (white) — points relative to centroid */}
+            <polygon
+              points={`${CX},${CY - 22} ${CX + 3},${CY} ${CX - 3},${CY}`}
+              fill="currentColor"
+            />
+            <polygon
+              points={`${CX},${CY + 22} ${CX + 3},${CY} ${CX - 3},${CY}`}
+              fill="currentColor"
+            />
+            <polygon
+              points={`${CX - 12},${CY} ${CX},${CY - 3} ${CX},${CY + 3}`}
+              fill="currentColor"
+            />
 
-            {/* East — amber brand accent, slightly larger */}
-            <polygon points="32,0 0,-3 0,3" fill="#F4B41A" />
+            {/* East — amber, longer */}
+            <polygon
+              points={`${CX + 32},${CY} ${CX},${CY - 3} ${CX},${CY + 3}`}
+              fill="#F4B41A"
+            />
 
             {/* Inner hub */}
-            <circle cx="0" cy="0" r="5.5" fill="none" stroke="currentColor" strokeWidth="0.6" opacity="0.4" />
-            <circle cx="0" cy="0" r="2.6" fill="currentColor" />
-            <circle cx="0" cy="0" r="1" fill="#F4B41A" />
+            <circle cx={CX} cy={CY} r="5.5" fill="none" stroke="currentColor" strokeWidth="0.6" opacity="0.4" />
+            <circle cx={CX} cy={CY} r="2.6" fill="currentColor" />
+            <circle cx={CX} cy={CY} r="1" fill="#F4B41A" />
           </g>
         </svg>
       </div>
@@ -78,23 +97,13 @@ export function HeroLogoAnimation({ className }) {
           animation: hidai-compass-spin 11s linear infinite;
         }
         @keyframes hidai-twist {
-          0% {
-            transform: rotateY(-42deg) rotateX(6deg);
-          }
-          50% {
-            transform: rotateY(38deg) rotateX(-6deg);
-          }
-          100% {
-            transform: rotateY(-42deg) rotateX(6deg);
-          }
+          0% { transform: rotateY(-42deg) rotateX(6deg); }
+          50% { transform: rotateY(38deg) rotateX(-6deg); }
+          100% { transform: rotateY(-42deg) rotateX(6deg); }
         }
         @keyframes hidai-compass-spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
         }
         @media (prefers-reduced-motion: reduce) {
           .hidai-twist {
