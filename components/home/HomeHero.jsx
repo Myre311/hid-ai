@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import dynamic from "next/dynamic";
 import { Container } from "@/components/ui/Container";
-
-const HeroFloating3D = dynamic(
-  () => import("@/components/3d/HeroFloating3D").then((m) => m.HeroFloating3D),
-  { ssr: false, loading: () => null }
-);
+import { HeroFloating3DLoader } from "@/components/3d/HeroFloating3DLoader";
 
 /**
  * Hero principal — Scale AI style.
@@ -16,7 +11,7 @@ export function HomeHero() {
   return (
     <section className="relative min-h-[80vh] md:min-h-[90vh] flex flex-col justify-center overflow-hidden bg-black pt-32 pb-20">
       {/* Background — 3D floating triangle */}
-      <HeroFloating3D className="absolute inset-0 w-full h-full" />
+      <HeroFloating3DLoader className="absolute inset-0 w-full h-full" />
 
       {/* Subtle radial accent — barely visible */}
       <div
