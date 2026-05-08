@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/talents", label: "Talents" },
   { href: "/infrastructure", label: "Infrastructure" },
   { href: "/a-propos", label: "À propos" },
+  { href: "mailto:contact@hidea-solution.fr", label: "Contact" },
 ];
 
 export function Nav() {
