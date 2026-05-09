@@ -1,126 +1,227 @@
 "use client";
 
 import { useState } from "react";
-import { cn } from "@/lib/utils/cn";
+import {
+  ComposableMap,
+  Geographies,
+  Geography,
+  Marker,
+  ZoomableGroup,
+} from "react-simple-maps";
+import { Plus, Minus, RotateCcw } from "lucide-react";
 
 /**
- * SVG world map (Robinson-projection-ish, simplifié) avec points HID AI.
- * - FR (Direction): Marseille, Toulouse — accent jaune
- * - Opérationnel: Côte d'Ivoire, Maroc, Congo — gris clair
+ * Carte du monde HID AI — style "néon" + zoom/pan.
+ * Source TopoJSON : `world-atlas` v2 (countries-110m).
+ *
+ * Interactions :
+ *  - Drag pour pan
+ *  - Molette / pinch pour zoomer
+ *  - Boutons +/-/reset overlay
  *
  * Pas de NEO, pas de Bonoua, pas de hub pilote.
  */
+const TOPO_JSON_URL =
+  "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
+
+const HIGHLIGHTED_COUNTRIES = {
+  250: "direction",   // FR
+  504: "operational", // MA
+  384: "operational", // CI
+  178: "operational", // CG (Congo Brazzaville)
+};
+
 const POINTS = [
-  // Direction (FR)
-  { id: "marseille", label: "Marseille", role: "direction", x: 506, y: 230 },
-  { id: "toulouse", label: "Toulouse", role: "direction", x: 498, y: 232 },
-  // Opérationnel
-  { id: "maroc", label: "Maroc · Casablanca", role: "operational", x: 480, y: 260 },
-  { id: "civ", label: "Côte d'Ivoire · Abidjan", role: "operational", x: 482, y: 332 },
-  { id: "congo", label: "Congo Brazzaville", role: "operational", x: 528, y: 372 },
+  { id: "marseille", label: "Marseille", role: "direction", coords: [5.37, 43.30] },
+  { id: "toulouse", label: "Toulouse", role: "direction", coords: [1.44, 43.60] },
+  { id: "casablanca", label: "Maroc · Casablanca", role: "operational", coords: [-7.59, 33.57] },
+  { id: "abidjan", label: "Côte d'Ivoire · Abidjan", role: "operational", coords: [-4.01, 5.36] },
+  { id: "brazzaville", label: "Congo Brazzaville", role: "operational", coords: [15.28, -4.27] },
 ];
+
+const COLORS = {
+  baseFill: "#0d0d10",
+  baseStroke: "#3f3f4a",
+  opFill: "#2c2c34",
+  opStroke: "#a6a6b3",
+  dirFill: "#3a3018",
+  dirStroke: "#f4b41a",
+  accent: "#f4b41a",
+  foreground: "#fafafa",
+  tooltipBg: "#15151a",
+  tooltipBorder: "#3f3f4a",
+};
+
+const INITIAL_VIEW = { coordinates: [5, 25], zoom: 1.4 };
 
 export function WorldMap() {
   const [hover, setHover] = useState(null);
+  const [view, setView] = useState(INITIAL_VIEW);
+
+  const handleMoveEnd = (next) => setView(next);
+  const zoomIn = () =>
+    setView((v) => ({ ...v, zoom: Math.min(v.zoom * 1.5, 8) }));
+  const zoomOut = () =>
+    setView((v) => ({ ...v, zoom: Math.max(v.zoom / 1.5, 1) }));
+  const reset = () => setView(INITIAL_VIEW);
 
   return (
     <div className="relative w-full">
-      <svg
-        viewBox="0 0 1000 500"
-        className="w-full h-auto bg-background"
-        role="img"
-        aria-label="Présence HID AI — Direction France, Opérationnel Côte d'Ivoire, Maroc, Congo Brazzaville"
+      <ComposableMap
+        projection="geoEqualEarth"
+        projectionConfig={{ scale: 165 }}
+        width={1000}
+        height={500}
+        className="w-full h-auto"
       >
-        {/* Stylised continents — simplified path */}
-        <g
-          fill="none"
-          stroke="#26262C"
-          strokeWidth="1"
-          strokeLinejoin="round"
+        <defs>
+          <filter id="hidai-marker-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blurred" />
+            <feMerge>
+              <feMergeNode in="blurred" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <filter id="hidai-country-glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1.6" result="blurred" />
+            <feMerge>
+              <feMergeNode in="blurred" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <ZoomableGroup
+          center={view.coordinates}
+          zoom={view.zoom}
+          minZoom={1}
+          maxZoom={8}
+          onMoveEnd={handleMoveEnd}
         >
-          {/* Africa */}
-          <path d="M 460 230 L 520 220 L 560 230 L 590 260 L 605 295 L 595 335 L 585 380 L 558 410 L 525 415 L 495 395 L 475 360 L 462 320 L 460 280 Z" />
-          {/* Europe */}
-          <path d="M 460 200 L 520 190 L 555 195 L 575 215 L 565 235 L 525 245 L 495 240 L 470 225 Z" />
-          {/* Americas (simplified blocks) */}
-          <path d="M 200 175 L 260 170 L 295 200 L 290 240 L 265 275 L 240 295 L 215 280 L 195 240 Z" />
-          <path d="M 240 305 L 280 305 L 305 335 L 320 380 L 305 425 L 280 445 L 255 425 L 245 385 L 240 345 Z" />
-          {/* Asia */}
-          <path d="M 575 175 L 700 170 L 770 185 L 820 215 L 815 250 L 770 270 L 720 270 L 660 255 L 615 235 L 580 215 Z" />
-          {/* India */}
-          <path d="M 660 270 L 710 270 L 720 305 L 700 335 L 680 325 L 670 300 Z" />
-          {/* Australia */}
-          <path d="M 790 350 L 855 345 L 870 375 L 855 400 L 820 405 L 790 380 Z" />
-        </g>
+          <Geographies geography={TOPO_JSON_URL}>
+            {({ geographies }) =>
+              geographies.map((geo) => {
+                const id = Number(geo.id);
+                const role = HIGHLIGHTED_COUNTRIES[id];
+                const isHighlighted = !!role;
+                const fill = !isHighlighted
+                  ? COLORS.baseFill
+                  : role === "direction"
+                  ? COLORS.dirFill
+                  : COLORS.opFill;
+                const stroke = !isHighlighted
+                  ? COLORS.baseStroke
+                  : role === "direction"
+                  ? COLORS.dirStroke
+                  : COLORS.opStroke;
+                return (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    fill={fill}
+                    stroke={stroke}
+                    strokeWidth={isHighlighted ? 0.9 : 0.5}
+                    filter={isHighlighted ? "url(#hidai-country-glow)" : undefined}
+                    style={{
+                      default: { outline: "none" },
+                      hover: { outline: "none" },
+                      pressed: { outline: "none" },
+                    }}
+                  />
+                );
+              })
+            }
+          </Geographies>
 
-        {/* Subtle grid lines */}
-        <g stroke="#1a1a1f" strokeWidth="0.5" opacity="0.6">
-          <line x1="0" y1="250" x2="1000" y2="250" />
-          <line x1="500" y1="0" x2="500" y2="500" />
-        </g>
-
-        {/* Points */}
-        {POINTS.map((p) => {
-          const isDirection = p.role === "direction";
-          const isHover = hover === p.id;
-          return (
-            <g
-              key={p.id}
-              transform={`translate(${p.x}, ${p.y})`}
-              onMouseEnter={() => setHover(p.id)}
-              onMouseLeave={() => setHover(null)}
-              className="cursor-pointer"
-            >
-              <circle
-                r={isHover ? 12 : 9}
-                fill={isDirection ? "#F4B41A" : "#FAFAFA"}
-                opacity={isHover ? 0.18 : 0.12}
-                className="transition-all"
-              />
-              <circle
-                r={isHover ? 4 : 3}
-                fill={isDirection ? "#F4B41A" : "#FAFAFA"}
-              />
-            </g>
-          );
-        })}
-      </svg>
-
-      {/* Floating label on hover */}
-      {hover && (
-        <div
-          className={cn(
-            "absolute pointer-events-none px-3 py-2 rounded-md border bg-surface text-xs",
-            "transform -translate-x-1/2 -translate-y-full",
-            "whitespace-nowrap"
-          )}
-          style={{
-            left: `${(POINTS.find((p) => p.id === hover).x / 1000) * 100}%`,
-            top: `${(POINTS.find((p) => p.id === hover).y / 500) * 100}%`,
-            marginTop: "-12px",
-          }}
-        >
-          {(() => {
-            const p = POINTS.find((p) => p.id === hover);
+          {POINTS.map((p) => {
             const isDirection = p.role === "direction";
+            const isHover = hover === p.id;
+            const color = isDirection ? COLORS.accent : COLORS.foreground;
+            // Ajustement visuel : les markers gardent leur taille apparente même en zoom élevé
+            const scaleAdjust = 1 / Math.sqrt(view.zoom);
             return (
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn(
-                    "h-1.5 w-1.5 rounded-full",
-                    isDirection ? "bg-accent" : "bg-foreground"
+              <Marker
+                key={p.id}
+                coordinates={p.coords}
+                onMouseEnter={() => setHover(p.id)}
+                onMouseLeave={() => setHover(null)}
+                style={{ cursor: "pointer" }}
+              >
+                <g transform={`scale(${scaleAdjust})`}>
+                  <circle
+                    r={isHover ? 18 : 14}
+                    fill={color}
+                    opacity={isHover ? 0.55 : 0.35}
+                    filter="url(#hidai-marker-glow)"
+                    style={{ transition: "all 200ms" }}
+                  />
+                  <circle
+                    r={isHover ? 7 : 5}
+                    fill={color}
+                    opacity={0.55}
+                    style={{ transition: "all 200ms" }}
+                  />
+                  <circle
+                    r={isHover ? 3.2 : 2.5}
+                    fill={color}
+                  />
+                  {isHover && (
+                    <g transform="translate(0, -22)">
+                      <rect
+                        x={-(p.label.length * 3.5)}
+                        y={-12}
+                        width={p.label.length * 7}
+                        height={20}
+                        rx={4}
+                        fill={COLORS.tooltipBg}
+                        stroke={COLORS.tooltipBorder}
+                        strokeWidth={0.6}
+                      />
+                      <text
+                        textAnchor="middle"
+                        y={2}
+                        fontSize={10}
+                        fill={COLORS.foreground}
+                        style={{ pointerEvents: "none" }}
+                      >
+                        {p.label}
+                      </text>
+                    </g>
                   )}
-                />
-                <span className="text-foreground">{p.label}</span>
-                <span className="text-muted">·</span>
-                <span className="text-muted">
-                  {isDirection ? "Direction" : "Opérationnel"}
-                </span>
-              </div>
+                </g>
+              </Marker>
             );
-          })()}
-        </div>
-      )}
+          })}
+        </ZoomableGroup>
+      </ComposableMap>
+
+      {/* Contrôles de zoom */}
+      <div className="absolute top-3 right-3 flex flex-col gap-1 bg-surface/80 backdrop-blur-sm border border-border rounded-md p-1">
+        <button
+          type="button"
+          onClick={zoomIn}
+          aria-label="Zoom avant"
+          className="inline-flex h-8 w-8 items-center justify-center rounded text-muted hover:text-foreground hover:bg-surface-elevated transition-colors"
+        >
+          <Plus className="h-4 w-4" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={zoomOut}
+          aria-label="Zoom arrière"
+          className="inline-flex h-8 w-8 items-center justify-center rounded text-muted hover:text-foreground hover:bg-surface-elevated transition-colors"
+        >
+          <Minus className="h-4 w-4" aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={reset}
+          aria-label="Réinitialiser la vue"
+          className="inline-flex h-8 w-8 items-center justify-center rounded text-muted hover:text-foreground hover:bg-surface-elevated transition-colors"
+        >
+          <RotateCcw className="h-4 w-4" aria-hidden="true" />
+        </button>
+      </div>
 
       {/* Légende */}
       <div className="mt-6 flex flex-wrap items-center gap-6 text-xs text-muted">
@@ -131,6 +232,9 @@ export function WorldMap() {
         <div className="inline-flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-foreground" />
           <span>Opérationnel · Côte d&rsquo;Ivoire, Maroc, Congo Brazzaville</span>
+        </div>
+        <div className="inline-flex items-center gap-2 text-muted-strong">
+          <span>Cliquez-glissez pour explorer · molette pour zoomer</span>
         </div>
       </div>
     </div>

@@ -34,9 +34,9 @@ export function SystemsGrid() {
       {SYSTEMS.map((s) => (
         <article
           key={s.title}
-          className="bg-surface border border-border rounded-lg p-7 md:p-8 transition-colors duration-300 hover:border-border-strong"
+          className="p-7 md:p-8"
         >
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-md bg-surface-elevated text-accent">
+          <span className="inline-flex h-10 w-10 items-center justify-center text-accent">
             <s.Icon className="h-5 w-5" aria-hidden="true" />
           </span>
           <h3 className="mt-5 t-h3 leading-tight">

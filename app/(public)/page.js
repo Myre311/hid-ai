@@ -17,8 +17,8 @@ export default function HomePage() {
   return (
     <>
       <HomeHero />
-      <PartnersMarquee />
       <EntreprisesSection />
+      <PartnersMarquee />
       <TalentsSection />
       <LeadersTrustBar />
       <CertificationsBadges />

@@ -3,19 +3,25 @@
 import { useState } from "react";
 import { cn } from "@/lib/utils/cn";
 
-// Écoles & hubs tech partenaires — placeholders neutres tant que la liste
-// définitive n'a pas été fournie par le client (cf. TODO).
+/**
+ * Liste partenaires — édite ici pour ajouter / retirer.
+ * Mélange écoles, hubs tech, et entreprises partenaires dans un seul
+ * carousel défilant. Le champ `name` est ce qui s'affiche.
+ */
 const PARTNERS = [
+  // Écoles & hubs tech
   { name: "École · 01" },
   { name: "Hub Tech · 02" },
   { name: "École · 03" },
-  { name: "Hub Tech · 04" },
-  { name: "École · 05" },
-  { name: "Hub Tech · 06" },
+
+  // Entreprises partenaires (ajoute ici)
+  { name: "Entreprise · 01" },
+  { name: "Entreprise · 02" },
+  { name: "Entreprise · 03" },
 ];
 
 /**
- * Carousel CSS infini de logos partenaires.
+ * Carousel CSS infini de logos partenaires (écoles, hubs tech, entreprises).
  * - Liste dupliquée pour boucle continue
  * - Vitesse: ~38s/cycle
  * - Pause au hover
@@ -28,11 +34,11 @@ export function PartnersMarquee() {
   return (
     <section
       className="relative overflow-hidden bg-background py-12 md:py-16"
-      aria-label="Écoles & hubs tech partenaires"
+      aria-label="Écoles, hubs tech et entreprises partenaires"
     >
       <div className="text-center">
         <p className="text-xs uppercase tracking-[0.22em] text-muted">
-          Écoles & hubs tech partenaires
+          Écoles, hubs tech &amp; entreprises partenaires
         </p>
       </div>
 

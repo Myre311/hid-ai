@@ -9,10 +9,10 @@ import { Logo } from "@/components/marketing/Logo";
 import { cn } from "@/lib/utils/cn";
 
 const NAV_LINKS = [
+  { href: "/a-propos", label: "À propos" },
   { href: "/entreprises", label: "Entreprises" },
   { href: "/talents", label: "Talents" },
   { href: "/infrastructure", label: "Infrastructure" },
-  { href: "/a-propos", label: "À propos" },
   { href: "mailto:contact@hidea-solution.fr", label: "Contact" },
 ];
 
