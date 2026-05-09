@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
-import { SystemsGrid } from "@/components/infrastructure/SystemsGrid";
+import { SystemsCarousel } from "@/components/infrastructure/SystemsCarousel";
 import { WorldMap } from "@/components/infrastructure/WorldMap";
 
 export const metadata = {
@@ -22,22 +22,8 @@ export default function InfrastructurePage() {
         </Container>
       </section>
 
-      {/* Systèmes */}
-      <Section className="bg-background">
-        <Container className="flex flex-col gap-12">
-          <div className="flex flex-col gap-3 max-w-3xl">
-            <h2 className="t-h2-md">
-              Les systèmes HID AI
-            </h2>
-            <p className="t-lead">
-              Une infrastructure pensée pour la conformité européenne, la
-              transparence et la qualité des données traitées.
-            </p>
-          </div>
-
-          <SystemsGrid />
-        </Container>
-      </Section>
+      {/* Systèmes — carousel horizontal */}
+      <SystemsCarousel />
 
       {/* Carte du monde */}
       <Section className="bg-surface/40">
