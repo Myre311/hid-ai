@@ -1,22 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { cn } from "@/lib/utils/cn";
+import { useEffect, useRef, useState } from "react";
 
 /**
- * Liste partenaires — édite ici pour ajouter / retirer.
- * - Sans `src` → rendu texte + pastille (placeholder écoles, etc.)
- * - Avec `src` → rendu image (logo entreprise réel)
- *
- * Logos hostés sur major-exchanges.com pour cette itération.
+ * Liste des entreprises partenaires affichées dans le carousel.
+ * Ajoute simplement un objet { name, alt, src } pour chaque nouvelle entreprise.
  */
 const PARTNERS = [
-  // Écoles & hubs tech (placeholders en attendant la liste finale)
-  { name: "École · 01" },
-  { name: "Hub Tech · 02" },
-  { name: "École · 03" },
-
-  // Entreprises partenaires
+  {
+    name: "Major Exchanges",
+    alt: "Major Exchanges",
+    src: "/images/partners/major-exchanges.png",
+  },
+  {
+    name: "Roder 5",
+    alt: "Roder 5 — Optimizing Potential",
+    src: "/images/partners/roder5.png",
+  },
   {
     name: "OMC",
     alt: "OMC — Organisation Mondiale du Commerce",
@@ -54,42 +54,106 @@ const PARTNERS = [
   },
 ];
 
+const AUTO_SCROLL_PX_PER_SEC = 38; // vitesse auto-scroll
+const RESUME_AFTER_MS = 2200;       // délai avant reprise après interaction utilisateur
+
 /**
- * Carousel CSS infini de logos partenaires (écoles, hubs tech, entreprises).
- * - Liste dupliquée pour boucle continue
- * - Vitesse: ~46s/cycle (un peu plus lent vu qu'il y a plus d'items)
- * - Pause au hover
+ * Carousel partenaires : auto-scrollant ET scrollable manuellement.
+ * - rAF incrémente `scrollLeft` à vitesse fixe
+ * - Liste dupliquée → quand on dépasse la moitié, on wrap pour boucle infinie
+ * - Pause au hover, au wheel, au touch — reprise auto après ~2s d'inactivité
  */
 export function PartnersMarquee() {
-  const [paused, setPaused] = useState(false);
+  const trackRef = useRef(null);
+  const rafRef = useRef(null);
+  const lastTsRef = useRef(0);
+  const pausedRef = useRef(false);
+  const resumeTimerRef = useRef(null);
+  const [hovered, setHovered] = useState(false);
   const doubled = [...PARTNERS, ...PARTNERS];
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const pauseAndQueueResume = () => {
+      pausedRef.current = true;
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+      resumeTimerRef.current = setTimeout(() => {
+        pausedRef.current = false;
+      }, RESUME_AFTER_MS);
+    };
+
+    const tick = (now) => {
+      if (!lastTsRef.current) lastTsRef.current = now;
+      const dt = now - lastTsRef.current;
+      lastTsRef.current = now;
+
+      const halfWidth = track.scrollWidth / 2;
+      let pos = track.scrollLeft;
+
+      if (!pausedRef.current && !hovered) {
+        pos += (AUTO_SCROLL_PX_PER_SEC * dt) / 1000;
+      }
+
+      // Wrap dans les deux sens
+      if (halfWidth > 0) {
+        if (pos >= halfWidth) pos -= halfWidth;
+        else if (pos < 0) pos += halfWidth;
+      }
+
+      if (pos !== track.scrollLeft) {
+        track.scrollLeft = pos;
+      }
+
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+
+    const onWheel = () => pauseAndQueueResume();
+    const onTouchStart = () => {
+      pausedRef.current = true;
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+    };
+    const onTouchEnd = () => pauseAndQueueResume();
+
+    track.addEventListener("wheel", onWheel, { passive: true });
+    track.addEventListener("touchstart", onTouchStart, { passive: true });
+    track.addEventListener("touchend", onTouchEnd, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(rafRef.current);
+      if (resumeTimerRef.current) clearTimeout(resumeTimerRef.current);
+      track.removeEventListener("wheel", onWheel);
+      track.removeEventListener("touchstart", onTouchStart);
+      track.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [hovered]);
 
   return (
     <section
-      className="relative overflow-hidden bg-background py-12 md:py-16"
-      aria-label="Écoles, hubs tech et entreprises partenaires"
+      className="relative overflow-hidden bg-background py-16 md:py-20"
+      aria-label="Entreprises partenaires"
     >
       <div className="text-center">
         <p className="text-xs uppercase tracking-[0.22em] text-muted">
-          Écoles, hubs tech &amp; entreprises partenaires
+          Entreprises partenaires
         </p>
       </div>
 
-      <div
-        className="mt-8 relative"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-      >
+      <div className="mt-10 relative">
         <div
-          className={cn(
-            "flex items-center gap-12 md:gap-16 w-max",
-            "animate-[marquee_46s_linear_infinite]"
-          )}
-          style={{ animationPlayState: paused ? "paused" : "running" }}
+          ref={trackRef}
+          className="overflow-x-auto pb-2 hide-marquee-scrollbar"
+          onMouseEnter={() => setHovered(true)}
+          onMouseLeave={() => setHovered(false)}
         >
-          {doubled.map((p, i) => (
-            <PartnerLogo key={`${p.name}-${i}`} partner={p} />
-          ))}
+          <div className="flex items-center gap-16 md:gap-24 w-max px-8">
+            {doubled.map((p, i) => (
+              <PartnerLogo key={`${p.name}-${i}`} partner={p} />
+            ))}
+          </div>
         </div>
 
         {/* Edge fades */}
@@ -98,9 +162,12 @@ export function PartnersMarquee() {
       </div>
 
       <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+        .hide-marquee-scrollbar {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .hide-marquee-scrollbar::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </section>
@@ -115,7 +182,8 @@ function PartnerLogo({ partner }) {
         src={partner.src}
         alt={partner.alt ?? partner.name}
         loading="lazy"
-        className="h-9 md:h-10 w-auto max-w-[160px] object-contain opacity-70 hover:opacity-100 transition-opacity duration-200 select-none"
+        draggable="false"
+        className="h-14 md:h-16 w-auto max-w-[220px] object-contain opacity-75 hover:opacity-100 transition-opacity duration-200 select-none flex-shrink-0"
       />
     );
   }
@@ -123,7 +191,7 @@ function PartnerLogo({ partner }) {
   return (
     <span
       aria-label={partner.name}
-      className="inline-flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors duration-200 select-none whitespace-nowrap"
+      className="inline-flex items-center gap-2 text-foreground/70 hover:text-foreground transition-colors duration-200 select-none whitespace-nowrap flex-shrink-0"
     >
       <span aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-full border border-current" />
       <span className="text-sm tracking-[0.2em] font-medium">{partner.name}</span>
