@@ -8,6 +8,7 @@ import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { buildInitialTestRows } from "@/lib/evaluation/tests";
 import { EvaluationRoadmap } from "@/components/dashboard/EvaluationRoadmap";
 import { AiNativeScoreCard } from "@/components/dashboard/AiNativeScoreCard";
+import PageTransition from "@/components/shared/PageTransition";
 
 export const metadata = { title: "Vue d'ensemble · HID AI" };
 
@@ -105,6 +106,7 @@ export default async function DashboardHome() {
   const allDone = completedCount === 8;
 
   return (
+    <PageTransition>
     <div className="flex flex-col gap-10 max-w-5xl">
       {/* Hero personnalisé */}
       <section className="flex flex-col gap-2">
@@ -194,6 +196,7 @@ export default async function DashboardHome() {
         )}
       </section>
     </div>
+    </PageTransition>
   );
 }
 

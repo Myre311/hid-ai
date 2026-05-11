@@ -14,14 +14,15 @@ const TEST = getTestBySlug("mlops");
 // Ordre initial mélangé — le candidat doit reconstituer l'ordre canonique.
 const SHUFFLED = [
   "evaluation",
-  "ingestion",
+  "kappa_validation",
   "deployment",
-  "validation",
-  "monitoring",
+  "ingestion",
   "training",
-  "features",
-  "registry",
+  "annotation",
   "versioning",
+  "registry",
+  "validation",
+  "features",
 ];
 
 export default function MlopsPage() {
@@ -82,10 +83,10 @@ export default function MlopsPage() {
 
         <section>
           <h2 className="t-h3 mb-2">
-            Partie 2 / 3 — Architecture du pipeline (9 étapes)
+            Partie 2 / 3 — Architecture du pipeline (10 étapes)
           </h2>
           <p className="text-sm text-foreground/55 mb-4">
-            Réordonnez les 9 étapes pour reconstituer un pipeline MLOps canonique
+            Réordonnez les 10 étapes pour reconstituer un pipeline MLOps canonique
             (utilisez les flèches haut/bas).
           </p>
 

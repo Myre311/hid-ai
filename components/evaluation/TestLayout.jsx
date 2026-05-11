@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Clock, X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import confetti from "canvas-confetti";
 
 /**
  * Layout commun à toutes les pages de test.
@@ -210,6 +211,20 @@ function SidebarCard({ label, children }) {
 
 function ResultScreen({ test, result, timeSeconds }) {
   const passed = result.passed;
+
+  useEffect(() => {
+    if (passed) {
+      confetti({
+        particleCount: 60,
+        spread: 70,
+        origin: { y: 0.6 },
+        colors: ["#C89530", "#F4B41A", "#FAFAFA"],
+        ticks: 150,
+        startVelocity: 35,
+      });
+    }
+  }, [passed]);
+
   return (
     <div className="max-w-2xl flex flex-col gap-8 py-12">
       <div

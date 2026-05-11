@@ -122,10 +122,10 @@ export default function TalentsPage() {
             Notre équipe peut vous éclairer sur le parcours, les missions
             disponibles ou les modalités de rémunération.
           </p>
-          <B2BTriggerButton className="inline-flex items-center gap-2 mt-2 h-12 rounded-md bg-black border border-white/25 px-6 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
+          <TalentTriggerButton className="inline-flex items-center gap-2 mt-2 h-12 rounded-md bg-black border border-white/25 px-6 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
             Parler à notre équipe
             <ArrowRight className="h-4 w-4" />
-          </B2BTriggerButton>
+          </TalentTriggerButton>
         </Container>
       </Section>
     </>

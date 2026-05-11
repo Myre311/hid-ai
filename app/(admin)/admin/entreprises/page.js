@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, Building2, SearchX } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/server";
+import { sanitizeSearchQuery } from "@/lib/admin/sanitize";
+import EmptyState from "@/components/ui/EmptyState";
 
 export const metadata = { title: "Admin · Entreprises" };
 export const dynamic = "force-dynamic";
@@ -23,7 +25,7 @@ const STATUS_COLORS = {
 };
 
 export default async function AdminB2BPage({ searchParams }) {
-  const q = (searchParams?.q || "").trim();
+  const q = sanitizeSearchQuery(searchParams?.q || "");
   const status = searchParams?.status || "";
   const page = Math.max(1, parseInt(searchParams?.page || "1", 10));
   const perPage = 20;
@@ -123,8 +125,28 @@ export default async function AdminB2BPage({ searchParams }) {
           <tbody>
             {(!rows || rows.length === 0) && (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-foreground/50">
-                  Aucune inscription B2B trouvée.
+                <td colSpan={8}>
+                  {q || status ? (
+                    <EmptyState
+                      icon={<SearchX className="w-10 h-10 text-foreground/40" />}
+                      title="Aucun résultat"
+                      description="Aucune entreprise ne correspond à vos filtres. Essayez d'élargir vos critères."
+                      cta={
+                        <Link
+                          href="/admin/entreprises"
+                          className="inline-flex h-10 items-center rounded-md border border-white/15 px-4 text-xs text-foreground/85 hover:bg-white/5"
+                        >
+                          Réinitialiser
+                        </Link>
+                      }
+                    />
+                  ) : (
+                    <EmptyState
+                      icon={<Building2 className="w-10 h-10 text-foreground/40" />}
+                      title="Aucune entreprise inscrite"
+                      description="Les entreprises apparaîtront ici dès qu'elles soumettront une demande B2B."
+                    />
+                  )}
                 </td>
               </tr>
             )}

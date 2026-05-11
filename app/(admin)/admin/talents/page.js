@@ -1,6 +1,8 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, Users, SearchX } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/server";
+import { sanitizeSearchQuery } from "@/lib/admin/sanitize";
+import EmptyState from "@/components/ui/EmptyState";
 
 export const metadata = { title: "Admin · Talents" };
 export const dynamic = "force-dynamic";
@@ -8,7 +10,7 @@ export const dynamic = "force-dynamic";
 const METIER_LABELS = { specialist: "AI Specialist", engineer: "AI Engineer" };
 
 export default async function AdminTalentsPage({ searchParams }) {
-  const q = (searchParams?.q || "").trim();
+  const q = sanitizeSearchQuery(searchParams?.q || "");
   const metier = searchParams?.metier || "";
   const status = searchParams?.status || "";
   const page = Math.max(1, parseInt(searchParams?.page || "1", 10));
@@ -149,8 +151,28 @@ export default async function AdminTalentsPage({ searchParams }) {
           <tbody>
             {rows.length === 0 && (
               <tr>
-                <td colSpan={8} className="py-12 text-center text-foreground/50">
-                  Aucun candidat trouvé.
+                <td colSpan={8}>
+                  {q || metier || status ? (
+                    <EmptyState
+                      icon={<SearchX className="w-10 h-10 text-foreground/40" />}
+                      title="Aucun résultat"
+                      description="Aucun candidat ne correspond à vos filtres. Essayez d'élargir vos critères."
+                      cta={
+                        <Link
+                          href="/admin/talents"
+                          className="inline-flex h-10 items-center rounded-md border border-white/15 px-4 text-xs text-foreground/85 hover:bg-white/5"
+                        >
+                          Réinitialiser
+                        </Link>
+                      }
+                    />
+                  ) : (
+                    <EmptyState
+                      icon={<Users className="w-10 h-10 text-foreground/40" />}
+                      title="Aucun candidat inscrit"
+                      description="Les candidats apparaîtront ici dès qu'ils s'inscriront via la page Talents."
+                    />
+                  )}
                 </td>
               </tr>
             )}

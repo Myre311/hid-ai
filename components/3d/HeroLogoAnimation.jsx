@@ -34,10 +34,10 @@ export function HeroLogoAnimation({ className }) {
 
         <svg
           viewBox="0 0 100 100"
+          aria-hidden="true"
           className="relative w-[80%] max-w-[480px] h-auto text-foreground drop-shadow-[0_0_28px_rgba(244,180,26,0.35)]"
           style={{ transformStyle: "preserve-3d" }}
         >
-          <title>HID AI — D et boussole animés</title>
 
           {/* D : spine vertical */}
           <rect x="0" y="0" width="14" height="100" fill="currentColor" />

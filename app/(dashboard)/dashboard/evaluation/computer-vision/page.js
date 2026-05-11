@@ -8,11 +8,29 @@ import { getTestBySlug } from "@/lib/evaluation/tests";
 import {
   CV_GROUND_TRUTH,
   CV_POLYGON_TARGET,
+  CV_TRACKING_GROUND_TRUTH,
 } from "@/lib/evaluation/data/cv-ground-truth";
+import { FrameSequenceAnnotator } from "@/components/evaluation/cv/FrameSequenceAnnotator";
 
 const TEST = getTestBySlug("computer-vision");
 
+// mode: "boxes" | "polygon" | "tracking"
+const MODES = {
+  boxes: "boxes",
+  polygon: "polygon",
+  tracking: "tracking",
+};
+
+function getNormalized(e, rect) {
+  const point = e.touches?.[0] || e.changedTouches?.[0] || e;
+  return {
+    x: (point.clientX - rect.left) / rect.width,
+    y: (point.clientY - rect.top) / rect.height,
+  };
+}
+
 export default function ComputerVisionPage() {
+  const [mode, setMode] = useState(MODES.boxes);
   const [imageIdx, setImageIdx] = useState(0);
   // boxes : { imageId: [{x,y,w,h,attr}] }
   const [boxes, setBoxes] = useState({});
@@ -20,29 +38,30 @@ export default function ComputerVisionPage() {
   // Polygone (image dédiée)
   const [polygon, setPolygon] = useState([]);
   const [polygonClosed, setPolygonClosed] = useState(false);
-  const [showPolygon, setShowPolygon] = useState(false);
+  // Tracking
+  const [trackingAnnotations, setTrackingAnnotations] = useState({});
 
   const image = CV_GROUND_TRUTH[imageIdx];
   const currentBoxes = boxes[image.id] || [];
 
-  const onMouseDown = (e) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    setDraft({ startX: x, startY: y, x, y, w: 0, h: 0 });
+  // --- Bounding box handlers ---
+
+  const startDraw = (e, rect) => {
+    const pos = getNormalized(e, rect);
+    setDraft({ startX: pos.x, startY: pos.y, x: pos.x, y: pos.y, w: 0, h: 0 });
   };
-  const onMouseMove = (e) => {
+
+  const moveDraw = (e, rect) => {
     if (!draft) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const cx = (e.clientX - rect.left) / rect.width;
-    const cy = (e.clientY - rect.top) / rect.height;
-    const x = Math.min(draft.startX, cx);
-    const y = Math.min(draft.startY, cy);
-    const w = Math.abs(cx - draft.startX);
-    const h = Math.abs(cy - draft.startY);
+    const pos = getNormalized(e, rect);
+    const x = Math.min(draft.startX, pos.x);
+    const y = Math.min(draft.startY, pos.y);
+    const w = Math.abs(pos.x - draft.startX);
+    const h = Math.abs(pos.y - draft.startY);
     setDraft({ ...draft, x, y, w, h });
   };
-  const onMouseUp = () => {
+
+  const endDraw = () => {
     if (!draft) return;
     if (draft.w > 0.02 && draft.h > 0.02) {
       const next = { ...boxes };
@@ -54,6 +73,37 @@ export default function ComputerVisionPage() {
     }
     setDraft(null);
   };
+
+  // Mouse handlers (bbox)
+  const onMouseDown = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    startDraw(e, rect);
+  };
+  const onMouseMove = (e) => {
+    if (!draft) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    moveDraw(e, rect);
+  };
+  const onMouseUp = () => endDraw();
+  const onMouseLeave = () => endDraw();
+
+  // Touch handlers (bbox)
+  const onTouchStart = (e) => {
+    e.preventDefault();
+    const rect = e.currentTarget.getBoundingClientRect();
+    startDraw(e, rect);
+  };
+  const onTouchMove = (e) => {
+    e.preventDefault();
+    if (!draft) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    moveDraw(e, rect);
+  };
+  const onTouchEnd = (e) => {
+    e.preventDefault();
+    endDraw();
+  };
+
   const removeBox = (i) => {
     const next = { ...boxes };
     next[image.id] = (next[image.id] || []).filter((_, idx) => idx !== i);
@@ -67,46 +117,65 @@ export default function ComputerVisionPage() {
     setBoxes(next);
   };
 
-  // Polygone
+  // --- Polygone handlers ---
+
   const onPolygonClick = (e) => {
     if (polygonClosed) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    setPolygon((p) => [...p, { x, y }]);
+    const pos = getNormalized(e, rect);
+    setPolygon((p) => [...p, { x: pos.x, y: pos.y }]);
   };
+
+  const onPolygonTouchEnd = (e) => {
+    e.preventDefault();
+    if (polygonClosed) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = getNormalized(e, rect);
+    setPolygon((p) => [...p, { x: pos.x, y: pos.y }]);
+  };
+
+  // --- Stats ---
 
   const casesProcessed = Object.keys(boxes).filter(
     (k) => (boxes[k] || []).length > 0
   ).length;
 
+  const trackingAnnotatedCount = Object.keys(trackingAnnotations).length;
+
   const canSubmit =
     casesProcessed >= 3 && polygon.length >= CV_POLYGON_TARGET.minPoints;
+
+  const totalCasesProcessed =
+    casesProcessed +
+    (polygon.length > 0 ? 1 : 0) +
+    (trackingAnnotatedCount > 0 ? 1 : 0);
 
   return (
     <TestLayout
       test={TEST}
       canSubmit={canSubmit}
-      getAnswers={() => ({ boxes, polygon })}
-      casesProcessed={casesProcessed + (polygon.length > 0 ? 1 : 0)}
-      totalCases={CV_GROUND_TRUTH.length + 1}
+      getAnswers={() => ({ boxes, polygon, tracking: trackingAnnotations })}
+      casesProcessed={totalCasesProcessed}
+      totalCases={CV_GROUND_TRUTH.length + 2}
     >
       <ContextCard title="Pipeline d'annotation industrielle HID AI">
         <p>
           Pour entraîner un modèle de détection sur des chantiers en Afrique de
           l&rsquo;Ouest, vous devez annoter (1) des bounding boxes avec
-          attributs sur 5 images et (2) un polygone précis sur une vue aérienne.
-          Visez un <strong>IoU &gt; 0.7</strong> et choisissez le bon attribut
-          pour chaque box.
+          attributs sur 5 images, (2) un polygone précis sur une vue aérienne,
+          et (3) tracker un objet sur 50 frames avec occlusions. Visez un{" "}
+          <strong>IoU &gt; 0.7</strong> et choisissez le bon attribut pour
+          chaque box.
         </p>
       </ContextCard>
 
-      <div className="flex items-center gap-2 mb-4">
+      {/* Mode selector */}
+      <div className="flex items-center gap-2 mb-4 flex-wrap">
         <button
           type="button"
-          onClick={() => setShowPolygon(false)}
+          onClick={() => setMode(MODES.boxes)}
           className={`h-9 px-4 rounded-md text-xs font-medium transition-colors border ${
-            !showPolygon
+            mode === MODES.boxes
               ? "border-accent bg-accent/15 text-accent"
               : "border-white/15 text-foreground/75 hover:bg-white/5"
           }`}
@@ -115,18 +184,30 @@ export default function ComputerVisionPage() {
         </button>
         <button
           type="button"
-          onClick={() => setShowPolygon(true)}
+          onClick={() => setMode(MODES.polygon)}
           className={`h-9 px-4 rounded-md text-xs font-medium transition-colors border ${
-            showPolygon
+            mode === MODES.polygon
               ? "border-accent bg-accent/15 text-accent"
               : "border-white/15 text-foreground/75 hover:bg-white/5"
           }`}
         >
           Partie 2 — Polygone ({polygon.length} pts)
         </button>
+        <button
+          type="button"
+          onClick={() => setMode(MODES.tracking)}
+          className={`h-9 px-4 rounded-md text-xs font-medium transition-colors border ${
+            mode === MODES.tracking
+              ? "border-accent bg-accent/15 text-accent"
+              : "border-white/15 text-foreground/75 hover:bg-white/5"
+          }`}
+        >
+          Partie 3 — Object tracking ({trackingAnnotatedCount} / 50)
+        </button>
       </div>
 
-      {!showPolygon ? (
+      {/* --- Bounding boxes mode --- */}
+      {mode === MODES.boxes && (
         <div className="flex flex-col gap-4">
           <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85">
             <strong className="text-accent">Consigne :</strong>{" "}
@@ -138,10 +219,14 @@ export default function ComputerVisionPage() {
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
               className="absolute inset-0 w-full h-full cursor-crosshair"
+              style={{ touchAction: "none" }}
               onMouseDown={onMouseDown}
               onMouseMove={onMouseMove}
               onMouseUp={onMouseUp}
-              onMouseLeave={onMouseUp}
+              onMouseLeave={onMouseLeave}
+              onTouchStart={onTouchStart}
+              onTouchMove={onTouchMove}
+              onTouchEnd={onTouchEnd}
             >
               <defs>
                 <pattern
@@ -281,7 +366,10 @@ export default function ComputerVisionPage() {
             </button>
           </div>
         </div>
-      ) : (
+      )}
+
+      {/* --- Polygone mode --- */}
+      {mode === MODES.polygon && (
         <div className="flex flex-col gap-4">
           <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85">
             <strong className="text-accent">Consigne :</strong>{" "}
@@ -295,7 +383,9 @@ export default function ComputerVisionPage() {
               className={`absolute inset-0 w-full h-full ${
                 polygonClosed ? "cursor-default" : "cursor-crosshair"
               }`}
+              style={{ touchAction: "none" }}
               onClick={onPolygonClick}
+              onTouchEnd={onPolygonTouchEnd}
             >
               <rect width="100" height="100" fill="url(#grid)" />
               {/* Cible visuelle : forme floue centrale */}
@@ -357,6 +447,23 @@ export default function ComputerVisionPage() {
               {polygon.length} / {CV_POLYGON_TARGET.minPoints} points minimum
             </span>
           </div>
+        </div>
+      )}
+
+      {/* --- Tracking mode --- */}
+      {mode === MODES.tracking && (
+        <div className="flex flex-col gap-4">
+          <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85">
+            <strong className="text-accent">Consigne :</strong>{" "}
+            {CV_TRACKING_GROUND_TRUTH.videoContext} — Dessinez une bounding box
+            sur la personne (<code className="text-accent">person-1</code>) pour
+            chaque frame. Les frames en orange indiquent une occlusion partielle.
+          </div>
+          <FrameSequenceAnnotator
+            frames={CV_TRACKING_GROUND_TRUTH.frames}
+            annotations={trackingAnnotations}
+            onChange={setTrackingAnnotations}
+          />
         </div>
       )}
     </TestLayout>

@@ -16,6 +16,7 @@ import {
   Network,
   Database,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { TESTS } from "@/lib/evaluation/tests";
 import { cn } from "@/lib/utils/cn";
 
@@ -102,13 +103,40 @@ function TestCard({ meta, status, score, Icon }) {
           isCompleted && "bg-success text-background"
         )}
       >
-        {isLocked ? (
-          <Lock className="h-5 w-5" />
-        ) : isCompleted ? (
-          <CheckCircle2 className="h-5 w-5" />
-        ) : (
-          <Icon className="h-5 w-5" />
-        )}
+        <AnimatePresence mode="wait" initial={false}>
+          {isLocked ? (
+            <motion.span
+              key="locked"
+              initial={{ opacity: 0, scale: 0.6 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0, rotate: 360 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="flex items-center justify-center"
+            >
+              <Lock className="h-5 w-5" />
+            </motion.span>
+          ) : isCompleted ? (
+            <motion.span
+              key="completed"
+              initial={{ opacity: 0, scale: 0.6, rotate: -90 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+              className="flex items-center justify-center"
+            >
+              <CheckCircle2 className="h-5 w-5" />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="active"
+              initial={{ opacity: 0, scale: 0.6, rotate: -90 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ duration: 0.4, ease: [0.34, 1.56, 0.64, 1] }}
+              className="flex items-center justify-center"
+            >
+              <Icon className="h-5 w-5" />
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Texte */}

@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/marketing/Logo";
+import AdminMobileDrawer from "@/components/admin/AdminMobileDrawer";
 
 export const metadata = { title: "Admin · HID AI" };
 
@@ -59,6 +60,7 @@ export default async function AdminLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-background flex">
+      <AdminMobileDrawer navItems={NAV} />
       {/* Sidebar */}
       <aside className="hidden md:flex md:flex-col w-64 border-r border-white/10 bg-surface/40 px-5 py-7 sticky top-0 h-screen">
         <Link href="/" className="text-foreground mb-2" aria-label="HID AI">
@@ -99,10 +101,6 @@ export default async function AdminLayout({ children }) {
       </aside>
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="md:hidden h-14 px-4 border-b border-white/10 flex items-center gap-3">
-          <Logo className="h-5 w-auto" />
-          <span className="text-[10px] uppercase tracking-[0.22em] text-accent">Admin</span>
-        </header>
         <main className="flex-1 px-4 md:px-8 py-8 md:py-12">{children}</main>
       </div>
     </div>

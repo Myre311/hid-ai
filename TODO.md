@@ -1,134 +1,99 @@
-# TODO — Placeholders & open items
+# TODO — Actions restantes côté HID AI
 
-## Placeholders à remplir
+> Dernière mise à jour : 2026-05-11 — finition 100 % (bugs + Phase 2 + Phase 4).
 
-Tous les `{{NOM_DU_PLACEHOLDER}}` du code doivent être remplacés par le client. Liste centralisée :
+## ✅ État global
 
-### Page Accueil (HID-001)
-- `{{HERO_HEADLINE}}` — phrase d'accroche XXL serif sur le hero
-- `{{HERO_SUBTEXT}}` — sous-texte court sous le hero, résumé services
-- `{{ENTREPRISES_INTRO}}` — 2-3 lignes d'intro section "HID AI pour les entreprises"
-- `{{TALENTS_INTRO}}` — 2-3 lignes d'intro section "HID AI pour les talents"
-- `{{NOTRE_ROLE_TEXT}}` — texte de la section "Notre rôle" décrivant le travail des équipes
+- **Site marketing** : tous les `{{PLACEHOLDERS}}` ont été remplacés par du contenu réel — aucun placeholder textuel résiduel détecté par `grep -rn "{{[A-Z_]*}}"`.
+- **Plateforme d'évaluation** : 8 tests, scoring AI-Native 0-1000, retry, finalisation, email.
+- **Dashboard admin** : whitelist `admin_users`, exports CSV, filtres, drawer mobile.
+- **UX polish** : skeletons, EmptyState, confettis per-test, animation cadenas, page transitions.
+- **A11y** : aria-labels, focus visible, alt tags, SVG 3D décoratifs en `aria-hidden`.
 
-### Page Entreprises (HID-002)
-- `{{ENTREPRISES_HERO_TEXT}}` — résumé des deux services (AI Data + Recrutement)
+## 🔴 Actions manuelles requises de Mark (l'orchestrateur ne peut pas le faire)
 
-### Page Talents (HID-003)
-- `{{TALENTS_HERO_TEXT}}` — résumé des deux métiers (AI Specialist + AI Engineer)
+### 1. Migration `0004_admin.sql` à exécuter
+Sans elle, le middleware bloque tout accès à `/admin/*`.
 
-### Logos & médias
-- Logos partenaires définitifs (carousel home) — placeholders SVG génériques en attendant
-- Logos certifications réels (RGPD, ISO, AICPA SOC) en blanc monochrome — placeholders SVG en attendant
-- Photos formation et vidéo (HID-005 médias) — `bg-gray-900` placeholders en attendant
+```sql
+-- 1. Vérifier que la fonction set_updated_at existe (déjà créée par 0002)
+CREATE OR REPLACE FUNCTION public.set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
 
-## Incohérences à clarifier avec le client
+-- 2. Coller le contenu de supabase/migrations/0004_admin.sql et exécuter
+```
 
-### NEO mention en timeline 2025 (HID-005)
-Le brief demande explicitement de masquer Hub NEO sur Infrastructure et "Notre vision", mais demande aussi la mention "Lancement du Hub NEO" sur la timeline 2025 de À propos. Mention conservée pour cette itération comme demandé, **flag** pour clarification ultérieure.
+### 2. Bootstrap admin (Mark / Lucien)
+Après ton 1er login sur `/login` (code `000000` en dev) :
 
-## Backend / intégrations à brancher
+```sql
+-- Récupérer l'UUID
+SELECT id, email, phone FROM auth.users ORDER BY created_at DESC LIMIT 5;
 
-### Formulaires d'inscription B2B + Talent — Setup Supabase
+-- Insérer comme super_admin
+INSERT INTO public.admin_users (user_id, email, role)
+VALUES ('<UUID>', 'mark@hidea-solution.fr', 'super_admin');
+```
 
-**État** : branchés sur Supabase (✅ tables `inscriptions_b2b` + `inscriptions_talents`, bucket Storage `kyc-documents` pour les pièces d'identité). API routes `POST /api/inscription-b2b` et `POST /api/inscription-talent`.
+### 3. Configurer Resend pour les emails
+- Compte sur https://resend.com
+- Vérifier le domaine `hid-ai.com` (DNS records SPF + DKIM)
+- Dans Vercel → Project Settings → Environment Variables :
+  - `RESEND_API_KEY=re_xxx`
+  - `RESEND_FROM_EMAIL=onboarding@hid-ai.com`
+- Sans clé : le code log les envois sans planter (`lib/email/resend.js:12-23`).
 
-#### Setup requis (une fois)
+### 4. Variables d'environnement Vercel
+Copier toutes les vars `.env.local` dans Project Settings → Environment Variables :
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `RESEND_API_KEY` / `RESEND_FROM_EMAIL`
+- `NEXT_PUBLIC_APP_URL=https://hid-ai.vercel.app`
 
-1. **Variables d'environnement** dans `.env.local` :
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
-   SUPABASE_SERVICE_ROLE_KEY=eyJ...
-   ```
+### 5. Twilio en prod (optionnel)
+Pour sortir du dev bypass (`code 000000`) :
+- `SMS_PROVIDER=twilio`
+- `TWILIO_ACCOUNT_SID`
+- `TWILIO_AUTH_TOKEN`
+- `TWILIO_PHONE_NUMBER`
 
-2. **Exécuter la migration** `supabase/migrations/0002_inscriptions.sql` :
-   - Aller sur https://supabase.com/dashboard → projet HID AI → SQL Editor
-   - Coller le contenu du fichier → Run
+### 6. Assets Computer Vision tracking (50 frames)
+Le test 3/3 du Computer Vision utilise des **placeholders SVG** dans `public/evaluation/cv/tracking/frame-001.svg` à `frame-050.svg` (fond gris + rectangle accent + barre d'occlusion).
 
-3. **Vérifier le bucket Storage** :
-   - Dashboard → Storage → vérifier que `kyc-documents` existe (créé par la migration)
-   - Il doit être **privé** (toggle "Public bucket" off)
+Action recommandée à terme : remplacer ces placeholders par une vraie séquence vidéo de surveillance urbaine (50 frames PNG/JPG), avec personne se déplaçant + occlusions partielles aux frames 15-25 et 35-40.
 
-#### À développer en V2
+### 7. Décision Hub NEO (timeline 2025)
+La timeline `/a-propos` mentionne "Lancement du Hub NEO" sur 2025. Le brief PDF demandait de cacher NEO sur `/infrastructure` (fait) mais l'avait sur la timeline. Confirmer si on garde ou retire.
 
-- **Email transactionnel** (Resend / Postmark) après chaque insertion : confirmation candidat + notification équipe
-- **Dashboard admin** : pages Next.js privées avec RLS adapté pour lister/filtrer/exporter les inscriptions
-- **Signed URLs** pour les fichiers KYC depuis le dashboard (révocation auto après 1h)
+## 🟡 Améliorations en V2
 
-### Service KYC réel pour le formulaire Talent
-L'étape 2 du `TalentForm` stocke actuellement les pièces d'identité dans Supabase Storage privé, mais sans vérification automatisée. À brancher en V2 :
+- Service KYC réel (Veriff / Onfido / Stripe Identity) pour vérification auto des pièces d'identité
+- Calendly / Cal.com pour la prise de RDV B2B
+- Contenu pédagogique réel pour les 3 modules de mini-formation Talent (étape 3)
+- Audit Lighthouse cible > 90 sur toutes les pages clés
+- Tests de sécurité documentés dans `SECURITY_TESTS.md` (à créer) :
+  - User A ne voit pas les données de B (RLS)
+  - POST direct sur test verrouillé → 403
+  - Non-admin sur `/admin/*` → redirect
+  - Injection SQL/XSS sur champs texte
+  - Re-submit d'un test passé → 409
 
-- **Veriff** ou **Onfido** ou **Stripe Identity** pour la vérification automatisée
-- Validation IA + revue manuelle si flag de risque
-- Workflow : status `kyc_pending` → `validated` ou `rejected`
+## 📜 Notes techniques
 
-### Calendrier de prise de RDV (B2B + Talent)
-Les composants `Calendar` génèrent des créneaux statiques côté client (14 jours ouvrés × créneaux 30/90 min). Connecter à :
+### Plateforme d'évaluation — points marquants
 
-- **Calendly** (lien d'intégration via embed) ou **Cal.com** (open source)
-- Synchronisation avec les agendas Google Calendar de l'équipe
-- Email de confirmation avec lien visio (Google Meet / Zoom auto-généré)
-
-### Contenu pédagogique des 3 modules (Talent — Étape 3)
-Les 3 modules de mini-formation (Maîtrise écosystème HID AI, Sécurité données, Orientation compétences) sont actuellement validés par un simple bouton "Marquer comme validé". À produire :
-
-- Contenu pédagogique réel (vidéos courtes ou pages interactives)
-- QCM final pour valider la compréhension
-- Tracking de progression par utilisateur
-
-### Plateforme de test technique (Talent — Étape 4)
-L'évaluation technique est actuellement réduite à la sélection d'un créneau. À développer :
-
-- Plateforme dédiée d'exercices (Annotation/Labellisation, RLHF, Fine-tuning supervisé)
-- Activation caméra + Chatbot Gatekeeper pour anti-triche
-- Score d'IA-Native calculé selon la persévérance et la précision
-- Restitution automatique au candidat
-
-### Boutons existants
-Tous les CTAs B2B et Talent sont désormais branchés sur les modals d'inscription via le contexte React `InscriptionContext`. Plus aucun lien `mailto:` ou `/signup` redirigeant vers une vraie URL — le flow se fait dans la modal.
-
-## Plateforme d'évaluation (mise en service — 2026-05-11)
-
-### ✅ Fait
-- 8 tests linéaires fonctionnels avec scoring déterministe (`lib/evaluation/scoring.js`)
-- Auto-création de session au 1er accès `/dashboard`
-- Retry autorisé sur tests échoués (score < 60), bloqué sur tests passés
-- Email Resend post-finalisation (stub si `RESEND_API_KEY` absente)
-- Dashboard admin sous `/admin` avec whitelist `admin_users`
-- Exports CSV des inscriptions Talent et B2B
-- Dev bypass OTP avec code `000000` (uniquement si `NODE_ENV !== 'production'`)
-
-### 🟠 À faire avant prod (Phase 2 — enrichissement des tests, brief PDF)
-- **Test Computer Vision** : ajouter polygons (zones irrégulières), object tracking sur 5 frames, attributs (casque, couleur, type)
-- **Test NLP** : ajouter Entity Recognition (NER) — surlignage interactif d'entités produits/dates/montants
-- **Test Fine-tuning** : 3 questions sur OHADA/Fiscalité Africaine + analyse de courbe Perplexity
-- **Test MLOps** : intégrer scénario "100 annotateurs HID AI" + 9 étapes au lieu de 8
-
-### 🟠 À faire avant prod (Phase 4 — polish UX)
-- Skeleton screens en remplacement des "Chargement..." actuels
-- Toasts (lib `sonner` ou équivalent) pour confirmations/erreurs au lieu d'`alert()`
-- Empty states soignés avec illustrations
-- Confettis lib `canvas-confetti` au lieu de l'animation custom Framer
-- Tests responsive 375px sur les canvas Computer Vision (touch events)
-- Lighthouse audit > 90 sur les pages clés
-
-### 🟠 À faire avant démo Lucien (config prod)
-1. **Resend** : créer compte sur resend.com, vérifier domaine `hid-ai.com`, ajouter `RESEND_API_KEY` + `RESEND_FROM_EMAIL` dans Vercel
-2. **Bootstrap admin** : après le 1er login de Lucien, exécuter dans Supabase SQL Editor :
-   ```sql
-   INSERT INTO admin_users (user_id, email, role)
-   VALUES ('<uuid-lucien>', 'lucien@hidea-solution.fr', 'super_admin');
-   ```
-   (Récupérer l'uuid via la table `auth.users`.)
-3. **Vercel env vars** : copier toutes les vars de `.env.local` dans Project Settings → Environment Variables
-4. **Migration 0004** : exécuter `supabase/migrations/0004_admin.sql` sur le projet Supabase
-5. **Twilio prod** (si on veut passer hors dev bypass) : ajouter `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_PHONE_NUMBER`
-
-### 🟡 Tests de sécurité (à faire après config prod)
-Documenté dans `SECURITY_TESTS.md` (à créer) :
-- Un user A ne doit pas voir les données de B (RLS)
-- POST direct sur test verrouillé doit renvoyer 403
-- Un non-admin sur `/admin` doit être redirigé
-- Injection SQL/XSS sur champs texte
-- Resubmit d'un test passé doit renvoyer 409
+- **Linéarité** : test N+1 débloqué uniquement si test N ≥ `passing_score=60`.
+- **Retry** : autorisé sur tests échoués, refusé (409) sur tests passés.
+- **Mode dev** : code OTP `000000` mint une session Supabase via `admin.createUser` + magic link (`app/api/auth/verify-otp/route.js:14-15, 143-164`).
+- **Computer Vision** : 4 sous-tests = bounding boxes IoU (40 pts) + attributs (15 pts) + polygone (15 pts) + object tracking 50 frames avec occlusions (30 pts).
+- **NLP** : sentiment/urgence/catégorie (70 pts) + NER 5 phrases africaines (30 pts).
+- **RLHF** : 10 paires dont 3 contextualisées OHADA / médecine / science.
+- **Fine-tuning** : quiz 50 + JSONL OHADA 30 + courbe Perplexity 20.
+- **MLOps** : quiz 50 + architecture pipeline **10 étapes** (annotation 100 specialists → kappa Cohen → ingestion → ... → deployment) + dashboard Data Drift 20.
+- **RAG** : quiz 60 (dont question "-40 % hallucinations" chiffrée) + hybrid search 40.

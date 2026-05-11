@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { TestLayout } from "@/components/evaluation/TestLayout";
+import { ContextCard } from "@/components/evaluation/ContextCard";
 import { TechnicalQuiz } from "@/components/evaluation/TechnicalQuiz";
 import { getTestBySlug } from "@/lib/evaluation/tests";
 import { VISION_EDGE_DATA } from "@/lib/evaluation/data/vision-edge-data";
@@ -38,6 +39,17 @@ export default function VisionEdgePage() {
       casesProcessed={total}
       totalCases={VISION_EDGE_DATA.quiz.length + 1}
     >
+      <ContextCard title="Optimisation Edge — surveillance locale confidentielle">
+        <p>
+          Vous devez optimiser un modèle <strong>YOLOv8</strong> de détection
+          d&rsquo;objets pour qu&rsquo;il tourne sur un appareil mobile ou un petit serveur
+          local — sans envoyer les images dans le cloud. C&rsquo;est le cas d&rsquo;usage
+          typique surveillance industrielle avec contrainte de
+          <strong> confidentialité</strong>. Stack : YOLOv8, ONNX, TensorRT,
+          quantification INT8. Livrable : modèle quantifié avec gain FPS mesuré.
+        </p>
+      </ContextCard>
+
       <div className="flex flex-col gap-8">
         <section>
           <h2 className="t-h3 mb-2">Partie 1 — Quiz technique</h2>

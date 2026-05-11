@@ -82,7 +82,7 @@ export default function RlhfPage() {
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <span className="text-xs text-foreground/55">Votre choix :</span>
           {["A", "B", "tie"].map((c) => (
             <button
@@ -151,7 +151,7 @@ function ResponseCard({ letter, text, selected, onClick }) {
       type="button"
       onClick={onClick}
       className={cn(
-        "text-left rounded-lg border p-5 transition-colors min-h-[160px]",
+        "text-left rounded-lg border p-4 md:p-5 transition-colors min-h-[160px]",
         selected
           ? "border-accent bg-accent/5"
           : "border-white/10 bg-surface hover:border-white/25"
