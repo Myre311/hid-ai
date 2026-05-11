@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { toast } from "sonner";
 import { useAuthStore } from "@/stores/authStore";
 import { Button } from "@/components/ui/Button";
 import { phoneSchema } from "@/lib/utils/validation";
@@ -54,12 +55,19 @@ export function PhoneForm({
       const data = await res.json();
       if (!res.ok) {
         setError(data?.error ?? "Envoi du code impossible");
+        toast.error("Envoi du code impossible", {
+          description: data?.error,
+        });
         setSubmitting(false);
         return;
       }
+      toast.success("Code envoyé", {
+        description: "Vérifiez vos SMS (ou utilisez 000000 en mode dev).",
+      });
       router.push(redirectTo);
     } catch (err) {
       setError("Erreur réseau, réessayez.");
+      toast.error("Erreur réseau", { description: "Réessayez." });
       setSubmitting(false);
     }
   };

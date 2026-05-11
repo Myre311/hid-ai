@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { OtpInput } from "@/components/ui/OtpInput";
 import { Button } from "@/components/ui/Button";
 import { useOtpTimer } from "@/hooks/useOtpTimer";
@@ -49,12 +50,17 @@ export function VerifyForm({ onSuccessRedirect = "/signup/profile" }) {
       const data = await res.json();
       if (!res.ok) {
         setError(data?.error ?? "Code invalide");
+        toast.error("Code invalide", {
+          description: data?.error ?? "Vérifiez le code reçu par SMS.",
+        });
         setSubmitting(false);
         return;
       }
+      toast.success("Téléphone vérifié");
       router.push(onSuccessRedirect);
     } catch {
       setError("Erreur réseau, réessayez.");
+      toast.error("Erreur réseau", { description: "Réessayez." });
       setSubmitting(false);
     }
   };

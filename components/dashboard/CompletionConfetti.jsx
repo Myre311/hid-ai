@@ -1,62 +1,54 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useMemo } from "react";
+import { useEffect } from "react";
+import confetti from "canvas-confetti";
+
+const ACCENT_PALETTE = ["#F4B41A", "#C89530", "#FAFAFA", "#10B981"];
 
 /**
- * Animation discrète de confettis SVG pour la page d'activation.
- * Pas de dépendance externe.
+ * Salve de confettis canvas-confetti.
+ * Trois tirs successifs depuis les côtés gauche, droit puis centre,
+ * pour un effet plus dense qu'une simple pluie SVG.
  */
 export function CompletionConfetti() {
-  const particles = useMemo(
-    () =>
-      Array.from({ length: 30 }, (_, i) => ({
-        id: i,
-        left: Math.random() * 100,
-        size: 4 + Math.random() * 6,
-        rotate: Math.random() * 360,
-        delay: Math.random() * 0.6,
-        duration: 2.2 + Math.random() * 1.6,
-        color:
-          i % 4 === 0
-            ? "#F4B41A"
-            : i % 4 === 1
-            ? "#C89530"
-            : i % 4 === 2
-            ? "#FAFAFA"
-            : "#10B981",
-      })),
-    []
-  );
+  useEffect(() => {
+    const end = Date.now() + 1200;
 
-  return (
-    <div
-      aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-[60] overflow-hidden"
-    >
-      {particles.map((p) => (
-        <motion.span
-          key={p.id}
-          initial={{ y: -40, opacity: 0, rotate: 0 }}
-          animate={{
-            y: typeof window !== "undefined" ? window.innerHeight + 40 : 800,
-            opacity: [0, 1, 1, 0],
-            rotate: p.rotate,
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            ease: "easeIn",
-          }}
-          className="absolute block rounded-sm"
-          style={{
-            left: `${p.left}%`,
-            width: p.size,
-            height: p.size,
-            backgroundColor: p.color,
-          }}
-        />
-      ))}
-    </div>
-  );
+    const shoot = (originX) => {
+      confetti({
+        particleCount: 80,
+        spread: 65,
+        startVelocity: 55,
+        ticks: 200,
+        origin: { x: originX, y: 0.6 },
+        colors: ACCENT_PALETTE,
+        scalar: 0.95,
+      });
+    };
+
+    shoot(0.1);
+    shoot(0.9);
+
+    const id = setInterval(() => {
+      if (Date.now() > end) {
+        clearInterval(id);
+        return;
+      }
+      confetti({
+        particleCount: 30,
+        startVelocity: 35,
+        spread: 90,
+        origin: {
+          x: 0.5,
+          y: 0.3,
+        },
+        colors: ACCENT_PALETTE,
+        scalar: 0.85,
+      });
+    }, 250);
+
+    return () => clearInterval(id);
+  }, []);
+
+  return null;
 }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Sparkles, Loader2 } from "lucide-react";
 
 export function FinalizeButton() {
@@ -12,13 +13,22 @@ export function FinalizeButton() {
   const finalize = async () => {
     setBusy(true);
     setError(null);
+    const tId = toast.loading("Finalisation de votre profil…");
     try {
       const res = await fetch("/api/evaluation/finalize", { method: "POST" });
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Échec de la finalisation");
+      toast.success("Profil finalisé !", {
+        id: tId,
+        description: "Votre AI-Native Score est calculé.",
+      });
       router.push("/dashboard/evaluation/complete");
     } catch (err) {
       setError(err.message);
+      toast.error("Finalisation impossible", {
+        id: tId,
+        description: err.message,
+      });
     } finally {
       setBusy(false);
     }

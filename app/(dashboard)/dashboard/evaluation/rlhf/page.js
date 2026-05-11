@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TestLayout } from "@/components/evaluation/TestLayout";
+import { ContextCard } from "@/components/evaluation/ContextCard";
 import { getTestBySlug } from "@/lib/evaluation/tests";
 import { RLHF_DATA } from "@/lib/evaluation/data/rlhf-data";
 import { cn } from "@/lib/utils/cn";
@@ -43,6 +44,17 @@ export default function RlhfPage() {
       casesProcessed={completedCount}
       totalCases={RLHF_DATA.length}
     >
+      <ContextCard title="Alignement IA — contextes juridique & scientifique">
+        <p>
+          Vous comparez deux réponses produites par un modèle IA sur des sujets
+          sensibles (juridique OHADA, médecine, science). Pour chaque paire,
+          choisissez la meilleure réponse en privilégiant la{" "}
+          <strong>précision factuelle</strong>, l&rsquo;absence
+          d&rsquo;hallucinations, et le respect des limites du modèle (pas de
+          conseil médical, citation de sources, prudence sur les chiffres).
+        </p>
+      </ContextCard>
+
       <div className="flex flex-col gap-5">
         <p className="text-xs uppercase tracking-[0.18em] text-foreground/50">
           Paire {idx + 1} / {RLHF_DATA.length}

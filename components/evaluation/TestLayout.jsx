@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { Clock, X, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
 
@@ -61,8 +62,22 @@ export function TestLayout({
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Échec de la soumission");
       setResult(json.result);
+      if (json.result?.passed) {
+        toast.success(`Test validé — ${json.result.score}/100`, {
+          description: json.result.isLastTest
+            ? "Tous les tests sont complétés. Rendez-vous sur la roadmap."
+            : json.result.unlockedNext
+            ? "Le test suivant est débloqué."
+            : "Vous pouvez passer au suivant.",
+        });
+      } else {
+        toast.error(`Test non validé — ${json.result.score}/100`, {
+          description: `Seuil minimal ${json.result.passing_score}/100. Vous pouvez retenter.`,
+        });
+      }
     } catch (err) {
       setError(err.message);
+      toast.error("Soumission impossible", { description: err.message });
     } finally {
       setSubmitting(false);
     }

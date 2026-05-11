@@ -2,6 +2,7 @@
 
 import { TESTS } from "@/lib/evaluation/tests";
 import { aiNativeBreakdown, aiNativeLevel } from "@/lib/evaluation/aiNativeScore";
+import { AnimatedScore } from "./AnimatedScore";
 
 /**
  * Carte de présentation du score AI-Native global.
@@ -27,9 +28,10 @@ export function AiNativeScoreCard({ score, testResults = [] }) {
       </div>
 
       <div className="flex items-baseline gap-3">
-        <span className="font-sans text-7xl md:text-8xl tracking-tight text-foreground tabular-nums">
-          {score}
-        </span>
+        <AnimatedScore
+          value={score}
+          className="font-sans text-7xl md:text-8xl tracking-tight text-foreground"
+        />
         <span className="text-2xl text-foreground/35">/ 1000</span>
       </div>
 

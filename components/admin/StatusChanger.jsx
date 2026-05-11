@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 
 const OPTIONS = [
   { value: "new", label: "Nouveau" },
@@ -26,7 +27,14 @@ export function StatusChanger({ id, currentStatus }) {
       if (res.ok) {
         setValue(newStatus);
         setSavedAt(new Date());
+        toast.success("Statut mis à jour", {
+          description: OPTIONS.find((o) => o.value === newStatus)?.label,
+        });
+      } else {
+        toast.error("Mise à jour impossible");
       }
+    } catch (err) {
+      toast.error("Mise à jour impossible", { description: err.message });
     } finally {
       setBusy(false);
     }

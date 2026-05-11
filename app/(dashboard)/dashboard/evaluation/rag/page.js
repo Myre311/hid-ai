@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { TestLayout } from "@/components/evaluation/TestLayout";
 import { TechnicalQuiz } from "@/components/evaluation/TechnicalQuiz";
+import { ContextCard } from "@/components/evaluation/ContextCard";
 import { getTestBySlug } from "@/lib/evaluation/tests";
 import { RAG_DATA } from "@/lib/evaluation/data/rag-data";
 
@@ -38,6 +39,17 @@ export default function RagPage() {
       casesProcessed={total}
       totalCases={RAG_DATA.quiz.length + 1}
     >
+      <ContextCard title="RAG — Manuels d'ingénierie HID AI">
+        <p>
+          Vous concevez un système RAG pour indexer 50 000 pages de manuels
+          d&rsquo;ingénierie (mécanique, électronique embarquée, normes
+          africaines de construction). L&rsquo;exigence métier : un ingénieur
+          terrain doit obtenir la bonne référence en moins de 2 secondes, sans
+          hallucination. Évaluez vos choix de vector DB, de chunking et de
+          poids hybride.
+        </p>
+      </ContextCard>
+
       <div className="flex flex-col gap-8">
         <section>
           <h2 className="t-h3 mb-2">Partie 1 — Quiz RAG</h2>

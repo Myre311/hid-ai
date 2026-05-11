@@ -4,6 +4,7 @@ import {
   Instrument_Serif,
 } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "sonner";
 import { InscriptionProvider } from "@/contexts/InscriptionContext";
 import { InscriptionModal } from "@/components/modals/InscriptionModal";
 
@@ -63,6 +64,20 @@ export default function RootLayout({ children }) {
           {children}
           <InscriptionModal />
         </InscriptionProvider>
+        <Toaster
+          position="top-right"
+          theme="dark"
+          richColors
+          closeButton
+          toastOptions={{
+            style: {
+              background: "#1A1A1A",
+              border: "1px solid rgba(255,255,255,0.10)",
+              color: "#FAFAFA",
+              fontFamily: "var(--font-sans)",
+            },
+          }}
+        />
       </body>
     </html>
   );
