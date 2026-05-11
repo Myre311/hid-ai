@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { LayoutGrid, User, Settings, Menu, X, LogOut } from "lucide-react";
+import { LayoutGrid, ClipboardCheck, User, Briefcase, Menu, X, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils/cn";
 import { useAuthStore } from "@/stores/authStore";
@@ -11,8 +11,9 @@ import { Logo } from "@/components/marketing/Logo";
 
 const NAV = [
   { href: "/dashboard", label: "Vue d'ensemble", Icon: LayoutGrid },
-  { href: "/dashboard/profile", label: "Mon profil", Icon: User },
-  { href: "/dashboard/settings", label: "Paramètres", Icon: Settings },
+  { href: "/dashboard/evaluation", label: "Évaluation", Icon: ClipboardCheck },
+  { href: "/dashboard/profil", label: "Profil", Icon: User },
+  { href: "/dashboard/missions", label: "Missions", Icon: Briefcase },
 ];
 
 const BRANCH_LABEL = {

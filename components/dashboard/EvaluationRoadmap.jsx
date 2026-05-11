@@ -1,0 +1,161 @@
+"use client";
+
+import Link from "next/link";
+import {
+  Lock,
+  CheckCircle2,
+  Loader2,
+  Play,
+  ChevronRight,
+  ScanEye,
+  MessageSquareText,
+  GitCompare,
+  Sparkles,
+  Brain,
+  Gauge,
+  Network,
+  Database,
+} from "lucide-react";
+import { TESTS } from "@/lib/evaluation/tests";
+import { cn } from "@/lib/utils/cn";
+
+const ICONS = {
+  ScanEye,
+  MessageSquareText,
+  GitCompare,
+  Sparkles,
+  Brain,
+  Gauge,
+  Network,
+  Database,
+};
+
+const CATEGORY_LABEL = {
+  specialist: "Specialist",
+  engineer: "Engineer",
+};
+
+/**
+ * Affiche la roadmap des 8 tests d'évaluation.
+ * Props:
+ *  - tests : array de test_results retournés par /api/evaluation/get-session
+ *            (peut être undefined si pas encore créée)
+ */
+export function EvaluationRoadmap({ tests }) {
+  const byOrder = new Map((tests || []).map((t) => [t.test_order, t]));
+
+  return (
+    <div className="flex flex-col gap-3">
+      {TESTS.map((meta, i) => {
+        const result = byOrder.get(meta.order);
+        const status = result?.status ?? (i === 0 ? "available" : "locked");
+        const score = result?.score;
+        const Icon = ICONS[meta.icon] ?? Sparkles;
+        return (
+          <TestCard
+            key={meta.slug}
+            meta={meta}
+            status={status}
+            score={score}
+            Icon={Icon}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+function TestCard({ meta, status, score, Icon }) {
+  const isLocked = status === "locked";
+  const isAvailable = status === "available";
+  const isInProgress = status === "in_progress";
+  const isCompleted = status === "completed";
+
+  const href = `/dashboard/evaluation/${meta.slug}`;
+  const orderLabel = String(meta.order + 1).padStart(2, "0");
+
+  const Wrapper = isLocked
+    ? (props) => <div {...props} />
+    : ({ children, ...rest }) => (
+        <Link href={href} {...rest}>
+          {children}
+        </Link>
+      );
+
+  return (
+    <Wrapper
+      className={cn(
+        "group relative rounded-lg border p-5 transition-colors flex items-center gap-4",
+        isLocked && "border-white/5 bg-surface/30 cursor-not-allowed opacity-60",
+        isAvailable && "border-accent/40 bg-surface hover:border-accent/70",
+        isInProgress && "border-accent bg-accent/5 hover:border-accent/80",
+        isCompleted && "border-success/40 bg-success/5 hover:border-success/60"
+      )}
+    >
+      {/* Numéro + icône */}
+      <div
+        className={cn(
+          "flex-shrink-0 inline-flex h-12 w-12 items-center justify-center rounded-md",
+          isLocked && "bg-white/5 text-foreground/30",
+          isAvailable && "bg-surface-elevated text-accent",
+          isInProgress && "bg-accent text-background",
+          isCompleted && "bg-success text-background"
+        )}
+      >
+        {isLocked ? (
+          <Lock className="h-5 w-5" />
+        ) : isCompleted ? (
+          <CheckCircle2 className="h-5 w-5" />
+        ) : (
+          <Icon className="h-5 w-5" />
+        )}
+      </div>
+
+      {/* Texte */}
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.18em] text-foreground/40">
+          <span>Test {orderLabel}</span>
+          <span>·</span>
+          <span>{CATEGORY_LABEL[meta.category]}</span>
+        </div>
+        <h4 className="text-sm md:text-base font-medium text-foreground mt-1">
+          {meta.title}
+        </h4>
+        <p className="text-xs text-foreground/55 mt-0.5">
+          {meta.description}
+        </p>
+      </div>
+
+      {/* Statut */}
+      <div className="flex-shrink-0">
+        {isLocked && (
+          <span
+            className="text-xs text-foreground/35 hidden md:block"
+            title="Validez le test précédent pour débloquer"
+          >
+            Débloqué après le test précédent
+          </span>
+        )}
+        {isAvailable && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-accent group-hover:text-accent-hover transition-colors">
+            <Play className="h-4 w-4" />
+            <span className="hidden md:inline">Commencer</span>
+            <ChevronRight className="h-4 w-4" />
+          </span>
+        )}
+        {isInProgress && (
+          <span className="inline-flex items-center gap-1.5 text-xs text-accent">
+            <Loader2 className="h-4 w-4 animate-spin" />
+            <span className="hidden md:inline">Continuer</span>
+            <ChevronRight className="h-4 w-4" />
+          </span>
+        )}
+        {isCompleted && (
+          <span className="text-xs text-success font-medium">
+            {typeof score === "number" ? `${score}/100` : "Validé"}
+          </span>
+        )}
+      </div>
+    </Wrapper>
+  );
+}

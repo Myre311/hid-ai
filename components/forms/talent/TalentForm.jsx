@@ -194,8 +194,8 @@ export function TalentForm({ presetMetier = null, onClose }) {
         }
         actions={[
           {
-            label: "Accéder aux modules de formation",
-            href: "/dashboard",
+            label: "Démarrer mon évaluation",
+            href: "/login?next=/dashboard",
             primary: true,
           },
           { label: "Retour à l'accueil", href: "/" },

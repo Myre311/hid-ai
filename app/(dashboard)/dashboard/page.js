@@ -1,93 +1,206 @@
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+import { redirect } from "next/navigation";
+import {
+  FileCheck2,
+  BookOpen,
+  ClipboardCheck,
+} from "lucide-react";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { buildInitialTestRows } from "@/lib/evaluation/tests";
+import { EvaluationRoadmap } from "@/components/dashboard/EvaluationRoadmap";
+import { AiNativeScoreCard } from "@/components/dashboard/AiNativeScoreCard";
 
-export const metadata = { title: "Tableau de bord" };
+export const metadata = { title: "Vue d'ensemble · HID AI" };
 
-// Hardcoded placeholder until Supabase auth is wired.
-// Once /api/auth/verify-otp creates a real session, switch to a server component
-// that calls supabase.auth.getUser() + reads /profiles.
-const MOCK_USER = {
-  firstName: "Talent",
-  branch: "specialist",
-  completion: 60,
-  phoneVerified: true,
-  lastLogin: "il y a quelques secondes",
-};
+/**
+ * Tableau de bord candidat.
+ * Server component : lit la session/inscription + initialise si nécessaire,
+ * puis rend la roadmap des 8 tests.
+ */
+export default async function DashboardHome() {
+  const userClient = createClient();
+  const {
+    data: { user },
+  } = await userClient.auth.getUser();
 
-const NEXT_STEP = {
-  specialist:
-    "Le Flow Manager analyse votre profil. Vos premières missions arriveront prochainement.",
-  engineer:
-    "Votre évaluation par le Chatbot Gatekeeper sera disponible dans les prochains jours.",
-  business:
-    "Votre validation KYB est en cours. Notre équipe vous contactera sous 48h.",
-};
+  if (!user) {
+    redirect("/login");
+  }
 
-const BRANCH_LABEL = {
-  specialist: "AI Specialist",
-  engineer: "AI Engineer",
-  business: "Entreprise",
-};
+  const service = createServiceClient();
 
-export default function DashboardPage() {
-  const user = MOCK_USER;
+  // Inscription liée (prénom, métier, etc.)
+  let inscription = null;
+  if (user.email) {
+    const { data } = await service
+      .from("inscriptions_talents")
+      .select("id, prenom, nom, email, metier, doc_type")
+      .eq("email", user.email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    inscription = data;
+  }
+
+  // Session active
+  let { data: session } = await service
+    .from("evaluation_sessions")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  // Auto-création si pas de session
+  let tests = [];
+  if (!session) {
+    const { data: created } = await service
+      .from("evaluation_sessions")
+      .insert({
+        user_id: user.id,
+        inscription_talent_id: inscription?.id ?? null,
+        status: "in_progress",
+        current_test_index: 0,
+      })
+      .select()
+      .single();
+    session = created;
+    if (session) {
+      const { data: createdTests } = await service
+        .from("test_results")
+        .insert(buildInitialTestRows(session.id))
+        .select()
+        .order("test_order");
+      tests = createdTests || [];
+    }
+  } else {
+    const { data: existingTests } = await service
+      .from("test_results")
+      .select("*")
+      .eq("session_id", session.id)
+      .order("test_order");
+    tests = existingTests || [];
+  }
+
+  const completedCount = tests.filter((t) => t.status === "completed").length;
+  const firstName = inscription?.prenom || "Candidat";
+  const metierLabel =
+    inscription?.metier === "engineer" ? "AI Engineer" : "AI Specialist";
+  const activated = session?.status === "activated";
+  const allDone = completedCount === 8;
 
   return (
     <div className="flex flex-col gap-10 max-w-5xl">
-      <header className="flex flex-col gap-2">
-        <p className="text-sm text-muted">Tableau de bord</p>
-        <h1 className="t-h2-md">
-          Bienvenue, {user.firstName}.
-        </h1>
-      </header>
-
-      <div className="grid md:grid-cols-3 gap-5">
-        <Card padding="lg" className="md:col-span-2 flex flex-col gap-5">
-          <div className="flex items-start justify-between gap-4">
-            <div className="flex flex-col gap-1">
-              <p className="text-xs uppercase tracking-widest text-muted-strong">
-                Profil
-              </p>
-              <h2 className="font-serif text-2xl tracking-tight">
-                {BRANCH_LABEL[user.branch]}
-              </h2>
-            </div>
-            <Badge variant="accent">{user.completion}% complété</Badge>
-          </div>
-          <div className="h-1 rounded-full bg-border overflow-hidden">
-            <div
-              className="h-full bg-accent transition-all duration-500"
-              style={{ width: `${user.completion}%` }}
-            />
-          </div>
-          <p className="text-sm text-muted leading-relaxed">
-            Complétez votre profil pour débloquer l&rsquo;ensemble des
-            fonctionnalités. Les sections manquantes accélèrent votre matching.
-          </p>
-        </Card>
-
-        <Card padding="lg" className="flex flex-col gap-3">
-          <p className="text-xs uppercase tracking-widest text-muted-strong">
-            Sécurité
-          </p>
-          <div className="flex items-center gap-2">
-            <span className="inline-block h-2 w-2 rounded-full bg-success" />
-            <span className="text-sm">Numéro vérifié</span>
-          </div>
-          <p className="text-sm text-muted">
-            Dernière connexion : {user.lastLogin}
-          </p>
-        </Card>
-      </div>
-
-      <Card padding="lg" variant="elevated" className="flex flex-col gap-3">
-        <p className="text-xs uppercase tracking-widest text-accent">
-          Prochaine étape
+      {/* Hero personnalisé */}
+      <section className="flex flex-col gap-2">
+        <p className="text-xs uppercase tracking-[0.18em] text-foreground/40">
+          Espace candidat · {metierLabel}
         </p>
-        <p className="font-serif text-xl md:text-2xl tracking-tight leading-snug max-w-3xl">
-          {NEXT_STEP[user.branch]}
+        <h1 className="t-h2-md">Bonjour {firstName},</h1>
+        <p className="t-lead max-w-2xl">
+          Bienvenue dans votre espace HID AI.
+          {activated
+            ? " Votre profil est activé — vos missions arrivent bientôt."
+            : allDone
+            ? " Tous les tests sont validés — finalisez votre profil ci-dessous."
+            : " Complétez les 8 tests d'évaluation pour activer votre profil."}
         </p>
-      </Card>
+      </section>
+
+      {/* Cards de progression */}
+      <section className="grid md:grid-cols-3 gap-4">
+        <ProgressCard
+          Icon={FileCheck2}
+          title="Identité"
+          status={inscription?.doc_type ? "Vérification en cours" : "Non démarrée"}
+          progressLabel={inscription?.doc_type ? "Documents reçus" : "À compléter"}
+          progress={inscription?.doc_type ? 0.5 : 0}
+        />
+        <ProgressCard
+          Icon={BookOpen}
+          title="Mini-formation"
+          status="3 modules à valider"
+          progressLabel="Lancée à l'inscription"
+          progress={1}
+        />
+        <ProgressCard
+          Icon={ClipboardCheck}
+          title="Évaluation"
+          status={`${completedCount} / 8 tests`}
+          progressLabel={
+            allDone ? "Tous les tests validés" : "Test linéaire en cours"
+          }
+          progress={completedCount / 8}
+        />
+      </section>
+
+      {/* Roadmap des 8 tests */}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-end justify-between gap-3">
+          <div>
+            <h2 className="t-h3">Roadmap d&rsquo;évaluation</h2>
+            <p className="text-sm text-foreground/55 mt-1">
+              Validez chaque test pour débloquer le suivant.
+            </p>
+          </div>
+          <span className="text-xs text-foreground/40">
+            {completedCount} / 8 complétés
+          </span>
+        </div>
+        <EvaluationRoadmap tests={tests} />
+      </section>
+
+      {/* Score AI-Native si activé */}
+      {activated && session?.ai_native_score != null && (
+        <section>
+          <AiNativeScoreCard
+            score={session.ai_native_score}
+            testResults={tests}
+          />
+        </section>
+      )}
+
+      {/* Footer : statut activation */}
+      <section className="rounded-lg border border-white/10 bg-surface p-5 text-sm text-foreground/70">
+        {activated ? (
+          <span className="text-success font-medium">
+            ✓ Profil activé · Score AI-Native : {session.ai_native_score} / 1000
+          </span>
+        ) : allDone ? (
+          <span>
+            Tous les tests sont validés. Cliquez sur « Finaliser mon profil » dans
+            l&rsquo;onglet Évaluation pour activer votre compte.
+          </span>
+        ) : (
+          <span>
+            Complétez tous les tests pour activer votre profil. Aucun test ne
+            peut être skippé.
+          </span>
+        )}
+      </section>
     </div>
+  );
+}
+
+function ProgressCard({ Icon, title, status, progressLabel, progress }) {
+  const pct = Math.max(0, Math.min(1, Number(progress) || 0));
+  return (
+    <article className="rounded-lg border border-white/10 bg-surface p-5 flex flex-col gap-4">
+      <div className="flex items-center gap-3">
+        <span className="inline-flex h-9 w-9 items-center justify-center rounded-md bg-surface-elevated text-accent">
+          <Icon className="h-4 w-4" />
+        </span>
+        <h3 className="text-sm font-medium text-foreground">{title}</h3>
+      </div>
+      <div className="flex flex-col gap-1">
+        <span className="text-sm text-foreground/85">{status}</span>
+        <span className="text-xs text-foreground/40">{progressLabel}</span>
+      </div>
+      <div className="relative h-1 bg-white/5 rounded-full overflow-hidden">
+        <span
+          className="absolute inset-y-0 left-0 bg-accent transition-[width] duration-500"
+          style={{ width: `${pct * 100}%` }}
+        />
+      </div>
+    </article>
   );
 }
