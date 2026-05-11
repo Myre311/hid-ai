@@ -4,6 +4,8 @@ import {
   Instrument_Serif,
 } from "next/font/google";
 import "./globals.css";
+import { InscriptionProvider } from "@/contexts/InscriptionContext";
+import { InscriptionModal } from "@/components/modals/InscriptionModal";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -57,7 +59,10 @@ export default function RootLayout({ children }) {
       className={`${sans.variable} ${mono.variable} ${instrumentSerif.variable}`}
     >
       <body className="font-sans antialiased min-h-screen bg-background text-foreground">
-        {children}
+        <InscriptionProvider>
+          {children}
+          <InscriptionModal />
+        </InscriptionProvider>
       </body>
     </html>
   );

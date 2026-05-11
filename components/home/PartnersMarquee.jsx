@@ -133,16 +133,10 @@ export function PartnersMarquee() {
 
   return (
     <section
-      className="relative overflow-hidden bg-background py-16 md:py-20"
+      className="relative overflow-hidden bg-background py-12 md:py-16"
       aria-label="Entreprises partenaires"
     >
-      <div className="text-center">
-        <p className="text-xs uppercase tracking-[0.22em] text-muted">
-          Entreprises partenaires
-        </p>
-      </div>
-
-      <div className="mt-10 relative">
+      <div className="relative">
         <div
           ref={trackRef}
           className="overflow-x-auto pb-2 hide-marquee-scrollbar"

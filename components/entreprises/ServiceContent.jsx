@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { ArrowRight, Check, ShieldCheck, KeyRound, Lock, FileCheck2, Award } from "lucide-react";
+import { B2BTriggerButton } from "@/components/forms/buttons/InscriptionTriggerButtons";
 
 const COMPLIANCE_ITEMS = [
   { Icon: ShieldCheck, label: "RGPD" },
@@ -19,7 +19,6 @@ export function ServiceContent({
   description,
   subservices = [],
   ctaLabel = "Réserver une démo",
-  ctaHref = "mailto:contact@hidea-solution.fr",
 }) {
   return (
     <div className="flex flex-col gap-16 md:gap-20">
@@ -47,13 +46,10 @@ export function ServiceContent({
             </ul>
           )}
 
-          <Link
-            href={ctaHref}
-            className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
-          >
+          <B2BTriggerButton className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
             {ctaLabel}
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </B2BTriggerButton>
         </div>
 
         {/* Illustration descriptive — placeholder en attendant client */}
@@ -75,13 +71,10 @@ export function ServiceContent({
           espace projet. Vous recevez votre accès en moins de deux jours
           ouvrés.
         </p>
-        <Link
-          href="/signup?as=business"
-          className="inline-flex items-center gap-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
-        >
+        <B2BTriggerButton className="inline-flex items-center gap-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
           Démarrer l&rsquo;onboarding entreprise
           <ArrowRight className="h-4 w-4" />
-        </Link>
+        </B2BTriggerButton>
       </div>
 
       {/* 3. Bandeau Compliance — dupliqué dans chaque tab */}

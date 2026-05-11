@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils/cn";
+import { useInscription } from "@/contexts/InscriptionContext";
 
 const ROLES = [
   { value: "specialist", label: "AI Specialist" },
@@ -23,6 +23,7 @@ const COUNTRIES = [
 ];
 
 export function TalentSignupForm() {
+  const { openTalentForm } = useInscription();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -31,8 +32,6 @@ export function TalentSignupForm() {
     message: "",
   });
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
 
   const setField = (k, v) => setForm((f) => ({ ...f, [k]: v }));
 
@@ -46,31 +45,13 @@ export function TalentSignupForm() {
     return Object.keys(e).length === 0;
   };
 
-  const onSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
     if (!validate()) return;
-    setSubmitting(true);
-    // TODO: connect to backend
-    console.log("[TalentSignupForm] submitted:", form);
-    await new Promise((r) => setTimeout(r, 600));
-    setSubmitted(true);
-    setSubmitting(false);
+    // Au clic, on ouvre le formulaire d'inscription complet (modal)
+    // en pré-cochant le métier choisi ici.
+    openTalentForm(form.role);
   };
-
-  if (submitted) {
-    return (
-      <div className="flex flex-col items-start gap-3 p-8 rounded-lg bg-success/10 border border-success/30">
-        <CheckCircle2 className="h-7 w-7 text-success" aria-hidden="true" />
-        <h3 className="t-h3 text-foreground">
-          Demande envoyée.
-        </h3>
-        <p className="text-sm text-muted leading-relaxed max-w-md">
-          Notre équipe revient vers vous sous 48 heures ouvrées avec les
-          prochaines étapes.
-        </p>
-      </div>
-    );
-  }
 
   return (
     <form
@@ -128,10 +109,9 @@ export function TalentSignupForm() {
 
       <button
         type="submit"
-        disabled={submitting}
-        className="inline-flex items-center justify-center mt-2 h-11 px-5 rounded-md bg-black text-sm font-medium text-foreground border border-white/25 hover:border-white/60 hover:bg-surface-elevated transition-all duration-200 disabled:opacity-60"
+        className="inline-flex items-center justify-center mt-2 h-11 px-5 rounded-md bg-black text-sm font-medium text-foreground border border-white/25 hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
       >
-        {submitting ? "Envoi en cours…" : "Créer mon profil"}
+        Créer mon profil
       </button>
 
       <p className="text-xs text-muted">Validation par notre équipe sous 48h.</p>

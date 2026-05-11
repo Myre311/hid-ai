@@ -1,10 +1,12 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { ServiceTabs } from "@/components/shared/ServiceTabs";
-import { TalentSignupForm } from "@/components/talents/TalentSignupForm";
 import { ComplianceSection } from "@/components/home/ComplianceSection";
+import {
+  B2BTriggerButton,
+  TalentTriggerButton,
+} from "@/components/forms/buttons/InscriptionTriggerButtons";
 
 export const metadata = {
   title: "Pour les talents",
@@ -25,6 +27,7 @@ const ROLE_TABS = [
         description="Démarrez sans prérequis technique avancé. Le Flow Manager IA surveille votre progression et débloque automatiquement les niveaux de mission au fil de votre montée en qualité."
         skills={SPECIALIST_SKILLS}
         ctaLabel="S'inscrire comme Specialist"
+        metierKey="specialist"
       />
     ),
   },
@@ -37,12 +40,13 @@ const ROLE_TABS = [
         description="Missions techniques avancées sur des projets de fine-tuning, de mise en production et d'optimisation. Validation de votre profil par le Chatbot Gatekeeper avant accès aux missions."
         skills={ENGINEER_SKILLS}
         ctaLabel="S'inscrire comme Engineer"
+        metierKey="engineer"
       />
     ),
   },
 ];
 
-function RoleContent({ subtitle, description, skills, ctaLabel }) {
+function RoleContent({ subtitle, description, skills, ctaLabel, metierKey }) {
   return (
     <div className="grid md:grid-cols-[1.4fr_1fr] gap-10 md:gap-16 items-start">
       <div className="flex flex-col gap-6">
@@ -64,13 +68,13 @@ function RoleContent({ subtitle, description, skills, ctaLabel }) {
           ))}
         </ul>
 
-        <a
-          href="#inscription"
+        <TalentTriggerButton
+          presetMetier={metierKey}
           className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
         >
           {ctaLabel}
           <ArrowRight className="h-4 w-4" />
-        </a>
+        </TalentTriggerButton>
       </div>
 
       <div className="aspect-[4/5] md:aspect-auto md:h-full md:min-h-[24rem] bg-surface border border-border rounded-lg flex items-center justify-center p-8">
@@ -107,22 +111,6 @@ export default function TalentsPage() {
         </Container>
       </Section>
 
-      <Section id="inscription" className="bg-surface/40">
-        <Container className="max-w-3xl flex flex-col gap-8">
-          <div className="flex flex-col gap-3">
-            <h2 className="t-h3">
-              Inscription.
-            </h2>
-            <p className="text-base text-muted leading-relaxed max-w-xl">
-              Quelques informations pour démarrer votre profil. Notre équipe
-              valide votre dossier sous 48 heures et vous transmet les
-              premières étapes.
-            </p>
-          </div>
-          <TalentSignupForm />
-        </Container>
-      </Section>
-
       <ComplianceSection />
 
       <Section className="bg-background">
@@ -134,13 +122,10 @@ export default function TalentsPage() {
             Notre équipe peut vous éclairer sur le parcours, les missions
             disponibles ou les modalités de rémunération.
           </p>
-          <Link
-            href="mailto:contact@hidea-solution.fr"
-            className="inline-flex items-center gap-2 mt-2 h-12 rounded-md bg-black border border-white/25 px-6 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
-          >
+          <B2BTriggerButton className="inline-flex items-center gap-2 mt-2 h-12 rounded-md bg-black border border-white/25 px-6 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
             Parler à notre équipe
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </B2BTriggerButton>
         </Container>
       </Section>
     </>

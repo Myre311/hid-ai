@@ -4,7 +4,9 @@ import { cn } from "@/lib/utils/cn";
 
 /**
  * Bloc CTA dual réutilisable (pattern Scale AI).
- * variant: "primary" = fond accent jaune | "secondary" = fond surface sombre
+ * variant: "primary" = bandeau noir contrasté | "secondary" = surface sombre
+ *
+ * Soit ctaHref (Link) soit ctaSlot (ReactNode personnalisé, ex. trigger button).
  */
 export function DualCTABlock({
   eyebrow,
@@ -12,10 +14,17 @@ export function DualCTABlock({
   subtext,
   ctaLabel,
   ctaHref,
+  ctaSlot,
   variant = "secondary",
   className,
 }) {
   const isPrimary = variant === "primary";
+  const ctaClass = cn(
+    "inline-flex items-center gap-2 mt-auto self-start h-11 rounded-md px-5 text-sm font-medium transition-colors",
+    isPrimary
+      ? "bg-background text-foreground hover:bg-foreground hover:text-background"
+      : "bg-black text-foreground border border-white/25 hover:border-white/60 hover:bg-surface-elevated"
+  );
 
   return (
     <article
@@ -53,18 +62,14 @@ export function DualCTABlock({
           {subtext}
         </p>
       )}
-      <Link
-        href={ctaHref}
-        className={cn(
-          "inline-flex items-center gap-2 mt-auto self-start h-11 rounded-md px-5 text-sm font-medium transition-colors",
-          isPrimary
-            ? "bg-background text-foreground hover:bg-foreground hover:text-background"
-            : "bg-black text-foreground border border-white/25 hover:border-white/60 hover:bg-surface-elevated"
-        )}
-      >
-        {ctaLabel}
-        <ArrowRight className="h-4 w-4" />
-      </Link>
+      {ctaSlot ? (
+        ctaSlot
+      ) : (
+        <Link href={ctaHref} className={ctaClass}>
+          {ctaLabel}
+          <ArrowRight className="h-4 w-4" />
+        </Link>
+      )}
     </article>
   );
 }

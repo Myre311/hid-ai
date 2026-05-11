@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { Timeline } from "@/components/about/Timeline";
 import { MediaGallery } from "@/components/about/MediaGallery";
+import { B2BTriggerButton } from "@/components/forms/buttons/InscriptionTriggerButtons";
 
 export const metadata = {
   title: "À propos",
@@ -100,13 +100,10 @@ export default function AProposPage() {
           <p className="text-base text-muted leading-relaxed">
             Hidea Solution · Paris · contact@hidea-solution.fr
           </p>
-          <Link
-            href="mailto:contact@hidea-solution.fr"
-            className="inline-flex items-center gap-2 mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
-          >
+          <B2BTriggerButton className="inline-flex items-center gap-2 mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
             Parler à notre équipe
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </B2BTriggerButton>
         </Container>
       </Section>
     </>

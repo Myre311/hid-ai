@@ -1,8 +1,8 @@
-import Link from "next/link";
 import { ArrowRight, Database, Users } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
 import { ServiceCard } from "@/components/shared/ServiceCard";
+import { B2BTriggerButton } from "@/components/forms/buttons/InscriptionTriggerButtons";
 
 export function EntreprisesSection() {
   return (
@@ -32,13 +32,10 @@ Deux services complémentaires pour vos pipelines IA : production de données d&
         </div>
 
         <div>
-          <Link
-            href="mailto:contact@hidea-solution.fr"
-            className="inline-flex items-center gap-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
-          >
+          <B2BTriggerButton className="inline-flex items-center gap-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
             Réserver une démo
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </B2BTriggerButton>
         </div>
       </Container>
     </Section>

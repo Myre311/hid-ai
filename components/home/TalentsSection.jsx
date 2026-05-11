@@ -1,7 +1,7 @@
-import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
+import { TalentTriggerButton } from "@/components/forms/buttons/InscriptionTriggerButtons";
 
 const SPECIALIST_SKILLS = ["Annotation", "Labellisation", "RLHF", "Computer Vision"];
 const ENGINEER_SKILLS = ["NLP", "Vision", "Optimisation", "Fine-tuning", "MLOps"];
@@ -33,13 +33,10 @@ Deux parcours selon votre profil : AI Specialist pour l&rsquo;annotation et le R
         </div>
 
         <div>
-          <Link
-            href="/talents"
-            className="inline-flex items-center gap-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
-          >
+          <TalentTriggerButton className="inline-flex items-center gap-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
             Inscription
             <ArrowRight className="h-4 w-4" />
-          </Link>
+          </TalentTriggerButton>
         </div>
       </Container>
     </Section>
