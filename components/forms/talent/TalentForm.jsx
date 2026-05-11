@@ -195,7 +195,7 @@ export function TalentForm({ presetMetier = null, onClose }) {
         actions={[
           {
             label: "Démarrer mon évaluation",
-            href: "/login?next=/dashboard",
+            href: "/signup?next=/dashboard",
             primary: true,
           },
           { label: "Retour à l'accueil", href: "/" },

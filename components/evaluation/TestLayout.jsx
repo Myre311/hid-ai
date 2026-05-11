@@ -202,22 +202,21 @@ function ResultScreen({ test, result, timeSeconds }) {
           "inline-flex h-16 w-16 items-center justify-center rounded-full",
           passed
             ? "bg-success/15 border-2 border-success"
-            : "bg-red-500/15 border-2 border-red-400"
+            : "bg-amber-400/15 border-2 border-amber-400"
         )}
       >
-        <CheckCircle2
-          className={cn(
-            "h-8 w-8",
-            passed ? "text-success" : "text-red-400"
-          )}
-        />
+        {passed ? (
+          <CheckCircle2 className="h-8 w-8 text-success" />
+        ) : (
+          <AlertCircle className="h-8 w-8 text-amber-400" />
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <p className="text-xs uppercase tracking-[0.18em] text-foreground/40">
           Test {String(test.order + 1).padStart(2, "0")} · résultat
         </p>
         <h2 className="t-h2-md">
-          {passed ? "Test validé !" : "Test à recommencer"}
+          {passed ? "Test validé !" : "Test non validé"}
         </h2>
         <p className="t-lead">
           {passed
@@ -226,7 +225,7 @@ function ResultScreen({ test, result, timeSeconds }) {
               : result.unlockedNext
               ? "Le test suivant est débloqué."
               : "Vous pouvez continuer."
-            : `Score minimum requis : ${result.passing_score}/100. Vous pourrez relancer le test depuis la roadmap.`}
+            : `Vous n'avez pas atteint le seuil de validation (${result.passing_score}/100). Vous pouvez retenter ce test autant de fois que nécessaire.`}
         </p>
       </div>
       <div className="grid grid-cols-3 gap-3">
@@ -237,12 +236,47 @@ function ResultScreen({ test, result, timeSeconds }) {
         />
         <Stat label="Temps" value={`${Math.floor(timeSeconds / 60)} min`} />
       </div>
-      <a
-        href="/dashboard/evaluation"
-        className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-accent text-background text-sm font-medium hover:bg-accent-hover transition-colors self-start"
-      >
-        Retour à la roadmap
-      </a>
+      <div className="flex flex-col md:flex-row gap-3">
+        {passed ? (
+          <>
+            {!result.isLastTest && result.unlockedNext && (
+              <a
+                href="/dashboard/evaluation"
+                className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-accent text-background text-sm font-medium hover:bg-accent-hover transition-colors"
+              >
+                Continuer vers le test suivant
+              </a>
+            )}
+            <a
+              href="/dashboard/evaluation"
+              className={cn(
+                "inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md text-sm font-medium transition-colors",
+                !result.isLastTest && result.unlockedNext
+                  ? "border border-white/20 text-foreground/85 hover:bg-white/5"
+                  : "bg-accent text-background hover:bg-accent-hover"
+              )}
+            >
+              Retour à la roadmap
+            </a>
+          </>
+        ) : (
+          <>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md bg-accent text-background text-sm font-medium hover:bg-accent-hover transition-colors"
+            >
+              Réessayer ce test
+            </button>
+            <a
+              href="/dashboard/evaluation"
+              className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-md border border-white/20 text-sm font-medium text-foreground/85 hover:bg-white/5 transition-colors"
+            >
+              Retour à la roadmap
+            </a>
+          </>
+        )}
+      </div>
     </div>
   );
 }

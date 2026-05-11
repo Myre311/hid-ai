@@ -28,13 +28,29 @@ export default async function DashboardHome() {
 
   const service = createServiceClient();
 
-  // Inscription liée (prénom, métier, etc.)
+  // Inscription liée (prénom, métier, etc.) — on cherche par email
+  // puis fallback par téléphone (l'auth SMS Supabase n'expose pas d'email).
   let inscription = null;
   if (user.email) {
     const { data } = await service
       .from("inscriptions_talents")
-      .select("id, prenom, nom, email, metier, doc_type")
+      .select("id, prenom, nom, email, telephone, metier, doc_type")
       .eq("email", user.email)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    inscription = data;
+  }
+  if (!inscription && user.phone) {
+    // L'auth SMS stocke le téléphone en E.164 sans le "+" (ex: "33612345678").
+    // L'inscription stocke ce que le candidat a tapé (parfois avec "+", espaces).
+    // On essaie les deux variantes.
+    const phoneNoPlus = user.phone.replace(/^\+/, "");
+    const phonePlus = "+" + phoneNoPlus;
+    const { data } = await service
+      .from("inscriptions_talents")
+      .select("id, prenom, nom, email, telephone, metier, doc_type")
+      .or(`telephone.eq.${phonePlus},telephone.eq.${phoneNoPlus}`)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();

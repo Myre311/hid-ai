@@ -114,6 +114,13 @@ export function LoginForm() {
       <p className="text-sm text-muted text-center">
         Code envoyé. Valide {expiry.display}.
       </p>
+      {process.env.NODE_ENV !== "production" && (
+        <p className="text-xs text-accent/85 text-center bg-accent/10 border border-accent/30 rounded-md px-3 py-2">
+          Mode dev — entrez{" "}
+          <code className="font-mono bg-black/30 px-1 py-0.5 rounded">000000</code>{" "}
+          pour bypass l&rsquo;OTP
+        </p>
+      )}
       <OtpInput
         length={6}
         value={code}

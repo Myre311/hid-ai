@@ -34,6 +34,17 @@ export async function POST(request) {
     );
   }
   const { phone } = parsed.data;
+  const isProd = process.env.NODE_ENV === "production";
+
+  // En dev, on bypass entièrement la table otp_codes (qui peut ne pas exister)
+  // et on accepte 000000 dans verify-otp.
+  if (!isProd) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `[send-otp DEV] OTP factice pour ${phone} — utilisez 000000 pour bypass`
+    );
+    return NextResponse.json({ ok: true, devHint: "Use 000000 to bypass" });
+  }
 
   const supabase = createServiceClient();
 
@@ -83,6 +94,15 @@ export async function POST(request) {
   } catch (err) {
     console.error("[send-otp] sms error", err);
     // Don't leak provider errors to client
+  }
+
+  // En dev, signaler dans la console serveur le code généré + le bypass possible.
+  if (process.env.NODE_ENV !== "production") {
+    // eslint-disable-next-line no-console
+    console.log(
+      `[send-otp DEV] code généré pour ${phone}: ${code} — ou utilisez 000000 pour bypass`
+    );
+    return NextResponse.json({ ok: true, devHint: "Use 000000 to bypass" });
   }
 
   return NextResponse.json({ ok: true });

@@ -74,11 +74,17 @@ export async function POST(request) {
       { status: 403 }
     );
   }
+  // Si le test a déjà été complété :
+  //  - score ≥ passing_score  → on bloque (test validé, pas de re-passage)
+  //  - score < passing_score  → on autorise le retry (réécrit la ligne)
   if (testRow.status === "completed") {
-    return NextResponse.json(
-      { error: "Test already completed" },
-      { status: 409 }
-    );
+    if ((testRow.score ?? 0) >= testDef.passing_score) {
+      return NextResponse.json(
+        { error: "Test already passed — no retry allowed" },
+        { status: 409 }
+      );
+    }
+    // sinon on passe : c'est un retry après échec
   }
 
   // Scoring
