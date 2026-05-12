@@ -7,6 +7,13 @@ import { cn } from "@/lib/utils/cn";
 
 const OPTIONS = [
   {
+    id: "business",
+    Icon: Building2,
+    title: "Entreprise",
+    body: "Recrutez des talents certifiés ou lancez vos projets de données. Validation KYB sous 48h.",
+    next: "/signup/business",
+  },
+  {
     id: "specialist",
     Icon: Sparkles,
     title: "AI Specialist",
@@ -19,13 +26,6 @@ const OPTIONS = [
     title: "AI Engineer",
     body: "Missions techniques avancées en NLP, vision, optimisation. Passez l’évaluation du Chatbot Gatekeeper.",
     next: "/signup/phone",
-  },
-  {
-    id: "business",
-    Icon: Building2,
-    title: "Entreprise",
-    body: "Recrutez des talents certifiés ou lancez vos projets de données. Validation KYB sous 48h.",
-    next: "/signup/business",
   },
 ];
 
