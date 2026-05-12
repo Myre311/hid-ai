@@ -7,6 +7,10 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import { InscriptionProvider } from "@/contexts/InscriptionContext";
 import { InscriptionModal } from "@/components/modals/InscriptionModal";
+import { ConsentProvider } from "@/components/consent/ConsentContext";
+import { CookieBanner } from "@/components/consent/CookieBanner";
+import { CookiePreferencesDialog } from "@/components/consent/CookiePreferencesDialog";
+import { getConsentServer } from "@/lib/consent/server";
 
 const sans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -54,16 +58,21 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }) {
+  const initialConsent = getConsentServer();
   return (
     <html
       lang="fr"
       className={`${sans.variable} ${mono.variable} ${instrumentSerif.variable}`}
     >
       <body className="font-sans antialiased min-h-screen bg-background text-foreground">
-        <InscriptionProvider>
-          {children}
-          <InscriptionModal />
-        </InscriptionProvider>
+        <ConsentProvider initial={initialConsent}>
+          <InscriptionProvider>
+            {children}
+            <InscriptionModal />
+          </InscriptionProvider>
+          <CookieBanner />
+          <CookiePreferencesDialog />
+        </ConsentProvider>
         <Toaster
           position="top-right"
           theme="dark"

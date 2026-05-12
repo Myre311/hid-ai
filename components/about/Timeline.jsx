@@ -9,7 +9,7 @@ const ENTRIES = [
   {
     year: "2025",
     description:
-      "Lancement du Hub NEO, recrutement des premiers conseillers et formateurs.",
+      "Structuration des hubs opérationnels en Côte d'Ivoire, au Maroc et au Congo Brazzaville. Recrutement des premiers conseillers et formateurs.",
   },
   {
     year: "2026",

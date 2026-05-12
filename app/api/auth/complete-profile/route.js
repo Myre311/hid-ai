@@ -9,7 +9,7 @@ import {
   businessStep2Schema,
   businessStep3Schema,
 } from "@/lib/utils/validation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 const bodySchema = z.object({
   branch: branchSchema,
@@ -30,13 +30,15 @@ export async function POST(request) {
   }
 
   const { branch, profile } = parsed.data;
-  const supabase = createClient();
 
-  // Auth requirement — uncomment once Supabase Auth is wired
-  // const { data: { user } } = await supabase.auth.getUser();
-  // if (!user) return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  // Auth requise — l'utilisateur doit avoir terminé le flow OTP (/signup/verify)
+  const userClient = createClient();
+  const { data: { user }, error: authError } = await userClient.auth.getUser();
+  if (authError || !user) {
+    return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
+  }
 
-  // Validate branch-specific shape
+  // Validation côté serveur du shape spécifique à la branche
   if (branch === "business") {
     const c1 = businessStep1Schema.safeParse(profile);
     const c2 = businessStep2Schema.safeParse(profile);
@@ -66,9 +68,28 @@ export async function POST(request) {
     }
   }
 
-  // TODO: persist via supabase.from('profiles').upsert(...) once auth is wired.
-  // For the bootstrap iteration we accept the payload and respond ok, so the
-  // client can route to /dashboard. Real persistence will be added in the
-  // sprint that wires Supabase Auth + RLS.
-  return NextResponse.json({ ok: true });
+  // Persistance : on stocke le profil dans user_metadata via service-role
+  // (l'utilisateur n'a pas la permission de modifier ses propres metadata
+  // via supabase.auth.updateUser dans le contexte server cookies-only).
+  const service = createServiceClient();
+  const completedAt = new Date().toISOString();
+  const { error: updateError } = await service.auth.admin.updateUserById(user.id, {
+    user_metadata: {
+      ...user.user_metadata,
+      branch,
+      profile,
+      profile_completed: true,
+      profile_completed_at: completedAt,
+    },
+  });
+
+  if (updateError) {
+    console.error("[complete-profile] updateUserById error:", updateError);
+    return NextResponse.json(
+      { error: "Impossible d'enregistrer le profil — réessayez." },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ ok: true, completed_at: completedAt });
 }

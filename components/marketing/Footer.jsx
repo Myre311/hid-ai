@@ -26,32 +26,52 @@ function XIcon(props) {
   );
 }
 
+/**
+ * Affiche les liens sociaux uniquement si les URLs sont configurées via
+ * variables d'environnement (NEXT_PUBLIC_SOCIAL_LINKEDIN / _X / _GITHUB).
+ * Évite les liens vers des pages génériques (linkedin.com) tant que les
+ * comptes officiels HID AI n'existent pas.
+ */
+function SocialLinks() {
+  const socials = [
+    { url: process.env.NEXT_PUBLIC_SOCIAL_LINKEDIN, Icon: LinkedInIcon, label: "LinkedIn" },
+    { url: process.env.NEXT_PUBLIC_SOCIAL_X, Icon: XIcon, label: "X (Twitter)" },
+    { url: process.env.NEXT_PUBLIC_SOCIAL_GITHUB, Icon: GitHubIcon, label: "GitHub" },
+  ].filter((s) => Boolean(s.url));
+
+  if (socials.length === 0) return null;
+
+  return (
+    <div className="flex items-center gap-4 md:justify-end">
+      {socials.map(({ url, Icon, label }) => (
+        <a
+          key={label}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={label}
+          className="text-muted hover:text-foreground transition-colors duration-200"
+        >
+          <Icon className="h-4 w-4" />
+        </a>
+      ))}
+    </div>
+  );
+}
 
 const COLUMNS = [
   {
     title: "Plateforme",
     links: [
-      { label: "Pour les talents", href: "/#talents" },
-      { label: "Pour les entreprises", href: "/#entreprises" },
-      { label: "Comment ça marche", href: "/#how-it-works" },
-      { label: "Sécurité", href: "/security" },
-    ],
-  },
-  {
-    title: "Ressources",
-    links: [
-      { label: "Documentation", href: "/docs" },
-      { label: "Recherche", href: "/research" },
-      { label: "Blog", href: "/blog" },
-      { label: "Help center", href: "/help" },
+      { label: "Pour les talents", href: "/talents" },
+      { label: "Pour les entreprises", href: "/entreprises" },
+      { label: "Infrastructure", href: "/infrastructure" },
     ],
   },
   {
     title: "Société",
     links: [
-      { label: "À propos", href: "/about" },
-      { label: "Carrières", href: "/careers" },
-      { label: "Presse", href: "/press" },
+      { label: "À propos", href: "/a-propos" },
       { label: "Contact", href: "/contact" },
     ],
   },
@@ -70,8 +90,8 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-background pt-16 pb-10">
       <Container>
-        {/* Desktop: 4-column grid. Mobile: native <details> accordions. */}
-        <div className="hidden md:grid md:grid-cols-4 md:gap-12">
+        {/* Desktop: 3-column grid. Mobile: native <details> accordions. */}
+        <div className="hidden md:grid md:grid-cols-3 md:gap-12">
           {COLUMNS.map((col) => (
             <div key={col.title} className="flex flex-col gap-3">
               <div className="text-xs uppercase tracking-[0.2em] text-muted-strong">
@@ -139,35 +159,7 @@ export function Footer() {
           <div className="text-center text-xs">
             Lucien Odzali · +33 6 27 67 89 31 · contact@hidea-solution.fr
           </div>
-          <div className="flex items-center gap-4 md:justify-end">
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="LinkedIn"
-              className="text-muted hover:text-foreground transition-colors duration-200"
-            >
-              <LinkedInIcon className="h-4 w-4" />
-            </a>
-            <a
-              href="https://x.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="X (Twitter)"
-              className="text-muted hover:text-foreground transition-colors duration-200"
-            >
-              <XIcon className="h-4 w-4" />
-            </a>
-            <a
-              href="https://github.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub"
-              className="text-muted hover:text-foreground transition-colors duration-200"
-            >
-              <GitHubIcon className="h-4 w-4" />
-            </a>
-          </div>
+          <SocialLinks />
         </div>
       </Container>
     </footer>
