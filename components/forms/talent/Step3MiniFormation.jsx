@@ -189,16 +189,27 @@ function ModuleCard({ module, status, onValidate }) {
   const [stage, setStage] = useState("content"); // content | quiz | result
   const [answers, setAnswers] = useState({}); // { qIdx: optIdx }
   const [score, setScore] = useState(null);
+  const [attempts, setAttempts] = useState(0);
 
   function submitQuiz() {
     let correct = 0;
     module.quiz.forEach((q, i) => {
       if (answers[i] === q.correct) correct++;
     });
+    const attemptNum = attempts + 1;
+    setAttempts(attemptNum);
     setScore(correct);
     setStage("result");
     if (correct >= PASS_THRESHOLD) {
-      onValidate();
+      // Enrichit le payload pour traçabilité (au lieu d'un simple string "valide")
+      onValidate({
+        status: "valide",
+        score: correct,
+        total: module.quiz.length,
+        attempts: attemptNum,
+        answers: { ...answers },
+        completed_at: new Date().toISOString(),
+      });
     }
   }
 
@@ -381,10 +392,17 @@ function ModuleCard({ module, status, onValidate }) {
   );
 }
 
+/** Lit le statut d'un module quel que soit le format (string legacy ou objet enrichi). */
+function moduleStatus(value) {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && value.status) return value.status;
+  return "a_demarrer";
+}
+
 export function TalentStep3MiniFormation({ data, errors, update }) {
   const modules = data.modules || {};
-  const setStatus = (id, status) =>
-    update({ ...data, modules: { ...modules, [id]: status } });
+  const setModuleValidated = (id, detail) =>
+    update({ ...data, modules: { ...modules, [id]: detail } });
 
   return (
     <div className="flex flex-col gap-6">
@@ -398,13 +416,13 @@ export function TalentStep3MiniFormation({ data, errors, update }) {
 
       <div className="flex flex-col gap-4">
         {MODULES.map((m) => {
-          const status = modules[m.id] || "a_demarrer";
+          const status = moduleStatus(modules[m.id]);
           return (
             <ModuleCard
               key={m.id}
               module={m}
               status={status}
-              onValidate={() => setStatus(m.id, "valide")}
+              onValidate={(detail) => setModuleValidated(m.id, detail)}
             />
           );
         })}
@@ -418,7 +436,7 @@ export function TalentStep3MiniFormation({ data, errors, update }) {
 export function validateTalentStep3(data) {
   const e = {};
   const modules = data.modules || {};
-  const allValidated = MODULES.every((m) => modules[m.id] === "valide");
+  const allValidated = MODULES.every((m) => moduleStatus(modules[m.id]) === "valide");
   if (!allValidated)
     e.modules = "Vous devez valider les 3 modules (quiz inclus) avant de continuer.";
   return e;

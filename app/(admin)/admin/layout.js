@@ -7,6 +7,8 @@ import {
   Download,
   LogOut,
   AlertTriangle,
+  Eye,
+  Mail,
 } from "lucide-react";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/marketing/Logo";
@@ -18,6 +20,7 @@ const NAV = [
   { href: "/admin", label: "Vue d'ensemble", Icon: LayoutGrid },
   { href: "/admin/talents", label: "Talents", Icon: Users },
   { href: "/admin/entreprises", label: "Entreprises", Icon: Building2 },
+  { href: "/admin/messages", label: "Messages", Icon: Mail },
   { href: "/admin/exports", label: "Exports", Icon: Download },
 ];
 
@@ -82,7 +85,14 @@ export default async function AdminLayout({ children }) {
           ))}
         </nav>
         <div className="flex flex-col gap-2 pt-4 border-t border-white/10">
-          <span className="text-xs text-foreground/55 truncate" title={adminRow.email}>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-xs text-foreground/55 hover:text-foreground transition-colors"
+          >
+            <Eye className="h-3.5 w-3.5" />
+            Vue site public
+          </Link>
+          <span className="text-xs text-foreground/55 truncate mt-2" title={adminRow.email}>
             {adminRow.email}
           </span>
           <span className="text-[10px] uppercase tracking-[0.18em] text-foreground/40">

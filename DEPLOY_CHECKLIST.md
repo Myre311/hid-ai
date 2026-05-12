@@ -6,7 +6,7 @@
 
 Côté **code** : tout est prêt. Cinq pages légales, contact, cookie banner, Sentry scaffold, sitemap/robots/OG image, 50 frames CV tracking réalistes, quiz Talent Step 3, complete-profile persiste désormais dans `user_metadata`. Tests sécurité 13/13 ✅.
 
-Côté **infrastructure** : 6 étapes ci-dessous.
+Côté **infrastructure** : 7 étapes ci-dessous.
 
 ---
 
@@ -48,6 +48,20 @@ create policy "super_admin_all"
 ```
 
 **Vérification** : `select count(*) from public.admin_users;` → renvoie `0` (table créée, vide).
+
+---
+
+## 1b. Supabase — migration `0005_contact_messages.sql`
+
+**Pourquoi** : sans la table `contact_messages`, les messages reçus via `/contact`
+ne sont pas tracés en DB (uniquement envoyés par Resend). Si Resend tombe ou si
+la clé manque, le message est perdu. La page `/admin/messages` est aussi inactive
+tant que la table n'existe pas.
+
+**Action** : Supabase Dashboard → SQL Editor → coller le contenu de
+`supabase/migrations/0005_contact_messages.sql` (table + RLS + index + trigger).
+
+**Vérification** : `select count(*) from public.contact_messages;` → `0` (table créée, vide).
 
 ---
 

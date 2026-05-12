@@ -29,6 +29,9 @@ export default async function DashboardHome() {
 
   const service = createServiceClient();
 
+  // Note: le redirect admin → /admin est géré au niveau du middleware
+  // (cf middleware.js). Ici on suppose qu'on est en présence d'un candidat.
+
   // Inscription liée (prénom, métier, etc.) — on cherche par email
   // puis fallback par téléphone (l'auth SMS Supabase n'expose pas d'email).
   let inscription = null;
