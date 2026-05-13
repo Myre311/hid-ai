@@ -7,9 +7,10 @@ import { ContextCard } from "@/components/evaluation/ContextCard";
 import { getTestBySlug } from "@/lib/evaluation/tests";
 import {
   getCvSceneSetForSession,
+  getCvTrackingSetForSession,
   CV_GROUND_TRUTH as DEFAULT_GROUND_TRUTH,
   CV_POLYGON_TARGET as DEFAULT_POLYGON_TARGET,
-  CV_TRACKING_GROUND_TRUTH,
+  CV_TRACKING_GROUND_TRUTH as DEFAULT_TRACKING,
 } from "@/lib/evaluation/data/cv-ground-truth";
 import { FrameSequenceAnnotator } from "@/components/evaluation/cv/FrameSequenceAnnotator";
 
@@ -55,16 +56,26 @@ export default function ComputerVisionPage() {
 
   // Pool déterministe → set bbox + polygone pour CETTE session.
   // Fallback aux variantes par défaut si la session n'est pas encore chargée.
-  const { groundTruth, polygonTarget } = useMemo(() => {
+  const { groundTruth, polygonTarget, trackingSet } = useMemo(() => {
     if (!sessionId) {
-      return { groundTruth: DEFAULT_GROUND_TRUTH, polygonTarget: DEFAULT_POLYGON_TARGET };
+      return {
+        groundTruth: DEFAULT_GROUND_TRUTH,
+        polygonTarget: DEFAULT_POLYGON_TARGET,
+        trackingSet: DEFAULT_TRACKING,
+      };
     }
     const set = getCvSceneSetForSession(sessionId);
-    return { groundTruth: set.ground_truth, polygonTarget: set.polygon_target };
+    const tracking = getCvTrackingSetForSession(sessionId);
+    return {
+      groundTruth: set.ground_truth,
+      polygonTarget: set.polygon_target,
+      trackingSet: tracking,
+    };
   }, [sessionId]);
 
   const CV_GROUND_TRUTH = groundTruth;
   const CV_POLYGON_TARGET = polygonTarget;
+  const CV_TRACKING_GROUND_TRUTH = trackingSet;
   const image = CV_GROUND_TRUTH[imageIdx];
   const currentBoxes = boxes[image.id] || [];
 
