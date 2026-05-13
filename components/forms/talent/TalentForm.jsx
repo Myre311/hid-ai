@@ -20,7 +20,6 @@ import {
   validateTalentStep4,
 } from "./Step4EvaluationTechnique";
 import { TalentStep5Activation, validateTalentStep5 } from "./Step5Activation";
-import { frenchDate } from "@/components/forms/shared/Calendar";
 
 const STORAGE_KEY = "hidai_talent_form";
 const STEPS = [
@@ -53,7 +52,6 @@ const INITIAL_DATA = {
   modules: { ecosysteme: "a_demarrer", securite: "a_demarrer", orientation: "a_demarrer" },
   // Step 4
   domaine: "",
-  creneau_test: null,
   prerequis: [],
   // Step 5
   consent_cgu: false,
@@ -191,10 +189,6 @@ export function TalentForm({ presetMetier = null, onClose }) {
   };
 
   if (submitted) {
-    const cr = data.creneau_test;
-    const dateStr = cr?.date
-      ? `${frenchDate(new Date(cr.date + "T12:00"))} à ${cr.time}`
-      : "—";
     const metierLabel = data.metier === "specialist" ? "AI Specialist" : "AI Engineer";
     return (
       <FormConfirmation
@@ -208,8 +202,8 @@ export function TalentForm({ presetMetier = null, onClose }) {
             <ul className="list-disc list-inside mt-3 text-left text-sm space-y-1">
               <li>Une confirmation d&rsquo;inscription</li>
               <li>
-                Un email de convocation pour votre évaluation technique du{" "}
-                <strong>{dateStr}</strong>
+                Un lien d&rsquo;accès à votre <strong>tableau de bord</strong>{" "}
+                pour démarrer votre évaluation technique dès maintenant
               </li>
               <li>L&rsquo;accès à votre espace personnel après validation finale</li>
             </ul>

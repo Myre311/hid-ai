@@ -1,7 +1,6 @@
 "use client";
 
 import { Target, RefreshCw, Edit3, Info } from "lucide-react";
-import { Calendar, DEFAULT_SLOTS_90 } from "@/components/forms/shared/Calendar";
 import { FormFieldRadio } from "@/components/forms/shared/FormFieldRadio";
 import { FormFieldCheckbox } from "@/components/forms/shared/FormFieldCheckbox";
 
@@ -52,8 +51,8 @@ export function TalentStep4EvaluationTechnique({ data, errors, update }) {
       <div className="flex flex-col gap-2">
         <h3 className="t-h3">Évaluation technique</h3>
         <p className="text-sm text-foreground/60">
-          Test calibré 45-60 min — votre score d&rsquo;IA-Native dépend de votre
-          persévérance.
+          Test accessible directement depuis votre tableau de bord après
+          l&rsquo;inscription — aucun rendez-vous n&rsquo;est requis.
         </p>
       </div>
 
@@ -93,23 +92,6 @@ export function TalentStep4EvaluationTechnique({ data, errors, update }) {
         error={errors.domaine}
       />
 
-      <div className="flex flex-col gap-3">
-        <h4 className="text-sm text-foreground/70">
-          Disponibilité pour l&rsquo;évaluation
-          <span className="text-red-400 ml-1">*</span>
-        </h4>
-        <Calendar
-          value={data.creneau_test}
-          onChange={(v) => set("creneau_test", v)}
-          daysAhead={14}
-          slots={DEFAULT_SLOTS_90}
-          slotDurationLabel="1h30"
-        />
-        {errors.creneau_test && (
-          <p className="text-xs text-red-400">{errors.creneau_test}</p>
-        )}
-      </div>
-
       <FormFieldCheckbox
         label="Pré-requis techniques (à confirmer)"
         name="prerequis"
@@ -126,8 +108,6 @@ export function TalentStep4EvaluationTechnique({ data, errors, update }) {
 export function validateTalentStep4(data) {
   const e = {};
   if (!data.domaine) e.domaine = "Domaine requis";
-  if (!data.creneau_test?.date || !data.creneau_test?.time)
-    e.creneau_test = "Sélectionnez une date et un créneau horaire";
   const allChecked =
     data.prerequis?.length === PREREQUIS.length &&
     PREREQUIS.every((p) => data.prerequis.includes(p.value));

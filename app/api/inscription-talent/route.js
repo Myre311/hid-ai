@@ -141,8 +141,10 @@ export async function POST(request) {
     antecedents: body.antecedents || null,
     modules_validated: body.modules || {},
     domaine: body.domaine || null,
-    creneau_test_date: body.creneau_test?.date || null,
-    creneau_test_time: body.creneau_test?.time || null,
+    // creneau_test_* gardé NULL : le RDV n'est plus demandé à l'inscription
+    // (le test se lance directement depuis le dashboard).
+    creneau_test_date: null,
+    creneau_test_time: null,
     prerequis_confirmed: Array.isArray(body.prerequis) ? body.prerequis : [],
     consent_cgu: !!body.consent_cgu,
     consent_rgpd: !!body.consent_rgpd,

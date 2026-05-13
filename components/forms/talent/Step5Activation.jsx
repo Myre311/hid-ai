@@ -2,7 +2,6 @@
 
 import { Pencil } from "lucide-react";
 import { FormCheckboxSingle } from "@/components/forms/shared/FormFieldCheckbox";
-import { frenchDate } from "@/components/forms/shared/Calendar";
 
 const METIER_LABELS = {
   specialist: "AI Specialist",
@@ -65,11 +64,6 @@ function Row({ label, value }) {
 export function TalentStep5Activation({ data, errors, update, onEditStep }) {
   const set = (k, v) => update({ ...data, [k]: v });
 
-  const cr = data.creneau_test;
-  const dateStr = cr?.date
-    ? `${frenchDate(new Date(cr.date + "T12:00"))} à ${cr.time}`
-    : null;
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
@@ -110,7 +104,6 @@ export function TalentStep5Activation({ data, errors, update, onEditStep }) {
 
       <RecapBlock title="Évaluation technique" onEdit={() => onEditStep(3)}>
         <Row label="Domaine" value={DOMAINE_LABELS[data.domaine]} />
-        <Row label="Créneau" value={dateStr} />
       </RecapBlock>
 
       <div className="border-t border-white/10 pt-5 flex flex-col gap-3">
