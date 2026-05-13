@@ -102,12 +102,13 @@ export default async function DashboardHome() {
     tests = existingTests || [];
   }
 
+  const totalTests = tests.length || 8;
   const completedCount = tests.filter((t) => t.status === "completed").length;
   const firstName = inscription?.prenom || "Candidat";
   const metierLabel =
     inscription?.metier === "engineer" ? "AI Engineer" : "AI Specialist";
   const activated = session?.status === "activated";
-  const allDone = completedCount === 8;
+  const allDone = completedCount === totalTests && totalTests > 0;
 
   return (
     <PageTransition>
@@ -124,7 +125,7 @@ export default async function DashboardHome() {
             ? " Votre profil est activé — vos missions arrivent bientôt."
             : allDone
             ? " Tous les tests sont validés — finalisez votre profil ci-dessous."
-            : " Complétez les 8 tests d'évaluation pour activer votre profil."}
+            : ` Complétez les ${totalTests} tests d'évaluation pour activer votre profil.`}
         </p>
       </section>
 
@@ -147,11 +148,11 @@ export default async function DashboardHome() {
         <ProgressCard
           Icon={ClipboardCheck}
           title="Évaluation"
-          status={`${completedCount} / 8 tests`}
+          status={`${completedCount} / ${totalTests} tests`}
           progressLabel={
             allDone ? "Tous les tests validés" : "Test linéaire en cours"
           }
-          progress={completedCount / 8}
+          progress={totalTests > 0 ? completedCount / totalTests : 0}
         />
       </section>
 
@@ -165,7 +166,7 @@ export default async function DashboardHome() {
             </p>
           </div>
           <span className="text-xs text-foreground/40">
-            {completedCount} / 8 complétés
+            {completedCount} / {totalTests} complétés
           </span>
         </div>
         <EvaluationRoadmap tests={tests} />
