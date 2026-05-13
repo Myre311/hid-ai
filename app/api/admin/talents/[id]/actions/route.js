@@ -4,7 +4,7 @@ import { logAdminAction } from "@/lib/admin/audit";
 
 /**
  * POST /api/admin/talents/[id]/actions
- * Body : { action: "suspend" | "reactivate" | "reset_session" | "activate_manual" | "resend_email" }
+ * Body : { action: "suspend" | "reactivate" | "reset_session" | "activate_manual" | "resend_email" | "delete_account" }
  *
  *  - suspend         : account_status='suspended', clôt la session active
  *  - reactivate      : account_status='active'
@@ -12,6 +12,9 @@ import { logAdminAction } from "@/lib/admin/audit";
  *                      → le candidat repassera tout
  *  - activate_manual : force session.status='activated' avec ai_native_score recalculé
  *  - resend_email    : déclenche /api/email/send-activation pour cette session
+ *  - delete_account  : SUPER_ADMIN seulement. Suppression définitive :
+ *                      inscription, sessions, test_results, fichiers KYC dans
+ *                      Storage, compte auth.users, ligne admin_users si présente.
  */
 export async function POST(request, { params }) {
   const guard = await requireAdmin();
@@ -25,14 +28,22 @@ export async function POST(request, { params }) {
   catch { return NextResponse.json({ error: "Invalid JSON" }, { status: 400 }); }
 
   const action = body?.action;
-  const allowed = ["suspend", "reactivate", "reset_session", "activate_manual", "resend_email"];
+  const allowed = ["suspend", "reactivate", "reset_session", "activate_manual", "resend_email", "delete_account"];
   if (!allowed.includes(action)) {
     return NextResponse.json({ error: "action invalide" }, { status: 400 });
   }
 
+  // Suppression définitive : super_admin only
+  if (action === "delete_account" && guard.role !== "super_admin") {
+    return NextResponse.json(
+      { error: "Suppression définitive réservée aux super-admins." },
+      { status: 403 }
+    );
+  }
+
   const { data: talent } = await service
     .from("inscriptions_talents")
-    .select("id, email, prenom, nom")
+    .select("id, email, prenom, nom, telephone, doc_recto_path, doc_verso_path, selfie_path")
     .eq("id", params.id)
     .maybeSingle();
 
@@ -119,6 +130,69 @@ export async function POST(request, { params }) {
         metadata: { ai_native_score: aiNativeScore, tests_count: tests?.length || 0 },
       });
       return NextResponse.json({ ok: true, ai_native_score: aiNativeScore });
+    }
+
+    if (action === "delete_account") {
+      const purge = { deleted: [], skipped: [] };
+
+      // 1. Supprime les sessions + test_results (cascade)
+      const { data: sessions } = await service
+        .from("evaluation_sessions")
+        .select("id")
+        .eq("inscription_talent_id", talent.id);
+      for (const s of sessions || []) {
+        await service.from("test_results").delete().eq("session_id", s.id);
+        await service.from("evaluation_sessions").delete().eq("id", s.id);
+        purge.deleted.push(`session ${s.id.slice(0, 8)}`);
+      }
+
+      // 2. Supprime les fichiers KYC dans Storage
+      const filesToRemove = [talent.doc_recto_path, talent.doc_verso_path, talent.selfie_path].filter(Boolean);
+      if (filesToRemove.length > 0) {
+        const { error: stErr } = await service.storage.from("kyc-documents").remove(filesToRemove);
+        if (stErr) purge.skipped.push(`storage: ${stErr.message}`);
+        else purge.deleted.push(`${filesToRemove.length} fichier(s) KYC`);
+      }
+
+      // 3. Trouve et supprime le compte auth.users correspondant
+      try {
+        const { data: list } = await service.auth.admin.listUsers({ page: 1, perPage: 1000 });
+        const phoneNoPlus = (talent.telephone || "").replace(/[^\d]/g, "");
+        const authUser = list?.users?.find(
+          (u) =>
+            (talent.email && u.email === talent.email) ||
+            (phoneNoPlus && u.phone === phoneNoPlus)
+        );
+        if (authUser) {
+          // Retire d'abord d'admin_users si présent (cascade le fait aussi via auth.users delete)
+          await service.from("admin_users").delete().eq("user_id", authUser.id);
+          const { error: delErr } = await service.auth.admin.deleteUser(authUser.id);
+          if (delErr) purge.skipped.push(`auth.users: ${delErr.message}`);
+          else purge.deleted.push(`auth.users ${authUser.id.slice(0, 8)}`);
+        } else {
+          purge.skipped.push("auth.users : aucune correspondance email/téléphone");
+        }
+      } catch (err) {
+        purge.skipped.push(`auth.users: ${err?.message || err}`);
+      }
+
+      // 4. Supprime l'inscription_talents
+      const { error: delTalentErr } = await service
+        .from("inscriptions_talents")
+        .delete()
+        .eq("id", talent.id);
+      if (delTalentErr) {
+        return NextResponse.json({ error: delTalentErr.message }, { status: 500 });
+      }
+      purge.deleted.push("inscription_talents");
+
+      await logAdminAction({
+        ...auditBase,
+        action: "talent.account.delete",
+        metadata: purge,
+      });
+
+      return NextResponse.json({ ok: true, purge });
     }
 
     if (action === "resend_email") {

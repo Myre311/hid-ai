@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ArrowLeft, FileText, Calendar, MapPin } from "lucide-react";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { TESTS } from "@/lib/evaluation/tests";
 import { TalentActionsPanel } from "@/components/admin/TalentActionsPanel";
 
@@ -24,6 +24,15 @@ const NIVEAU_LABELS = {
 
 export default async function AdminTalentDetail({ params }) {
   const service = createServiceClient();
+
+  // Récupère le rôle de l'admin courant pour gater les actions destructives
+  const userClient = createClient();
+  const { data: { user } } = await userClient.auth.getUser();
+  const { data: me } = user
+    ? await service.from("admin_users").select("role").eq("user_id", user.id).maybeSingle()
+    : { data: null };
+  const currentAdminRole = me?.role || "admin";
+
   const { data: t } = await service
     .from("inscriptions_talents")
     .select("*")
@@ -98,8 +107,8 @@ export default async function AdminTalentDetail({ params }) {
         )}
       </header>
 
-      {/* Panneau d'actions admin (KYC, compte, session) */}
-      <TalentActionsPanel talent={t} session={session} />
+      {/* Panneau d'actions admin (KYC, compte, session, suppression) */}
+      <TalentActionsPanel talent={t} session={session} currentAdminRole={currentAdminRole} />
 
       <div className="grid md:grid-cols-2 gap-6">
         <section className="rounded-lg border border-white/10 bg-surface p-5 flex flex-col gap-3">

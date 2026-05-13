@@ -13,6 +13,7 @@ import {
   Sparkles,
   Loader2,
   ShieldCheck,
+  Trash2,
 } from "lucide-react";
 
 /**
@@ -21,11 +22,14 @@ import {
  * - Compte : Suspendre / Réactiver
  * - Session : Reset / Activer manuellement / Renvoyer email d'activation
  */
-export function TalentActionsPanel({ talent, session }) {
+export function TalentActionsPanel({ talent, session, currentAdminRole = "admin" }) {
   const router = useRouter();
   const [busy, setBusy] = useState(null);
   const [rejectMode, setRejectMode] = useState(false);
   const [rejectReason, setRejectReason] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState("");
+  const isSuperAdmin = currentAdminRole === "super_admin";
+  const expectedConfirmation = `${talent.prenom} ${talent.nom}`.trim();
 
   const kycStatus = talent.kyc_status || "pending";
   const accountStatus = talent.account_status || "active";
@@ -80,12 +84,28 @@ export function TalentActionsPanel({ talent, session }) {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error);
       toast.success(label + " ✓");
-      router.refresh();
+      // Redirige hors de la page supprimée
+      if (action === "delete_account") {
+        router.push("/admin/talents");
+      } else {
+        router.refresh();
+      }
     } catch (err) {
       toast.error(`${label} échoué`, { description: err.message });
     } finally {
       setBusy(null);
     }
+  }
+
+  async function deleteAccount() {
+    if (deleteConfirm.trim() !== expectedConfirmation) {
+      toast.error("Le nom tapé ne correspond pas.");
+      return;
+    }
+    if (!confirm(`SUPPRIMER DÉFINITIVEMENT le compte de ${expectedConfirmation} ?\n\nCette action est IRRÉVERSIBLE et supprime :\n• L'inscription Talent\n• La session d'évaluation + tous les test_results\n• Les fichiers KYC (recto, verso, selfie)\n• Le compte d'authentification`)) {
+      return;
+    }
+    await talentAction("delete_account", "Compte supprimé");
   }
 
   return (
@@ -183,6 +203,42 @@ export function TalentActionsPanel({ talent, session }) {
           )}
         </div>
       </div>
+
+      {/* Zone dangereuse — super_admin only */}
+      {isSuperAdmin && (
+        <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-sm text-red-300/85 flex items-center gap-1.5">
+              <Trash2 className="h-3.5 w-3.5" /> Zone dangereuse
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.16em] text-red-300/70 px-2 py-0.5 rounded-full bg-red-500/10">
+              super_admin
+            </span>
+          </div>
+          <p className="text-xs text-foreground/55 leading-relaxed">
+            Suppression définitive (inscription + session + test_results + KYC Storage
+            + compte auth). <strong className="text-red-300">Irréversible.</strong>
+          </p>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <input
+              type="text"
+              value={deleteConfirm}
+              onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder={`Tape "${expectedConfirmation}" pour confirmer`}
+              className="flex-1 h-9 px-3 rounded-md bg-[#1A1A1A] border border-red-500/30 text-xs text-foreground placeholder:text-foreground/30 focus:outline-none focus:border-red-400"
+            />
+            <ActionBtn
+              onClick={deleteAccount}
+              loading={busy === "act-delete_account"}
+              disabled={deleteConfirm.trim() !== expectedConfirmation}
+              variant="danger"
+              icon={<Trash2 className="h-3.5 w-3.5" />}
+            >
+              Supprimer définitivement
+            </ActionBtn>
+          </div>
+        </div>
+      )}
 
       {/* Session d'évaluation */}
       {session && (
