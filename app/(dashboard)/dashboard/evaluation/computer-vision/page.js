@@ -243,17 +243,13 @@ export default function ComputerVisionPage() {
                   />
                 </pattern>
               </defs>
-              <rect width="100" height="100" fill="url(#grid)" />
-              <text
-                x="50"
-                y="50"
-                textAnchor="middle"
-                dominantBaseline="middle"
-                fill="#52525b"
-                fontSize="3"
-              >
-                {image.label}
-              </text>
+              <image
+                href={`/evaluation/cv/bboxes/${image.id}.svg`}
+                width="100"
+                height="100"
+                preserveAspectRatio="none"
+              />
+              <rect width="100" height="100" fill="url(#grid)" opacity="0.25" />
 
               {currentBoxes.map((b, i) => (
                 <g key={i}>
@@ -387,12 +383,13 @@ export default function ComputerVisionPage() {
               onClick={onPolygonClick}
               onTouchEnd={onPolygonTouchEnd}
             >
-              <rect width="100" height="100" fill="url(#grid)" />
-              {/* Cible visuelle : forme floue centrale */}
-              <circle cx="50" cy="50" r="28" fill="#1f1f2a" stroke="#3a3a44" strokeWidth="0.4" />
-              <text x="50" y="51" textAnchor="middle" dominantBaseline="middle" fill="#4a4a55" fontSize="3">
-                {CV_POLYGON_TARGET.label}
-              </text>
+              <image
+                href="/evaluation/cv/polygon/poly-1.svg"
+                width="100"
+                height="100"
+                preserveAspectRatio="none"
+              />
+              <rect width="100" height="100" fill="url(#grid)" opacity="0.2" />
 
               {/* Polygone en cours */}
               {polygon.length > 0 && (
