@@ -158,14 +158,16 @@ export default function ComputerVisionPage() {
       casesProcessed={totalCasesProcessed}
       totalCases={CV_GROUND_TRUTH.length + 2}
     >
-      <ContextCard title="Pipeline d'annotation industrielle HID AI">
+      <ContextCard title="Pipeline d'annotation Computer Vision HID AI">
         <p>
-          Pour entraîner un modèle de détection sur des chantiers en Afrique de
-          l&rsquo;Ouest, vous devez annoter (1) des bounding boxes avec
-          attributs sur 5 images, (2) un polygone précis sur une vue aérienne,
-          et (3) tracker un objet sur 50 frames avec occlusions. Visez un{" "}
-          <strong>IoU &gt; 0.7</strong> et choisissez le bon attribut pour
-          chaque box.
+          Vous allez annoter trois types de données utilisés en production
+          pour entraîner des modèles de détection en milieu urbain :
+          (1) des <strong>bounding boxes</strong> avec attributs sur 5 scènes
+          (feux, voitures, panneau STOP, personnes, vélos), (2) un{" "}
+          <strong>polygone</strong> précis sur une vue aérienne, et (3) le{" "}
+          <strong>tracking</strong> d&rsquo;un objet sur 50 frames avec
+          occlusions. Visez un <strong>IoU &gt; 0.7</strong> et choisissez le
+          bon attribut pour chaque box.
         </p>
       </ContextCard>
 
