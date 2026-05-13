@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Trash2, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { TestLayout } from "@/components/evaluation/TestLayout";
 import { ContextCard } from "@/components/evaluation/ContextCard";
 import { getTestBySlug } from "@/lib/evaluation/tests";
 import {
-  CV_GROUND_TRUTH,
-  CV_POLYGON_TARGET,
+  getCvSceneSetForSession,
+  CV_GROUND_TRUTH as DEFAULT_GROUND_TRUTH,
+  CV_POLYGON_TARGET as DEFAULT_POLYGON_TARGET,
   CV_TRACKING_GROUND_TRUTH,
 } from "@/lib/evaluation/data/cv-ground-truth";
 import { FrameSequenceAnnotator } from "@/components/evaluation/cv/FrameSequenceAnnotator";
@@ -40,7 +41,30 @@ export default function ComputerVisionPage() {
   const [polygonClosed, setPolygonClosed] = useState(false);
   // Tracking
   const [trackingAnnotations, setTrackingAnnotations] = useState({});
+  // Session : on récupère l'ID pour piocher les bonnes variantes du pool.
+  const [sessionId, setSessionId] = useState(null);
 
+  useEffect(() => {
+    let alive = true;
+    fetch("/api/evaluation/get-session")
+      .then((r) => r.json())
+      .then((j) => { if (alive) setSessionId(j?.session?.id || null); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
+  // Pool déterministe → set bbox + polygone pour CETTE session.
+  // Fallback aux variantes par défaut si la session n'est pas encore chargée.
+  const { groundTruth, polygonTarget } = useMemo(() => {
+    if (!sessionId) {
+      return { groundTruth: DEFAULT_GROUND_TRUTH, polygonTarget: DEFAULT_POLYGON_TARGET };
+    }
+    const set = getCvSceneSetForSession(sessionId);
+    return { groundTruth: set.ground_truth, polygonTarget: set.polygon_target };
+  }, [sessionId]);
+
+  const CV_GROUND_TRUTH = groundTruth;
+  const CV_POLYGON_TARGET = polygonTarget;
   const image = CV_GROUND_TRUTH[imageIdx];
   const currentBoxes = boxes[image.id] || [];
 

@@ -90,10 +90,11 @@ export async function POST(request) {
     // sinon on passe : c'est un retry après échec
   }
 
-  // Scoring brut
+  // Scoring brut — passe sessionId pour que Computer Vision sache quel
+  // pool de scènes utiliser (randomisation déterministe par session).
   let scoreData;
   try {
-    scoreData = scoreTest(test_slug, raw_answers || {});
+    scoreData = scoreTest(test_slug, raw_answers || {}, { sessionId: session.id });
   } catch (err) {
     return NextResponse.json(
       { error: err.message || "Scoring failed" },
