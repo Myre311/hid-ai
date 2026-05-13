@@ -13,16 +13,13 @@ import {
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/marketing/Logo";
 import AdminMobileDrawer from "@/components/admin/AdminMobileDrawer";
+import { ADMIN_NAV } from "@/lib/admin/nav";
 
 export const metadata = { title: "Admin · HID AI" };
 
-const NAV = [
-  { href: "/admin", label: "Vue d'ensemble", Icon: LayoutGrid },
-  { href: "/admin/talents", label: "Talents", Icon: Users },
-  { href: "/admin/entreprises", label: "Entreprises", Icon: Building2 },
-  { href: "/admin/messages", label: "Messages", Icon: Mail },
-  { href: "/admin/exports", label: "Exports", Icon: Download },
-];
+// Résolution locale des icônes — interdit de passer des composants React
+// (functions) d'un Server Component à un Client Component.
+const ICONS = { LayoutGrid, Users, Building2, Mail, Download };
 
 export default async function AdminLayout({ children }) {
   const userClient = createClient();
@@ -63,7 +60,7 @@ export default async function AdminLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <AdminMobileDrawer navItems={NAV} />
+      <AdminMobileDrawer navItems={ADMIN_NAV} />
       {/* Sidebar */}
       <aside className="hidden md:flex md:flex-col w-64 border-r border-white/10 bg-surface/40 px-5 py-7 sticky top-0 h-screen">
         <Link href="/" className="text-foreground mb-2" aria-label="HID AI">
@@ -73,16 +70,19 @@ export default async function AdminLayout({ children }) {
           Admin
         </p>
         <nav className="flex-1 flex flex-col gap-1">
-          {NAV.map((n) => (
-            <Link
-              key={n.href}
-              href={n.href}
-              className="inline-flex items-center gap-3 px-3 h-10 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
-            >
-              <n.Icon className="h-4 w-4" />
-              {n.label}
-            </Link>
-          ))}
+          {ADMIN_NAV.map((n) => {
+            const Icon = ICONS[n.iconName];
+            return (
+              <Link
+                key={n.href}
+                href={n.href}
+                className="inline-flex items-center gap-3 px-3 h-10 rounded-md text-sm text-foreground/70 hover:text-foreground hover:bg-white/5 transition-colors"
+              >
+                {Icon && <Icon className="h-4 w-4" />}
+                {n.label}
+              </Link>
+            );
+          })}
         </nav>
         <div className="flex flex-col gap-2 pt-4 border-t border-white/10">
           <Link

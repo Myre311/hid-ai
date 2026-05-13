@@ -2,9 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutGrid, Users, Building2, Mail, Download } from "lucide-react";
+import { ADMIN_NAV } from "@/lib/admin/nav";
 
-export default function AdminMobileDrawer({ navItems }) {
+// Résolution locale des icônes — Server Component ne peut pas nous passer
+// un composant React, donc on map le `iconName` (string) ici.
+const ICONS = { LayoutGrid, Users, Building2, Mail, Download };
+
+export default function AdminMobileDrawer({ navItems = ADMIN_NAV }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -44,17 +49,20 @@ export default function AdminMobileDrawer({ navItems }) {
 
         {/* Nav */}
         <nav className="flex flex-col gap-1">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setOpen(false)}
-              className="inline-flex items-center gap-3 px-4 py-3 rounded-md text-foreground/85 hover:bg-white/5 hover:text-foreground transition-colors text-sm"
-            >
-              <item.Icon className="h-4 w-4 shrink-0" />
-              {item.label}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            const Icon = ICONS[item.iconName];
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+                className="inline-flex items-center gap-3 px-4 py-3 rounded-md text-foreground/85 hover:bg-white/5 hover:text-foreground transition-colors text-sm"
+              >
+                {Icon && <Icon className="h-4 w-4 shrink-0" />}
+                {item.label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </>
