@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/Button";
 import { Logo } from "@/components/marketing/Logo";
 import { cn } from "@/lib/utils/cn";
 
@@ -67,9 +66,12 @@ export function Nav() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" size="sm" as="a">
-              <Link href="/login">Se connecter</Link>
-            </Button>
+            <Link
+              href="/login"
+              className="inline-flex h-9 items-center justify-center rounded-md bg-transparent border border-border px-4 text-sm font-medium text-foreground hover:border-border-strong transition-all duration-200"
+            >
+              Se connecter
+            </Link>
             <Link
               href="/signup"
               className="inline-flex h-9 items-center justify-center rounded-md bg-black border border-white/25 px-4 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
