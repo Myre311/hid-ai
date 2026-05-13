@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { scoreTest, applyScoringPolicy } from "@/lib/evaluation/scoring";
-import { getTestBySlug } from "@/lib/evaluation/tests";
+import {
+  getTestBySlug,
+  buildEngineerTestRows,
+  SPECIALIST_UPGRADE_THRESHOLD,
+} from "@/lib/evaluation/tests";
 
 /**
  * POST /api/evaluation/submit-test
@@ -123,12 +127,44 @@ export async function POST(request) {
     return NextResponse.json({ error: updErr.message }, { status: 500 });
   }
 
-  // Déblocage du suivant si score suffisant + maj de l'index courant + statut session
-  const passed = scoreData.score >= testDef.passing_score;
-  const isLastTest = testDef.order === 7;
-  let unlockedNext = false;
+  // Récupère TOUS les tests de la session pour décider de la suite.
+  const { data: allTests } = await service
+    .from("test_results")
+    .select("id, test_slug, test_category, test_order, status, score")
+    .eq("session_id", session.id)
+    .order("test_order");
 
-  if (passed && !isLastTest) {
+  const passed = scoreData.score >= testDef.passing_score;
+  const isFinalEngineerTest = testDef.order === 7;
+  const isLastSpecialistTest = testDef.order === 3;
+  // Le candidat est "specialist only" si SEULS les 4 tests specialist sont
+  // présents dans test_results (pas encore d'upgrade engineer).
+  const onlySpecialist =
+    allTests &&
+    allTests.length === 4 &&
+    allTests.every((t) => t.test_category === "specialist");
+  let unlockedNext = false;
+  let upgradedToEngineer = false;
+
+  // 1. Cas spécial : specialist vient de finir son 4e test ET il est "specialist only".
+  //    Si moyenne ≥ SPECIALIST_UPGRADE_THRESHOLD (95), on AJOUTE les 4 lignes engineer.
+  if (passed && isLastSpecialistTest && onlySpecialist) {
+    const completedScores = (allTests || [])
+      .map((t) => (t.id === testRow.id ? scoreData.score : t.score))
+      .filter((s) => typeof s === "number");
+    const avgScore =
+      completedScores.length > 0
+        ? completedScores.reduce((a, b) => a + b, 0) / completedScores.length
+        : 0;
+    if (avgScore >= SPECIALIST_UPGRADE_THRESHOLD) {
+      const engineerRows = buildEngineerTestRows(session.id);
+      await service.from("test_results").insert(engineerRows);
+      upgradedToEngineer = true;
+      unlockedNext = true; // le 1er engineer test (order 4) devient available
+    }
+  }
+  // 2. Sinon, débloquer le test suivant si présent dans test_results
+  else if (passed) {
     const { data: nextRow } = await service
       .from("test_results")
       .select("id, status")
@@ -144,15 +180,24 @@ export async function POST(request) {
     }
   }
 
-  // Maj session
+  // 3. Statut final de la session :
+  //    - 4 tests specialist completed sans upgrade → session 'completed'
+  //    - 8 tests engineer completed → session 'completed'
+  const totalRows = (allTests?.length || 0) + (upgradedToEngineer ? 4 : 0);
+  const completedNow =
+    (allTests || []).filter((t) => t.id === testRow.id || t.status === "completed").length;
   const sessionUpdate = {};
   if (passed) {
     sessionUpdate.current_test_index = Math.min(7, testDef.order + 1);
   }
-  if (passed && isLastTest) {
+  const isFinalRun =
+    (isLastSpecialistTest && onlySpecialist && !upgradedToEngineer && passed) ||
+    (isFinalEngineerTest && passed);
+  if (isFinalRun) {
     sessionUpdate.status = "completed";
     sessionUpdate.completed_at = new Date().toISOString();
   }
+  const isLastTest = isFinalRun;
   if (Object.keys(sessionUpdate).length > 0) {
     await service
       .from("evaluation_sessions")
@@ -176,6 +221,7 @@ export async function POST(request) {
       passing_score: testDef.passing_score,
       unlockedNext,
       isLastTest,
+      upgradedToEngineer,
     },
     tests,
   });

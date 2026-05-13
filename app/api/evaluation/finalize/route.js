@@ -51,14 +51,20 @@ export async function POST() {
     .eq("session_id", session.id)
     .order("test_order");
 
+  // La session peut contenir :
+  //  - 4 tests (specialist only, n'a pas débloqué engineer) → finalisable
+  //  - 8 tests (engineer ou specialist upgradé) → finalisable
+  // On accepte tant que TOUS les tests présents sont completed.
   const allCompleted =
     tests &&
-    tests.length === 8 &&
+    (tests.length === 4 || tests.length === 8) &&
     tests.every((t) => t.status === "completed");
 
   if (!allCompleted) {
     return NextResponse.json(
-      { error: "All 8 tests must be completed before finalization" },
+      {
+        error: `All ${tests?.length || 8} tests must be completed before finalization`,
+      },
       { status: 400 }
     );
   }

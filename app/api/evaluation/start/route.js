@@ -40,16 +40,37 @@ export async function POST() {
   }
 
   // Lie à l'inscription_talent si dispo (via email du user → inscription)
+  // Récupère aussi le `metier` pour décider du jeu de tests initial.
   let inscriptionTalentId = null;
+  let metier = "engineer"; // fallback : tous les tests si pas d'inscription
   if (user.email) {
     const { data: insc } = await service
       .from("inscriptions_talents")
-      .select("id")
+      .select("id, metier")
       .eq("email", user.email)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (insc) inscriptionTalentId = insc.id;
+    if (insc) {
+      inscriptionTalentId = insc.id;
+      if (insc.metier === "specialist") metier = "specialist";
+    }
+  }
+  // Fallback supplémentaire : recherche par téléphone si pas trouvé par email
+  if (!inscriptionTalentId && user.phone) {
+    const phonePlus = "+" + user.phone.replace(/^\+/, "");
+    const phoneNoPlus = user.phone.replace(/^\+/, "");
+    const { data: insc } = await service
+      .from("inscriptions_talents")
+      .select("id, metier")
+      .or(`telephone.eq.${phonePlus},telephone.eq.${phoneNoPlus}`)
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (insc) {
+      inscriptionTalentId = insc.id;
+      if (insc.metier === "specialist") metier = "specialist";
+    }
   }
 
   // Crée la session
@@ -71,8 +92,8 @@ export async function POST() {
     );
   }
 
-  // Crée les 8 lignes test_results
-  const rows = buildInitialTestRows(session.id);
+  // Crée les lignes test_results adaptées au metier (specialist=4, engineer=8)
+  const rows = buildInitialTestRows(session.id, metier);
   const { data: tests, error: tErr } = await service
     .from("test_results")
     .insert(rows)

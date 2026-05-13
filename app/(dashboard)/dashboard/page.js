@@ -85,9 +85,10 @@ export default async function DashboardHome() {
       .single();
     session = created;
     if (session) {
+      const metier = inscription?.metier === "specialist" ? "specialist" : "engineer";
       const { data: createdTests } = await service
         .from("test_results")
-        .insert(buildInitialTestRows(session.id))
+        .insert(buildInitialTestRows(session.id, metier))
         .select()
         .order("test_order");
       tests = createdTests || [];
