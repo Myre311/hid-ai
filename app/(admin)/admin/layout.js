@@ -9,6 +9,8 @@ import {
   AlertTriangle,
   Eye,
   Mail,
+  ShieldCheck,
+  History,
 } from "lucide-react";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { Logo } from "@/components/marketing/Logo";
@@ -19,7 +21,7 @@ export const metadata = { title: "Admin · HID AI" };
 
 // Résolution locale des icônes — interdit de passer des composants React
 // (functions) d'un Server Component à un Client Component.
-const ICONS = { LayoutGrid, Users, Building2, Mail, Download };
+const ICONS = { LayoutGrid, Users, Building2, Mail, Download, ShieldCheck, History };
 
 export default async function AdminLayout({ children }) {
   const userClient = createClient();

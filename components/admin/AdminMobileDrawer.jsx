@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, LayoutGrid, Users, Building2, Mail, Download } from "lucide-react";
+import { Menu, X, LayoutGrid, Users, Building2, Mail, Download, ShieldCheck, History } from "lucide-react";
 import { ADMIN_NAV } from "@/lib/admin/nav";
 
 // Résolution locale des icônes — Server Component ne peut pas nous passer
 // un composant React, donc on map le `iconName` (string) ici.
-const ICONS = { LayoutGrid, Users, Building2, Mail, Download };
+const ICONS = { LayoutGrid, Users, Building2, Mail, Download, ShieldCheck, History };
 
 export default function AdminMobileDrawer({ navItems = ADMIN_NAV }) {
   const [open, setOpen] = useState(false);

@@ -209,16 +209,20 @@ export default async function AdminMessagesPage({ searchParams }) {
                 return (
                   <tr key={r.id} className="border-t border-white/5 hover:bg-white/5">
                     <td className="py-3 px-4">
-                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] uppercase tracking-[0.16em] bg-white/5 text-foreground/70">
+                      <Link href={`/admin/messages/${r.id}`} className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] uppercase tracking-[0.16em] bg-white/5 text-foreground/70 hover:bg-accent/15 hover:text-accent transition-colors">
                         {TYPE_LABELS[r.type] || r.type}
-                      </span>
+                      </Link>
                     </td>
                     <td className="py-3 px-4 text-foreground">
-                      <div className="font-medium">{r.prenom} {r.nom}</div>
-                      <div className="text-foreground/55 text-xs">{r.email}</div>
+                      <Link href={`/admin/messages/${r.id}`} className="block hover:text-accent transition-colors">
+                        <div className="font-medium">{r.prenom} {r.nom}</div>
+                        <div className="text-foreground/55 text-xs">{r.email}</div>
+                      </Link>
                     </td>
                     <td className="py-3 px-4 text-foreground/85 max-w-md truncate" title={r.sujet}>
-                      {r.sujet}
+                      <Link href={`/admin/messages/${r.id}`} className="hover:text-accent transition-colors">
+                        {r.sujet}
+                      </Link>
                     </td>
                     <td className="py-3 px-4">
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] uppercase tracking-[0.16em] ${STATUS_COLORS[r.status] || "bg-white/5 text-foreground/40"}`}>

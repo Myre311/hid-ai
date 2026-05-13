@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, FileText, Calendar, MapPin } from "lucide-react";
 import { createServiceClient } from "@/lib/supabase/server";
 import { TESTS } from "@/lib/evaluation/tests";
+import { TalentActionsPanel } from "@/components/admin/TalentActionsPanel";
 
 export const metadata = { title: "Admin · Détail talent" };
 export const dynamic = "force-dynamic";
@@ -96,6 +97,9 @@ export default async function AdminTalentDetail({ params }) {
           </div>
         )}
       </header>
+
+      {/* Panneau d'actions admin (KYC, compte, session) */}
+      <TalentActionsPanel talent={t} session={session} />
 
       <div className="grid md:grid-cols-2 gap-6">
         <section className="rounded-lg border border-white/10 bg-surface p-5 flex flex-col gap-3">
