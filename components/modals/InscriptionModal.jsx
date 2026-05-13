@@ -59,7 +59,7 @@ export function InscriptionModal() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: 4 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full md:max-w-3xl bg-[#0A0A0B] border border-white/10 md:rounded-2xl overflow-hidden flex flex-col max-h-screen md:max-h-[90vh]"
+            className="relative w-full md:max-w-3xl bg-[#0A0A0B] border border-white/10 md:rounded-2xl overflow-hidden flex flex-col h-full md:h-[88vh] md:min-h-[560px]"
             role="dialog"
             aria-modal="true"
           >

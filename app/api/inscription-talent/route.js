@@ -123,7 +123,10 @@ export async function POST(request) {
     reference,
     prenom: body.prenom,
     nom: body.nom,
-    email: body.email,
+    // Normalisé en lowercase pour matcher la normalisation que Supabase Auth
+    // applique systématiquement aux emails (sinon mismatch case-sensitive
+    // lors des lookups dashboard / /api/evaluation/start).
+    email: (body.email || "").toLowerCase().trim(),
     telephone: body.telephone,
     date_naissance: body.date_naissance,
     pays: body.pays,

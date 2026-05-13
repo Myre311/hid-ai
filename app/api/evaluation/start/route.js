@@ -44,10 +44,12 @@ export async function POST() {
   let inscriptionTalentId = null;
   let metier = "engineer"; // fallback : tous les tests si pas d'inscription
   if (user.email) {
+    // ilike sans wildcard = exact match case-insensitive — Supabase lowercase
+    // les emails auth alors qu'inscriptions_talents.email garde la casse saisie.
     const { data: insc } = await service
       .from("inscriptions_talents")
       .select("id, metier")
-      .eq("email", user.email)
+      .ilike("email", user.email)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();

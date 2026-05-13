@@ -36,10 +36,12 @@ export default async function DashboardHome() {
   // puis fallback par téléphone (l'auth SMS Supabase n'expose pas d'email).
   let inscription = null;
   if (user.email) {
+    // ilike sans wildcard = exact match case-insensitive (Supabase lowercase
+    // les emails auth, l'inscription garde la casse saisie par le candidat).
     const { data } = await service
       .from("inscriptions_talents")
       .select("id, prenom, nom, email, telephone, metier, doc_type")
-      .eq("email", user.email)
+      .ilike("email", user.email)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
