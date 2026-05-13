@@ -37,17 +37,31 @@ const CATEGORY_LABEL = {
 };
 
 /**
- * Affiche la roadmap des 8 tests d'évaluation.
+ * Affiche la roadmap des tests d'évaluation du candidat.
+ *
  * Props:
  *  - tests : array de test_results retournés par /api/evaluation/get-session
- *            (peut être undefined si pas encore créée)
+ *            (4 lignes pour un Specialist non upgradé, 8 pour Engineer ou
+ *             Specialist upgradé). Si undefined → fallback aux 8 tests.
  */
 export function EvaluationRoadmap({ tests }) {
-  const byOrder = new Map((tests || []).map((t) => [t.test_order, t]));
+  const list = Array.isArray(tests) && tests.length > 0 ? tests : null;
+
+  // Si on n'a pas reçu de tests (cas dégradé), on affiche les 8 tests par défaut
+  // en mode "locked" sauf le premier — comportement legacy.
+  const visibleSlugs = list
+    ? list.map((t) => t.test_slug)
+    : TESTS.map((m) => m.slug);
+
+  const visibleMeta = visibleSlugs
+    .map((slug) => TESTS.find((m) => m.slug === slug))
+    .filter(Boolean);
+
+  const byOrder = new Map((list || []).map((t) => [t.test_order, t]));
 
   return (
     <div className="flex flex-col gap-3">
-      {TESTS.map((meta, i) => {
+      {visibleMeta.map((meta, i) => {
         const result = byOrder.get(meta.order);
         const status = result?.status ?? (i === 0 ? "available" : "locked");
         const score = result?.score;
