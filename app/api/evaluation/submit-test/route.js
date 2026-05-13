@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
-import { scoreTest } from "@/lib/evaluation/scoring";
+import { scoreTest, applyScoringPolicy } from "@/lib/evaluation/scoring";
 import { getTestBySlug } from "@/lib/evaluation/tests";
 
 /**
@@ -87,7 +87,7 @@ export async function POST(request) {
     // sinon on passe : c'est un retry après échec
   }
 
-  // Scoring
+  // Scoring brut
   let scoreData;
   try {
     scoreData = scoreTest(test_slug, raw_answers || {});
@@ -98,6 +98,12 @@ export async function POST(request) {
     );
   }
 
+  // Politique HID AI : facteur temps + cap à 96 (100/100 impossible).
+  // Le score envoyé en DB est le score AJUSTÉ.
+  const seconds = Math.max(0, Number(time_spent_seconds) || 0);
+  const finalScore = applyScoringPolicy(scoreData.score, seconds, testDef.target_minutes);
+  scoreData = { ...scoreData, score: finalScore };
+
   // Mise à jour de la ligne test_results
   const { error: updErr } = await service
     .from("test_results")
@@ -106,7 +112,7 @@ export async function POST(request) {
       raw_answers: raw_answers || {},
       score: scoreData.score,
       precision_rate: scoreData.precision_rate,
-      time_spent_seconds: Math.max(0, Number(time_spent_seconds) || 0),
+      time_spent_seconds: seconds,
       cases_processed: scoreData.cases_processed,
       completed_at: new Date().toISOString(),
       started_at: testRow.started_at ?? new Date().toISOString(),
