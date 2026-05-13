@@ -386,7 +386,7 @@ export default function ComputerVisionPage() {
               onTouchEnd={onPolygonTouchEnd}
             >
               <image
-                href="/evaluation/cv/polygon/poly-1.svg"
+                href={CV_POLYGON_TARGET.image || "/evaluation/cv/polygon/poly-1.svg"}
                 width="100"
                 height="100"
                 preserveAspectRatio="none"
