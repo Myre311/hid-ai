@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FormStepper } from "@/components/forms/shared/FormStepper";
 import { FormNavigation } from "@/components/forms/shared/FormNavigation";
 import { FormConfirmation } from "@/components/forms/shared/FormConfirmation";
+import { compressImage } from "@/lib/utils/image-compress";
 import {
   TalentStep1Identification,
   validateTalentStep1,
@@ -127,17 +128,39 @@ export function TalentForm({ presetMetier = null, onClose }) {
         const payload = { ...data };
         FILE_KEYS.forEach((k) => delete payload[k]);
 
+        // Compresse les images côté client AVANT envoi pour rester sous la
+        // limite Vercel de 4.5 MB par requête serverless. Les PDF/fichiers
+        // non-image passent inchangés.
+        const [recto, verso, selfie] = await Promise.all([
+          data.doc_recto instanceof File ? compressImage(data.doc_recto) : null,
+          data.doc_verso instanceof File ? compressImage(data.doc_verso) : null,
+          data.selfie instanceof File ? compressImage(data.selfie) : null,
+        ]);
+
         const fd = new FormData();
         fd.append("payload", JSON.stringify(payload));
-        if (data.doc_recto instanceof File) fd.append("doc_recto", data.doc_recto);
-        if (data.doc_verso instanceof File) fd.append("doc_verso", data.doc_verso);
-        if (data.selfie instanceof File) fd.append("selfie", data.selfie);
+        if (recto) fd.append("doc_recto", recto);
+        if (verso) fd.append("doc_verso", verso);
+        if (selfie) fd.append("selfie", selfie);
 
         const res = await fetch("/api/inscription-talent", {
           method: "POST",
           body: fd,
         });
-        const json = await res.json();
+
+        // Vercel peut renvoyer du texte brut (413 Request Entity Too Large) si
+        // la requête est trop lourde — on tente JSON, sinon on récupère le texte
+        let json;
+        try {
+          json = await res.json();
+        } catch {
+          const text = await res.text().catch(() => "");
+          throw new Error(
+            res.status === 413
+              ? "Fichiers trop volumineux. Réessayez avec des photos plus petites."
+              : (text?.slice(0, 200) || `Erreur HTTP ${res.status}`)
+          );
+        }
         if (!res.ok) {
           throw new Error(json.error || "Erreur serveur");
         }
