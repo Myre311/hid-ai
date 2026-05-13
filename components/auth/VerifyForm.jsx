@@ -13,9 +13,14 @@ const RESEND_AFTER_S = 30;
 
 /**
  * VerifyForm — 6-digit OTP entry tied to the phone stored in authStore.
- * Calls /api/auth/verify-otp; on success routes to /signup/profile or /dashboard.
+ * Calls /api/auth/verify-otp; on success route directement vers /dashboard.
+ *
+ * Note : on n'envoie plus vers /signup/profile par défaut. L'inscription
+ * Talent (modal) collecte déjà tout le profil et /dashboard ne nécessite
+ * pas /signup/profile pour fonctionner. Les vieux flows peuvent encore
+ * passer la prop `onSuccessRedirect` si besoin.
  */
-export function VerifyForm({ onSuccessRedirect = "/signup/profile" }) {
+export function VerifyForm({ onSuccessRedirect = "/dashboard" }) {
   const router = useRouter();
   const phone = useAuthStore((s) => s.phone);
   const branch = useAuthStore((s) => s.branch);
