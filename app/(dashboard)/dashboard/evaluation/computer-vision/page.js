@@ -244,7 +244,7 @@ export default function ComputerVisionPage() {
                 </pattern>
               </defs>
               <image
-                href={`/evaluation/cv/bboxes/${image.id}.svg`}
+                href={image.image || `/evaluation/cv/bboxes/${image.id}.svg`}
                 width="100"
                 height="100"
                 preserveAspectRatio="none"
