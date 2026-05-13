@@ -139,6 +139,62 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange }) {
             preserveAspectRatio="xMidYMid slice"
           />
 
+          {/* Overlay piéton (silhouette) + occluder éventuel */}
+          {frame?.personOverlay && (() => {
+            const p = frame.personOverlay;
+            const W = 640, H = 360;
+            const cx = p.x * W + (p.w * W) / 2;
+            const top = p.y * H;
+            const w = p.w * W;
+            const h = p.h * H;
+            const headR = w * 0.32;
+            const headCy = top + headR;
+            const torsoTopY = headCy + headR + 1;
+            const torsoBottomY = top + h * 0.62;
+            const stride = (p.stride || 0) * W;
+            return (
+              <g>
+                <ellipse cx={cx} cy={top + h - 1} rx={w * 0.4} ry={3} fill="rgba(0,0,0,0.55)" />
+                <line x1={cx - stride} y1={torsoBottomY} x2={cx - stride * 0.6 - w * 0.12} y2={top + h - 1} stroke="#1f2030" strokeWidth={w * 0.18} strokeLinecap="round" />
+                <line x1={cx + stride} y1={torsoBottomY} x2={cx + stride * 0.6 + w * 0.12} y2={top + h - 1} stroke="#1f2030" strokeWidth={w * 0.18} strokeLinecap="round" />
+                <path d={`M ${cx - w*0.32} ${torsoBottomY} L ${cx - w*0.38} ${torsoTopY} L ${cx + w*0.38} ${torsoTopY} L ${cx + w*0.32} ${torsoBottomY} Z`} fill="#262838" stroke="#0f1018" strokeWidth={0.8} />
+                <line x1={cx - w*0.36} y1={torsoTopY + 2} x2={cx - w*0.48 + stride*0.4} y2={torsoBottomY - 2} stroke="#262838" strokeWidth={w * 0.14} strokeLinecap="round" />
+                <line x1={cx + w*0.36} y1={torsoTopY + 2} x2={cx + w*0.48 - stride*0.4} y2={torsoBottomY - 2} stroke="#262838" strokeWidth={w * 0.14} strokeLinecap="round" />
+                <circle cx={cx} cy={headCy} r={headR} fill="#d6b48a" stroke="#0f1018" strokeWidth={0.8} />
+              </g>
+            );
+          })()}
+
+          {frame?.occluderOverlay && (() => {
+            const o = frame.occluderOverlay;
+            const W = 640, H = 360;
+            const p = frame.personOverlay;
+            const cx = p.x * W + (p.w * W) / 2;
+            const top = p.y * H;
+            const w = p.w * W;
+            const h = p.h * H;
+            if (o.type === "pole") {
+              return <rect x={cx - 4} y={top - 30} width={8} height={h + 60} fill="#1c1d28" stroke="#0f1018" strokeWidth={0.5} opacity={0.94} />;
+            }
+            // vehicle : voiture passe au premier plan, couvre le bas de la silhouette
+            return (
+              <g transform={`translate(${cx - 90}, ${top + h * 0.5})`}>
+                <rect x={0} y={0} width={180} height={32} rx={3} fill="#2a2c3a" stroke="#0f1018" strokeWidth={0.8} />
+                <rect x={5} y={5} width={170} height={12} fill="#0a0a12" opacity={0.85} />
+                <circle cx={32} cy={32} r={8} fill="#0f1018" />
+                <circle cx={148} cy={32} r={8} fill="#0f1018" />
+              </g>
+            );
+          })()}
+
+          {/* HUD frame counter */}
+          <g>
+            <rect x={6} y={6} width={130} height={22} rx={3} fill="rgba(0,0,0,0.6)" />
+            <text x={12} y={21} fontFamily="monospace" fontSize={12} fill="#e8e8ef">
+              CAM · {String(frame?.frameNumber || 0).padStart(2, "0")}/{frames.length}
+            </text>
+          </g>
+
           {/* Existing annotation */}
           {annotated && (
             <rect

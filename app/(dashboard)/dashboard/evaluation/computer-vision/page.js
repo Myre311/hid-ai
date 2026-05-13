@@ -251,7 +251,10 @@ export default function ComputerVisionPage() {
             {image.instruction}
           </div>
 
-          <div className="relative aspect-video bg-[#181820] rounded-lg overflow-hidden border border-white/10 select-none">
+          <div
+            className="relative bg-[#181820] rounded-lg overflow-hidden border border-white/10 select-none"
+            style={{ aspectRatio: `${image.width || 640} / ${image.height || 480}` }}
+          >
             <svg
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
@@ -409,7 +412,12 @@ export default function ComputerVisionPage() {
             {CV_POLYGON_TARGET.instruction}
           </div>
 
-          <div className="relative aspect-video bg-[#181820] rounded-lg overflow-hidden border border-white/10 select-none">
+          <div
+            className="relative bg-[#181820] rounded-lg overflow-hidden border border-white/10 select-none"
+            style={{
+              aspectRatio: `${CV_POLYGON_TARGET.width || 640} / ${CV_POLYGON_TARGET.height || 480}`,
+            }}
+          >
             <svg
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
