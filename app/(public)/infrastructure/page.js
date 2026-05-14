@@ -33,7 +33,7 @@ export default function InfrastructurePage() {
               Une présence en Europe et en Afrique.
             </h2>
             <p className="text-base text-muted leading-relaxed">
-              Direction depuis la France, opérations sur trois pays africains.
+              Direction depuis de la France et des centres opérationnels dans trois pays africains.
             </p>
           </div>
 
