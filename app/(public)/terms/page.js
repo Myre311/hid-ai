@@ -13,8 +13,9 @@ const SECTIONS = [
       <>
         <LP>
           Les présentes Conditions Générales d'Utilisation (« CGU ») régissent l'accès et
-          l'utilisation de la plateforme HID AI, éditée par <strong>Hidea Solution</strong>
-          (ci-après « HID AI » ou « la Société »), accessible à l'adresse{" "}
+          l'utilisation de la plateforme HID AI, opérée par <strong>la plate-forme HID AI
+          et par la société Major Exchanges SAS</strong> (ci-après « HID AI » ou « la
+          Société »), accessible à l'adresse{" "}
           <a href="https://hid-ai.com" className="underline underline-offset-4 hover:text-accent">hid-ai.com</a>.
         </LP>
         <LP>
@@ -33,10 +34,12 @@ const SECTIONS = [
           <li><strong>Utilisateur</strong> : toute personne accédant à la plateforme HID AI.</li>
           <li><strong>Talent</strong> : personne physique inscrite en tant que candidat à
             l'évaluation et au déploiement en mission d'annotation IA.</li>
-          <li><strong>Client B2B</strong> : entreprise contractualisant avec Hidea Solution
-            pour la livraison de prestations d'entraînement IA.</li>
+          <li><strong>Client B2B</strong> : entreprise contractualisant avec la plate-forme
+            HID AI et avec la société Major Exchanges SAS pour la livraison de prestations
+            d'entraînement IA.</li>
           <li><strong>Plateforme</strong> : ensemble des services accessibles sur hid-ai.com,
-            incluant inscription, évaluation, dashboard, et prestations de Hidea Solution.</li>
+            incluant inscription, évaluation, dashboard, et prestations de la plate-forme
+            HID AI et de la société Major Exchanges SAS.</li>
         </LUL>
       </>
     ),
@@ -76,7 +79,7 @@ const SECTIONS = [
           L'Utilisateur est seul responsable de la confidentialité de ses identifiants et de
           toutes les activités effectuées depuis son compte. Toute utilisation frauduleuse
           doit être signalée immédiatement à{" "}
-          <a href="mailto:contact@hidea-solution.fr" className="underline underline-offset-4 hover:text-accent">contact@hidea-solution.fr</a>.
+          <a href="mailto:contact@hid-ai.com" className="underline underline-offset-4 hover:text-accent">contact@hid-ai.com</a>.
         </LP>
       </>
     ),
@@ -93,7 +96,8 @@ const SECTIONS = [
         </LP>
         <LP>
           Les résultats des tests sont confidentiels et ne sont visibles que par le Talent
-          concerné et les administrateurs de Hidea Solution. Toute tentative de fraude
+          concerné et les administrateurs de la plate-forme HID AI et de la société Major
+          Exchanges SAS. Toute tentative de fraude
           (utilisation d'outils tiers non autorisés, partage de réponses, multi-comptes)
           entraîne la suspension immédiate du compte.
         </LP>
@@ -111,9 +115,9 @@ const SECTIONS = [
       <>
         <LP>
           Les conditions commerciales (volume, fréquence, tarifs, SLA) des prestations
-          d'annotation et d'entraînement IA sont définies dans un contrat séparé entre Hidea
-          Solution et le Client B2B. Les CGU ne se substituent pas à ces dispositions
-          contractuelles.
+          d'annotation et d'entraînement IA sont définies dans un contrat séparé entre la
+          plate-forme HID AI / la société Major Exchanges SAS et le Client B2B. Les CGU
+          ne se substituent pas à ces dispositions contractuelles.
         </LP>
       </>
     ),
@@ -126,12 +130,13 @@ const SECTIONS = [
         <LP>
           L'ensemble des contenus de la plateforme (textes, images, vidéos, code, marques,
           logos) est protégé par le droit de la propriété intellectuelle et appartient à
-          Hidea Solution ou à ses partenaires.
+          la plate-forme HID AI et à la société Major Exchanges SAS, ou à leurs partenaires.
         </LP>
         <LP>
-          Les Talents conservent la propriété de leurs réponses aux tests. Hidea Solution
-          dispose d'un droit d'usage à des fins d'évaluation, d'amélioration des barèmes
-          de scoring, et de communication anonymisée auprès des Clients B2B.
+          Les Talents conservent la propriété de leurs réponses aux tests. Les équipes de
+          la plate-forme HID AI et de la société Major Exchanges SAS disposent d'un droit
+          d'usage à des fins d'évaluation, d'amélioration des barèmes de scoring, et de
+          communication anonymisée auprès des Clients B2B.
         </LP>
       </>
     ),
@@ -148,7 +153,8 @@ const SECTIONS = [
           ou de la perte de données résultant de causes extérieures à sa volonté.
         </LP>
         <LP>
-          La responsabilité de Hidea Solution ne peut être engagée pour des dommages indirects
+          La responsabilité de la plate-forme HID AI et de la société Major Exchanges SAS
+          ne peut être engagée pour des dommages indirects
           (perte de chiffre d'affaires, perte d'opportunité, atteinte à l'image).
         </LP>
       </>
@@ -175,7 +181,8 @@ const SECTIONS = [
     content: (
       <>
         <LP>
-          Hidea Solution se réserve le droit de modifier les présentes CGU à tout moment. Les
+          Les éditeurs de la plate-forme HID AI et de la société Major Exchanges SAS se
+          réservent le droit de modifier les présentes CGU à tout moment. Les
           modifications prennent effet à compter de leur publication sur le site. Les Utilisateurs
           sont informés par notification en cas de modification substantielle. La poursuite de
           l'utilisation après publication vaut acceptation des nouvelles CGU.
@@ -191,7 +198,8 @@ const SECTIONS = [
         <LP>
           Les présentes CGU sont régies par le droit français. Tout litige relatif à leur
           interprétation ou à leur exécution relève de la compétence exclusive des tribunaux
-          français du ressort du siège social de Hidea Solution, après tentative de résolution
+          français du ressort du siège social de la société Major Exchanges SAS (Toulouse),
+          après tentative de résolution
           amiable.
         </LP>
       </>

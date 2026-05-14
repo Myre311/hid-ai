@@ -14,7 +14,8 @@ const SECTIONS = [
         <LP>
           Le Règlement Général sur la Protection des Données (RGPD, en vigueur depuis le
           25 mai 2018) garantit à chaque résident de l'Union européenne un ensemble de
-          droits sur ses données personnelles. Hidea Solution s'engage à respecter ces droits
+          droits sur ses données personnelles. Les équipes de la plate-forme HID AI et de
+          la société Major Exchanges SAS s'engagent à respecter ces droits
           dans le délai légal d'un mois maximum à compter de la réception d'une demande
           recevable.
         </LP>
@@ -36,9 +37,9 @@ const SECTIONS = [
         </LP>
         <LP>
           <strong>Comment exercer ?</strong> Envoyez un e-mail à{" "}
-          <a href="mailto:contact@hidea-solution.fr?subject=RGPD%20-%20Demande%20d'acc%C3%A8s"
+          <a href="mailto:contact@hid-ai.com?subject=RGPD%20-%20Demande%20d'acc%C3%A8s"
              className="underline underline-offset-4 hover:text-accent">
-            contact@hidea-solution.fr
+            contact@hid-ai.com
           </a>{" "}
           avec l'objet « RGPD — Demande d'accès », en précisant l'adresse e-mail de votre compte.
           Nous vous adresserons les données dans un format structuré (JSON) sous 30 jours.
@@ -76,9 +77,9 @@ const SECTIONS = [
         </LP>
         <LP>
           <strong>Comment exercer ?</strong> Envoyez un e-mail à{" "}
-          <a href="mailto:contact@hidea-solution.fr?subject=RGPD%20-%20Demande%20d'effacement"
+          <a href="mailto:contact@hid-ai.com?subject=RGPD%20-%20Demande%20d'effacement"
              className="underline underline-offset-4 hover:text-accent">
-            contact@hidea-solution.fr
+            contact@hid-ai.com
           </a>{" "}
           avec l'objet « RGPD — Demande d'effacement ». Nous traiterons votre demande sous
           30 jours et vous confirmerons par écrit les données effacées et celles éventuellement

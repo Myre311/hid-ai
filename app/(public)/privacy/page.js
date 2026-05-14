@@ -13,20 +13,18 @@ const SECTIONS = [
     content: (
       <>
         <LP>
-          Le responsable du traitement est <strong>Hidea Solution</strong>, éditeur de la
-          plateforme HID AI.
+          Le site <strong>hid-ai.com</strong> est édité par la direction du
+          projet HID AI, représentée par son représentant légal, M. Okandé
+          Lucien ODZALI. Les activités commerciales et de facturation du
+          projet HID AI sont opérées par la société Major Exchanges SAS.
         </LP>
         <LDL>
-          <LDLRow term="Société" value="Hidea Solution" />
-          <LDLRow term="Siège" value={<span>France <em className="text-muted">[adresse à confirmer]</em></span>} />
-          <LDLRow term="Contact" value={<a href="mailto:contact@hidea-solution.fr" className="underline underline-offset-4 hover:text-accent">contact@hidea-solution.fr</a>} />
-          <LDLRow term="Téléphone" value="+33 6 27 67 89 31" />
+          <LDLRow term="Raison sociale" value="Major Exchanges SAS" />
+          <LDLRow term="Forme juridique" value="SAS au capital de 5 000 €" />
+          <LDLRow term="Siège social" value="8 Esplanade Compans Caffarelli Regus, Immeuble Atria, 31000 Toulouse, France" />
+          <LDLRow term="Immatriculation" value="RCS Toulouse n° 912 094 760" />
+          <LDLRow term="Contact" value={<a href="mailto:contact@hid-ai.com" className="underline underline-offset-4 hover:text-accent">contact@hid-ai.com</a>} />
         </LDL>
-        <LP>
-          Pour toute demande relative à vos données, vous pouvez nous contacter à{" "}
-          <a href="mailto:contact@hidea-solution.fr" className="underline underline-offset-4 hover:text-accent">contact@hidea-solution.fr</a>
-          {" "}ou via notre <a href="/gdpr" className="underline underline-offset-4 hover:text-accent">page RGPD</a>.
-        </LP>
       </>
     ),
   },
@@ -99,7 +97,8 @@ const SECTIONS = [
       <>
         <LP>Vos données peuvent être communiquées à :</LP>
         <LUL>
-          <li>Les équipes opérationnelles de Hidea Solution (administrateurs habilités, opérateurs
+          <li>Les équipes opérationnelles de la plate-forme HID AI et de la société Major
+            Exchanges SAS (administrateurs habilités, opérateurs
             en Côte d'Ivoire, Maroc, Congo Brazzaville).</li>
           <li>Nos sous-traitants techniques (hébergement, base de données, envoi d'e-mails,
             authentification SMS) — voir section « Sous-traitants ».</li>
@@ -168,7 +167,7 @@ const SECTIONS = [
           Pour exercer ces droits, rendez-vous sur notre{" "}
           <a href="/gdpr" className="underline underline-offset-4 hover:text-accent">page RGPD</a>
           {" "}ou envoyez-nous un e-mail à{" "}
-          <a href="mailto:contact@hidea-solution.fr" className="underline underline-offset-4 hover:text-accent">contact@hidea-solution.fr</a>.
+          <a href="mailto:contact@hid-ai.com" className="underline underline-offset-4 hover:text-accent">contact@hid-ai.com</a>.
         </LP>
       </>
     ),
@@ -197,7 +196,8 @@ const SECTIONS = [
     content: (
       <>
         <LP>
-          Hidea Solution met en œuvre les mesures techniques et organisationnelles appropriées
+          Les équipes de la plate-forme HID AI et de la société Major Exchanges SAS
+          mettent en œuvre les mesures techniques et organisationnelles appropriées
           pour assurer la sécurité de vos données : chiffrement TLS en transit, isolation
           base de données via Row-Level Security (RLS), authentification à deux facteurs (SMS OTP),
           accès admin restreint par liste blanche, audit régulier des dépendances.

@@ -90,8 +90,8 @@ export function LegalLayout({ title, eyebrow, lastUpdated, sections = [] }) {
               <p className="t-small text-muted">
                 Pour toute question concernant ce document, contactez-nous à
                 {" "}
-                <a href="mailto:contact@hidea-solution.fr" className="text-foreground underline underline-offset-4 hover:text-accent">
-                  contact@hidea-solution.fr
+                <a href="mailto:contact@hid-ai.com" className="text-foreground underline underline-offset-4 hover:text-accent">
+                  contact@hid-ai.com
                 </a>
                 .
               </p>

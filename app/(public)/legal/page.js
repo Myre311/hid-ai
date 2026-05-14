@@ -12,17 +12,18 @@ const SECTIONS = [
     content: (
       <>
         <LP>
-          Le site <strong>hid-ai.com</strong> est édité par la société <strong>Hidea Solution</strong>.
+          Le site <strong>hid-ai.com</strong> est édité par la direction du
+          projet HID AI, représentée par son représentant légal, M. Okandé
+          Lucien ODZALI. Les activités commerciales et de facturation du
+          projet HID AI sont opérées par la société Major Exchanges SAS.
         </LP>
         <LDL>
-          <LDLRow term="Raison sociale" value="Hidea Solution" />
-          <LDLRow term="Forme juridique" value={<span>SAS <em className="text-muted">[à confirmer]</em></span>} />
-          <LDLRow term="Siège social" value={<span>France <em className="text-muted">[adresse postale complète à confirmer]</em></span>} />
-          <LDLRow term="RCS / SIREN" value={<em className="text-muted">[à confirmer]</em>} />
-          <LDLRow term="N° TVA intracom." value={<em className="text-muted">[à confirmer]</em>} />
-          <LDLRow term="Directeur de la publication" value="Lucien Odzali, Président" />
-          <LDLRow term="Contact" value={<a href="mailto:contact@hidea-solution.fr" className="underline underline-offset-4 hover:text-accent">contact@hidea-solution.fr</a>} />
-          <LDLRow term="Téléphone" value="+33 6 27 67 89 31" />
+          <LDLRow term="Raison sociale" value="Major Exchanges SAS" />
+          <LDLRow term="Forme juridique" value="SAS au capital de 5 000 €" />
+          <LDLRow term="Siège social" value="8 Esplanade Compans Caffarelli Regus, Immeuble Atria, 31000 Toulouse, France" />
+          <LDLRow term="Immatriculation" value="RCS Toulouse n° 912 094 760" />
+          <LDLRow term="Directeur de la publication" value="Okandé Lucien Odzali" />
+          <LDLRow term="Contact" value={<a href="mailto:contact@hid-ai.com" className="underline underline-offset-4 hover:text-accent">contact@hid-ai.com</a>} />
         </LDL>
       </>
     ),
@@ -57,10 +58,12 @@ const SECTIONS = [
           maquettes, code) est protégé par le droit d'auteur, le droit des marques et le droit
           des bases de données. Toute reproduction, représentation, modification, publication,
           transmission ou exploitation, totale ou partielle, sans l'autorisation expresse écrite
-          de Hidea Solution est strictement interdite.
+          de la plate-forme HID AI et de la société Major Exchanges SAS est strictement
+          interdite.
         </LP>
         <LP>
-          La marque <strong>HID AI</strong> et le logo associé sont la propriété de Hidea Solution.
+          La marque <strong>HID AI</strong> et le logo associé sont la propriété de la
+          plate-forme HID AI et de la société Major Exchanges SAS.
         </LP>
       </>
     ),
@@ -71,8 +74,9 @@ const SECTIONS = [
     content: (
       <>
         <LP>
-          Le site peut contenir des liens vers des sites tiers. Hidea Solution n'exerce aucun
-          contrôle sur ces sites et décline toute responsabilité quant à leur contenu,
+          Le site peut contenir des liens vers des sites tiers. Les équipes de la
+          plate-forme HID AI et de la société Major Exchanges SAS n'exercent aucun contrôle
+          sur ces sites et déclinent toute responsabilité quant à leur contenu,
           leurs conditions d'utilisation ou leur politique de confidentialité.
         </LP>
       </>
@@ -84,8 +88,9 @@ const SECTIONS = [
     content: (
       <>
         <LP>
-          Hidea Solution s'efforce d'assurer l'exactitude et la mise à jour des informations
-          diffusées. Cependant, Hidea Solution ne peut garantir l'exactitude, la précision ou
+          Les équipes de la plate-forme HID AI et de la société Major Exchanges SAS
+          s'efforcent d'assurer l'exactitude et la mise à jour des informations diffusées.
+          Cependant, elles ne peuvent garantir l'exactitude, la précision ou
           l'exhaustivité de ces informations et décline toute responsabilité pour toute
           interruption du site, survenance de bugs, inexactitude ou omission, et tout dommage
           résultant d'une intrusion frauduleuse d'un tiers.
@@ -114,7 +119,7 @@ const SECTIONS = [
         <LP>
           Les présentes mentions légales sont régies par le droit français. En cas de litige et
           à défaut de résolution amiable, compétence est attribuée aux tribunaux compétents du
-          ressort du siège social de Hidea Solution.
+          ressort du siège social de la société Major Exchanges SAS (Toulouse).
         </LP>
       </>
     ),

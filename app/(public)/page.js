@@ -10,7 +10,7 @@ import { HomeFinalCTA } from "@/components/home/HomeFinalCTA";
 export const metadata = {
   title: "L'infrastructure humaine de l'IA, depuis l'Afrique",
   description:
-    "Hidea Solution opère HID AI : plateforme d'infrastructure IA reliant entreprises et talents africains certifiés.",
+    "HID AI : plateforme d'infrastructure IA reliant entreprises et talents africains certifiés.",
 };
 
 export default function HomePage() {
