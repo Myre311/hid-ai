@@ -36,12 +36,12 @@ export function HomeHero() {
           {/* Text column */}
           <div className="flex flex-col items-start gap-7 md:gap-9 max-w-2xl">
             <h1 className="t-h1 text-foreground">
-              L&rsquo;infrastructure humaine de l&rsquo;IA, depuis l&rsquo;Afrique.
+              Le moteur humain de l&rsquo;IA d&rsquo;aujourd&rsquo;hui et de demain.
             </h1>
             <p className="t-lead">
-              HID AI relie les entreprises qui construisent l&rsquo;IA aux
-              talents africains certifiés qui produisent leurs données
-              d&rsquo;entraînement et opèrent leurs missions techniques.
+              Accélérez vos cycles d&rsquo;entraînement avec une data
+              d&rsquo;une précision absolue. HID AI transforme vos besoins
+              techniques complexes en succès opérationnels concrets.
             </p>
             <div className="flex flex-wrap gap-3">
               <Link
