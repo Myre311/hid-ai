@@ -52,14 +52,14 @@ export default function EntreprisesPage() {
       <section className="relative pt-32 pb-16 md:pb-20 bg-background">
         <Container className="flex flex-col gap-5 max-w-4xl">
           <p className="text-xs uppercase tracking-[0.22em] text-muted">
-            Pour les entreprises
+            Entreprises
           </p>
           <h1 className="t-h1">
             HID AI pour les entreprises
           </h1>
           <p className="t-lead max-w-2xl">
-            Deux services pour vos besoins IA. AI Data : production de
-            données d&rsquo;entraînement à grande échelle. Recrutement :
+            Deux services pour vos besoins IA. AI Data, production de
+            données d&rsquo;entraînement à grande échelle. Recrutement,
             accès direct à un vivier de talents certifiés.
           </p>
         </Container>

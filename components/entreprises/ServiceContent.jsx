@@ -23,41 +23,32 @@ export function ServiceContent({
   return (
     <div className="flex flex-col gap-16 md:gap-20">
       {/* 1. Détail service */}
-      <div className="grid md:grid-cols-[1.4fr_1fr] gap-10 md:gap-16 items-start">
-        <div className="flex flex-col gap-6">
-          <h3 className="t-h3">
-            {subtitle}
-          </h3>
-          <p className="t-lead max-w-xl">
-            {description}
-          </p>
+      <div className="flex flex-col gap-6 max-w-3xl">
+        <h3 className="t-h3">
+          {subtitle}
+        </h3>
+        <p className="t-lead">
+          {description}
+        </p>
 
-          {subservices.length > 0 && (
-            <ul className="flex flex-col gap-3 mt-2">
-              {subservices.map((s) => (
-                <li
-                  key={s}
-                  className="flex items-start gap-3 text-sm md:text-base text-foreground/90"
-                >
-                  <Check className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
-                  <span>{s}</span>
-                </li>
-              ))}
-            </ul>
-          )}
+        {subservices.length > 0 && (
+          <ul className="flex flex-col gap-3 mt-2">
+            {subservices.map((s) => (
+              <li
+                key={s}
+                className="flex items-start gap-3 text-sm md:text-base text-foreground/90"
+              >
+                <Check className="h-5 w-5 text-accent flex-shrink-0 mt-0.5" aria-hidden="true" />
+                <span>{s}</span>
+              </li>
+            ))}
+          </ul>
+        )}
 
-          <B2BTriggerButton className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
-            {ctaLabel}
-            <ArrowRight className="h-4 w-4" />
-          </B2BTriggerButton>
-        </div>
-
-        {/* Illustration descriptive — placeholder en attendant client */}
-        <div className="aspect-[4/5] md:aspect-auto md:h-full md:min-h-[24rem] bg-surface border border-border rounded-lg flex items-center justify-center p-8">
-          <span className="text-xs uppercase tracking-[0.2em] text-muted-strong text-center">
-            Illustration · à venir
-          </span>
-        </div>
+        <B2BTriggerButton className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200">
+          {ctaLabel}
+          <ArrowRight className="h-4 w-4" />
+        </B2BTriggerButton>
       </div>
 
       {/* 2. Bloc KYB — dupliqué dans chaque tab */}

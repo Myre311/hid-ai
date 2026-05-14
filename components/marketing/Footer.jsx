@@ -157,8 +157,8 @@ export function Footer() {
             <span>© 2026 HID AI. Tous droits réservés.</span>
           </div>
           <div className="text-center text-xs">
-            <a href="mailto:Contact@hid-ai.com" className="hover:text-foreground transition-colors">
-              Contact@hid-ai.com
+            <a href="mailto:contact@hid-ai.com" className="hover:text-foreground transition-colors">
+              contact@hid-ai.com
             </a>
           </div>
           <SocialLinks />
