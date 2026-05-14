@@ -16,7 +16,7 @@ const ENTRIES = [
     description: (
       <>
         Mise sur le marché de la Plateforme HID AI avec plus de 500 AI
-        Specialists & 50 AI Engineers
+        Specialists & 50 AI Engineers au lancement
         <Link
           href="/talents"
           className="text-accent hover:underline"
