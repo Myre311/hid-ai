@@ -20,7 +20,7 @@ export function TalentsSection() {
             </h2>
           </div>
           <p className="t-lead max-w-xl">
-Deux parcours selon votre profil : AI Specialist pour l&rsquo;annotation et le RLHF, AI Engineer pour les missions techniques avancées. Sans frais d&rsquo;inscription, paiement Mobile Money sous 5 minutes.
+Deux parcours selon votre profil : AI Specialist pour l&rsquo;annotation et le RLHF, AI Engineer pour les missions techniques avancées.
           </p>
         </div>
 

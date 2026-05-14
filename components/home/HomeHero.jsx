@@ -36,7 +36,7 @@ export function HomeHero() {
           {/* Text column */}
           <div className="flex flex-col items-start gap-7 md:gap-9 max-w-2xl">
             <h1 className="t-h1 text-foreground">
-              Le moteur humain de l&rsquo;IA d&rsquo;aujourd&rsquo;hui et de demain.
+              Le moteur humain de l&rsquo;IA d&rsquo;aujourd&rsquo;hui et de demain
             </h1>
             <p className="t-lead">
               Accélérez vos cycles d&rsquo;entraînement avec une data
