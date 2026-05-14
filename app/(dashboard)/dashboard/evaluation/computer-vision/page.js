@@ -505,6 +505,8 @@ export default function ComputerVisionPage() {
             frames={CV_TRACKING_GROUND_TRUTH.frames}
             annotations={trackingAnnotations}
             onChange={setTrackingAnnotations}
+            width={CV_TRACKING_GROUND_TRUTH.width || 640}
+            height={CV_TRACKING_GROUND_TRUTH.height || 360}
           />
         </div>
       )}

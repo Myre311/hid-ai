@@ -13,9 +13,11 @@ function getNormalized(e, rect) {
 }
 
 /**
- * @param {{ frames: Array<{ frameNumber: number, imagePath: string, isOcclusion: boolean }>, annotations: Record<number, { bbox: { x: number, y: number, w: number, h: number }, objectId: string }>, onChange: (annotations: Record<number, any>) => void }} props
+ * @param {{ frames: Array<{ frameNumber: number, imagePath: string, isOcclusion: boolean }>, annotations: Record<number, { bbox: { x: number, y: number, w: number, h: number }, objectId: string }>, onChange: (annotations: Record<number, any>) => void, width?: number, height?: number }} props
  */
-export function FrameSequenceAnnotator({ frames, annotations, onChange }) {
+export function FrameSequenceAnnotator({ frames, annotations, onChange, width = 640, height = 360 }) {
+  const W = width;
+  const H = height;
   const [currentFrame, setCurrentFrame] = useState(0);
   const [drawing, setDrawing] = useState(null);
 
@@ -116,11 +118,11 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange }) {
 
       {/* SVG canvas */}
       <div
-        className="relative bg-[#181820] rounded-lg overflow-hidden border border-white/10 select-none"
-        style={{ aspectRatio: "640 / 360" }}
+        className="relative bg-[#181820] rounded-lg overflow-hidden border border-white/10 select-none mx-auto"
+        style={{ aspectRatio: `${W} / ${H}`, maxHeight: "70vh", maxWidth: H > W ? "min(420px, 100%)" : "100%" }}
       >
         <svg
-          viewBox="0 0 640 360"
+          viewBox={`0 0 ${W} ${H}`}
           className="absolute inset-0 w-full h-full cursor-crosshair"
           style={{ touchAction: "none" }}
           onMouseDown={onMouseDown}
@@ -135,15 +137,14 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange }) {
             href={frame?.imagePath}
             x="0"
             y="0"
-            width="640"
-            height="360"
+            width={W}
+            height={H}
             preserveAspectRatio="xMidYMid slice"
           />
 
-          {/* Overlay piéton — sprite illustré choisi par la session */}
+          {/* Overlay piéton — sprite illustré (legacy : utilisé seulement si la séquence l'inclut) */}
           {frame?.personOverlay && (() => {
             const p = frame.personOverlay;
-            const W = 640, H = 360;
             const cx = p.x * W + (p.w * W) / 2;
             const top = p.y * H;
             const w = p.w * W;
@@ -156,7 +157,6 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange }) {
 
           {frame?.occluderOverlay && (() => {
             const o = frame.occluderOverlay;
-            const W = 640, H = 360;
             const p = frame.personOverlay;
             const cx = p.x * W + (p.w * W) / 2;
             const top = p.y * H;
@@ -187,10 +187,10 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange }) {
           {/* Existing annotation */}
           {annotated && (
             <rect
-              x={annotated.bbox.x * 640}
-              y={annotated.bbox.y * 360}
-              width={annotated.bbox.w * 640}
-              height={annotated.bbox.h * 360}
+              x={annotated.bbox.x * W}
+              y={annotated.bbox.y * H}
+              width={annotated.bbox.w * W}
+              height={annotated.bbox.h * H}
               fill="rgba(244,180,26,0.18)"
               stroke="#F4B41A"
               strokeWidth="1.5"
@@ -200,10 +200,10 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange }) {
           {/* Draft in progress */}
           {drawing && (
             <rect
-              x={drawing.x * 640}
-              y={drawing.y * 360}
-              width={drawing.w * 640}
-              height={drawing.h * 360}
+              x={drawing.x * W}
+              y={drawing.y * H}
+              width={drawing.w * W}
+              height={drawing.h * H}
               fill="rgba(244,180,26,0.10)"
               stroke="#F4B41A"
               strokeWidth="1.5"
