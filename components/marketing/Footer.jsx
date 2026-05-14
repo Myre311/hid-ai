@@ -154,10 +154,12 @@ export function Footer() {
           <div className="flex items-center gap-3">
             <Logo className="h-5 w-auto text-foreground" aria-label="HID AI" />
 
-            <span>© 2026 Hidea Solution. Tous droits réservés.</span>
+            <span>© 2026 HID AI. Tous droits réservés.</span>
           </div>
           <div className="text-center text-xs">
-            Lucien Odzali · +33 6 27 67 89 31 · contact@hidea-solution.fr
+            <a href="mailto:Contact@HID-AI.com" className="hover:text-foreground transition-colors">
+              Contact@HID-AI.com
+            </a>
           </div>
           <SocialLinks />
         </div>
