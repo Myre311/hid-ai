@@ -17,15 +17,24 @@ export default function PhoneSignupPage() {
             <ArrowLeft className="h-4 w-4" />
             Choix du profil
           </Link>
+          <p className="text-xs uppercase tracking-[0.18em] text-accent font-medium">
+            Inscription · Étape 1 sur 3
+          </p>
           <h1 className="t-h3">
-            Vérifions votre numéro.
+            Création de compte — vérifiez votre numéro.
           </h1>
           <p className="text-base text-muted leading-relaxed">
-            Nous envoyons un code à 6 chiffres par SMS. Pas de mot de passe,
-            pas de spam.
+            Nous envoyons un code à 6 chiffres par SMS pour confirmer votre
+            inscription. Pas de mot de passe, pas de spam.
           </p>
         </div>
         <PhoneForm />
+        <p className="text-sm text-muted text-center">
+          Vous avez déjà un compte ?{" "}
+          <Link href="/login" className="text-foreground underline-offset-4 hover:underline">
+            Se connecter
+          </Link>
+        </p>
       </div>
     </AuthShell>
   );
