@@ -1,6 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { Section } from "@/components/ui/Section";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Mail, MapPin, Clock } from "lucide-react";
 import { ContactForm } from "@/components/contact/ContactForm";
 
 export const metadata = {
@@ -12,19 +12,13 @@ const INFO = [
   {
     icon: Mail,
     label: "E-mail",
-    value: "contact@hidea-solution.fr",
-    href: "mailto:contact@hidea-solution.fr",
-  },
-  {
-    icon: Phone,
-    label: "Téléphone",
-    value: "+33 6 27 67 89 31",
-    href: "tel:+33627678931",
+    value: "contact@hid-ai.com",
+    href: "mailto:contact@hid-ai.com",
   },
   {
     icon: MapPin,
     label: "Siège",
-    value: "France",
+    value: "94 Rue Paradis, 13006 Marseille",
     sub: "Opérateurs en Côte d'Ivoire, Maroc, Congo Brazzaville",
   },
   {

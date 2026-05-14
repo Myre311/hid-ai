@@ -150,7 +150,7 @@ export function ContactForm() {
           required
         />
         <span>
-          J'accepte que mes données soient traitées par Hidea Solution afin de répondre à
+          J'accepte que mes données soient traitées par HID AI afin de répondre à
           ma demande, conformément à la{" "}
           <a href="/privacy" className="text-foreground underline underline-offset-4 hover:text-accent">
             politique de confidentialité
