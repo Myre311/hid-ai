@@ -11,7 +11,7 @@ export function EntreprisesSection() {
         <div className="grid md:grid-cols-[1fr_1.4fr] gap-8 md:gap-16 items-end">
           <div className="flex flex-col gap-4">
             <p className="text-xs uppercase tracking-[0.22em] text-muted">
-              Pour les entreprises
+              Entreprises
             </p>
             <h2 className="t-h2">
               HID AI pour les entreprises

@@ -192,3 +192,18 @@ body {
 .hid-phone-input .PhoneInputInput::placeholder {
   color: var(--muted-strong);
 }
+
+/* PartnersMarquee — défilement continu non-interruptible */
+@keyframes hid-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.hid-marquee-track {
+  animation: hid-marquee 45s linear infinite;
+  will-change: transform;
+  pointer-events: none;
+  user-select: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hid-marquee-track { animation: none; }
+}

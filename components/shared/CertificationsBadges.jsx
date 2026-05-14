@@ -1,16 +1,16 @@
 import { Container } from "@/components/ui/Container";
 
 const ITEMS = [
-  { label: "RGPD" },
-  { label: "ISO 27001" },
-  { label: "AICPA SOC 2" },
-  { label: "AES-256" },
-  { label: "mTLS 1.3" },
+  { label: "SOC 2",       sublabel: "Type II" },
+  { label: "ISO 27001",   sublabel: "Certified" },
+  { label: "HIPAA",       sublabel: "Healthcare Ready" },
+  { label: "RGPD / GDPR", sublabel: "EU Compliant" },
+  { label: "AES-256",     sublabel: "At Rest" },
+  { label: "TLS",         sublabel: "In Transit" },
 ];
 
 /**
- * Bandeau de certifications, monochrome blanc sur fond noir.
- * Texte uppercase tracking large + grille de logos.
+ * Bandeau de certifications, texte seul (pas de logos).
  */
 export function CertificationsBadges() {
   return (
@@ -22,17 +22,14 @@ export function CertificationsBadges() {
           pratiques de l&rsquo;industrie suivants
         </p>
 
-        <ul className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-x-6 gap-y-8 w-full place-items-center">
           {ITEMS.map((item) => (
-            <li
-              key={item.label}
-              className="text-foreground/70 hover:text-foreground transition-colors duration-200"
-            >
-              <span className="inline-flex items-center gap-2.5 px-4 py-2 border border-foreground/15 rounded-md">
-                <span aria-hidden="true" className="inline-block h-1.5 w-1.5 rounded-full bg-current" />
-                <span className="text-xs md:text-sm tracking-[0.18em] uppercase font-medium">
-                  {item.label}
-                </span>
+            <li key={item.label} className="flex flex-col items-center gap-1.5 text-center">
+              <span className="text-sm md:text-base tracking-[0.14em] uppercase font-semibold text-foreground/90">
+                {item.label}
+              </span>
+              <span className="text-[10px] md:text-[11px] tracking-[0.18em] uppercase text-foreground/50">
+                {item.sublabel}
               </span>
             </li>
           ))}

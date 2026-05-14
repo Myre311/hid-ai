@@ -1,12 +1,11 @@
 import { Container } from "@/components/ui/Container";
 
 const LEADERS = [
-  { name: "ATELIER" },
-  { name: "NEXUS" },
-  { name: "LATTICE" },
-  { name: "PRISM" },
-  { name: "AXIOM" },
-  { name: "VERTEX" },
+  { name: "RGPD" },
+  { name: "ISO 27001" },
+  { name: "AICPA SOC 2" },
+  { name: "AES-256" },
+  { name: "MTLS 1.3" },
 ];
 
 /**
@@ -50,7 +49,7 @@ function LeaderPastille({ name }) {
   return (
     <span
       aria-label={name}
-      className="snap-start inline-flex items-center gap-3 px-5 h-12 rounded-full border border-white/15 text-foreground/80 hover:text-foreground hover:border-white/35 transition-colors duration-200 select-none whitespace-nowrap flex-shrink-0"
+      className="snap-start inline-flex items-center gap-3 px-2 h-12 text-foreground/80 hover:text-foreground transition-colors duration-200 select-none whitespace-nowrap flex-shrink-0"
     >
       <span aria-hidden="true" className="inline-block h-2 w-2 rounded-full bg-current" />
       <span className="text-xs md:text-sm tracking-[0.22em] font-medium">{name}</span>

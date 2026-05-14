@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# YOLO model weights (téléchargés à la demande)
+yolov8n.pt
+yolov8m.pt

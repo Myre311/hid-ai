@@ -11,9 +11,14 @@ export function TalentsSection() {
     <Section id="talents" className="bg-surface/30">
       <Container className="flex flex-col gap-12">
         <div className="grid md:grid-cols-[1fr_1.4fr] gap-8 md:gap-16 items-end">
-          <h2 className="t-h2">
-            HID AI pour les talents
-          </h2>
+          <div className="flex flex-col gap-4">
+            <p className="text-xs uppercase tracking-[0.22em] text-muted">
+              Talents
+            </p>
+            <h2 className="t-h2">
+              HID AI pour les talents
+            </h2>
+          </div>
           <p className="t-lead max-w-xl">
 Deux parcours selon votre profil : AI Specialist pour l&rsquo;annotation et le RLHF, AI Engineer pour les missions techniques avancées. Sans frais d&rsquo;inscription, paiement Mobile Money sous 5 minutes.
           </p>
