@@ -60,42 +60,46 @@ export function PartnersMarquee() {
       className="relative overflow-hidden bg-background py-12 md:py-16"
       aria-label="Entreprises partenaires"
     >
-      <div className="relative overflow-hidden">
-        <div className="hid-marquee-track flex items-center gap-16 md:gap-24 w-max">
+      <div className="relative overflow-hidden" style={{ minHeight: "5rem" }}>
+        <div className="hid-marquee-track flex items-center gap-10 md:gap-24 w-max">
           {doubled.map((p, i) => (
             <PartnerLogo key={`${p.name}-${i}`} partner={p} />
           ))}
         </div>
 
         {/* Edge fades */}
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-background to-transparent z-10" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-background to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10" />
       </div>
     </section>
   );
 }
 
 function PartnerLogo({ partner }) {
-  if (partner.src) {
-    return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={partner.src}
-        alt={partner.alt ?? partner.name}
-        loading="lazy"
-        draggable="false"
-        className="h-14 md:h-16 w-auto max-w-[220px] object-contain opacity-75 select-none flex-shrink-0"
-      />
-    );
-  }
-
+  // Wrapper avec largeur fixe → la track conserve sa largeur même si les
+  // images externes mettent du temps à charger ou échouent sur mobile.
   return (
-    <span
-      aria-label={partner.name}
-      className="inline-flex items-center gap-2 text-foreground/70 select-none whitespace-nowrap flex-shrink-0"
+    <div
+      className="flex-shrink-0 flex items-center justify-center h-14 md:h-16 w-[120px] md:w-[180px]"
+      aria-label={partner.alt ?? partner.name}
     >
-      <span aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-full border border-current" />
-      <span className="text-sm tracking-[0.2em] font-medium">{partner.name}</span>
-    </span>
+      {partner.src ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={partner.src}
+          alt={partner.alt ?? partner.name}
+          loading="eager"
+          decoding="async"
+          draggable="false"
+          referrerPolicy="no-referrer"
+          className="max-h-full max-w-full object-contain opacity-75 select-none"
+        />
+      ) : (
+        <span className="inline-flex items-center gap-2 text-foreground/70 select-none whitespace-nowrap">
+          <span aria-hidden="true" className="inline-block h-2.5 w-2.5 rounded-full border border-current" />
+          <span className="text-sm tracking-[0.2em] font-medium">{partner.name}</span>
+        </span>
+      )}
+    </div>
   );
 }

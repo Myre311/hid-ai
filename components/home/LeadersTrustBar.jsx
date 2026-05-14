@@ -28,17 +28,19 @@ export function LeadersTrustBar() {
           </h2>
         </div>
 
-        <div className="relative">
+        <div className="relative -mx-4 md:mx-0">
           <div
-            className="flex gap-10 md:gap-14 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory [-ms-overflow-style:none] [scrollbar-width:thin]"
+            className="hid-trust-scroll flex gap-8 md:gap-14 overflow-x-auto pb-3 px-4 md:px-0 scroll-smooth snap-x snap-proximity [touch-action:pan-x]"
           >
             {LEADERS.map((l) => (
               <LeaderPastille key={l.name} name={l.name} />
             ))}
+            {/* Spacer pour permettre le scroll complet jusqu'au dernier item */}
+            <div className="flex-shrink-0 w-4 md:w-0" aria-hidden="true" />
           </div>
 
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-8 md:w-16 bg-gradient-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-8 md:w-16 bg-gradient-to-l from-background to-transparent" />
         </div>
       </Container>
     </section>

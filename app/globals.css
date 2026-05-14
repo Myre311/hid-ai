@@ -195,15 +195,33 @@ body {
 
 /* PartnersMarquee — défilement continu non-interruptible */
 @keyframes hid-marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-50%, 0, 0); }
 }
 .hid-marquee-track {
-  animation: hid-marquee 45s linear infinite;
+  animation: hid-marquee 20s linear infinite;
   will-change: transform;
   pointer-events: none;
   user-select: none;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+@media (max-width: 768px) {
+  .hid-marquee-track { animation-duration: 16s; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hid-marquee-track { animation: none; }
+}
+
+/* LeadersTrustBar — scroll horizontal mobile fluide */
+.hid-trust-scroll {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+.hid-trust-scroll::-webkit-scrollbar {
+  height: 4px;
+}
+.hid-trust-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
 }
