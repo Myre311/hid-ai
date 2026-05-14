@@ -211,6 +211,51 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange, width = 
             </text>
           </g>
 
+          {/* Repère cible sur frame 1 SEULEMENT — pour identifier visuellement person-1.
+              Affiche un rect cyan pointillé légèrement élargi autour du sujet attendu.
+              Ne donne PAS la bbox exacte (élargie de 6 % en x et 4 % en y) pour ne pas
+              transformer le test en simple décalque. */}
+          {currentFrame === 0 && frame?.expectedBbox && (() => {
+            const e = frame.expectedBbox;
+            const pad = 0.03;
+            const rx = Math.max(0, e.x - pad) * W;
+            const ry = Math.max(0, e.y - pad / 2) * H;
+            const rw = Math.min(1 - rx / W, e.w + pad * 2) * W;
+            const rh = Math.min(1 - ry / H, e.h + pad) * H;
+            return (
+              <g>
+                <rect
+                  x={rx}
+                  y={ry}
+                  width={rw}
+                  height={rh}
+                  fill="rgba(34,211,238,0.05)"
+                  stroke="#22D3EE"
+                  strokeWidth="2"
+                  strokeDasharray="6 4"
+                />
+                <rect
+                  x={rx}
+                  y={Math.max(0, ry - 22)}
+                  width={Math.min(160, rw)}
+                  height={20}
+                  fill="#22D3EE"
+                  rx={2}
+                />
+                <text
+                  x={rx + 6}
+                  y={Math.max(14, ry - 7)}
+                  fontFamily="monospace"
+                  fontSize={11}
+                  fill="#0a0a12"
+                  fontWeight="700"
+                >
+                  person-1 · cible
+                </text>
+              </g>
+            );
+          })()}
+
           {/* Existing annotation */}
           {annotated && (
             <rect

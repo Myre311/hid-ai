@@ -495,11 +495,22 @@ export default function ComputerVisionPage() {
       {/* --- Tracking mode --- */}
       {mode === MODES.tracking && (
         <div className="flex flex-col gap-4">
-          <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85">
-            <strong className="text-accent">Consigne :</strong>{" "}
-            {CV_TRACKING_GROUND_TRUTH.videoContext} — Dessinez une bounding box
-            sur la personne (<code className="text-accent">person-1</code>) pour
-            chaque frame. Les frames en orange indiquent une occlusion partielle.
+          <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85 space-y-1.5">
+            <div>
+              <strong className="text-accent">Consigne :</strong>{" "}
+              {CV_TRACKING_GROUND_TRUTH.videoContext} — Tracez une bounding box
+              serrée autour de la personne (<code className="text-accent">person-1</code>)
+              sur chaque frame.
+            </div>
+            <div className="text-xs text-foreground/60">
+              Sur la <strong className="text-foreground/85">frame 1</strong>, un repère{" "}
+              <span className="inline-block px-1.5 py-0.5 rounded bg-cyan-400/15 border border-cyan-400/40 text-cyan-300 text-[10px] font-mono">
+                cyan pointillé
+              </span>{" "}
+              encadre la personne à tracker — c&apos;est elle, et seulement elle, que vous devez
+              suivre sur les 49 frames suivantes. Le repère disparaît dès la frame 2 :
+              à vous de la suivre à l&apos;œil.
+            </div>
           </div>
           <FrameSequenceAnnotator
             frames={CV_TRACKING_GROUND_TRUTH.frames}
