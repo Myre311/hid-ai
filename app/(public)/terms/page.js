@@ -133,10 +133,9 @@ const SECTIONS = [
           la plate-forme HID AI et à la société Major Exchanges SAS, ou à leurs partenaires.
         </LP>
         <LP>
-          Les Talents conservent la propriété de leurs réponses aux tests. Les équipes de
-          la plate-forme HID AI et de la société Major Exchanges SAS disposent d'un droit
-          d'usage à des fins d'évaluation, d'amélioration des barèmes de scoring, et de
-          communication anonymisée auprès des Clients B2B.
+          Les Talents conservent la propriété de leurs réponses aux tests. La plate-forme
+          HID AI dispose d'un droit d'usage à des fins d'évaluation, d'amélioration des
+          barèmes de scoring, et de communication auprès des Clients B2B.
         </LP>
       </>
     ),
