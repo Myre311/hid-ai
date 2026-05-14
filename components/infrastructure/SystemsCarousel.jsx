@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, MoveHorizontal } from "lucide-react";
 import { useRef } from "react";
 import {
   FlowManagerIcon,
@@ -159,6 +159,19 @@ export function SystemsCarousel() {
             </motion.article>
           );
         })}
+      </div>
+
+      {/* Hint scroll mobile uniquement */}
+      <div className="md:hidden mt-5 px-6 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.18em] text-foreground/45">
+        <motion.span
+          aria-hidden="true"
+          animate={{ x: [-4, 4, -4] }}
+          transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+          className="inline-flex"
+        >
+          <MoveHorizontal className="h-4 w-4" />
+        </motion.span>
+        <span>Glissez pour voir plus</span>
       </div>
 
       <style jsx>{`

@@ -48,40 +48,32 @@ const ROLE_TABS = [
 
 function RoleContent({ subtitle, description, skills, ctaLabel, metierKey }) {
   return (
-    <div className="grid md:grid-cols-[1.4fr_1fr] gap-10 md:gap-16 items-start">
-      <div className="flex flex-col gap-6">
-        <h3 className="font-sans text-3xl md:text-4xl tracking-tight leading-[1.05]">
-          {subtitle}
-        </h3>
-        <p className="t-lead max-w-xl">
-          {description}
-        </p>
+    <div className="flex flex-col gap-6 max-w-3xl">
+      <h3 className="font-sans text-3xl md:text-4xl tracking-tight leading-[1.05]">
+        {subtitle}
+      </h3>
+      <p className="t-lead">
+        {description}
+      </p>
 
-        <ul className="flex flex-wrap gap-2 mt-2">
-          {skills.map((s) => (
-            <li
-              key={s}
-              className="inline-flex items-center text-xs px-3 h-8 rounded-full border border-accent/40 bg-accent-muted/30 text-accent"
-            >
-              {s}
-            </li>
-          ))}
-        </ul>
+      <ul className="flex flex-wrap gap-2 mt-2">
+        {skills.map((s) => (
+          <li
+            key={s}
+            className="inline-flex items-center text-xs px-3 h-8 rounded-full border border-accent/40 bg-accent-muted/30 text-accent"
+          >
+            {s}
+          </li>
+        ))}
+      </ul>
 
-        <TalentTriggerButton
-          presetMetier={metierKey}
-          className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
-        >
-          {ctaLabel}
-          <ArrowRight className="h-4 w-4" />
-        </TalentTriggerButton>
-      </div>
-
-      <div className="aspect-[4/5] md:aspect-auto md:h-full md:min-h-[24rem] bg-surface border border-border rounded-lg flex items-center justify-center p-8">
-        <span className="text-xs uppercase tracking-[0.2em] text-muted-strong text-center">
-          Illustration · à venir
-        </span>
-      </div>
+      <TalentTriggerButton
+        presetMetier={metierKey}
+        className="inline-flex items-center gap-2 self-start mt-2 h-11 rounded-md bg-black border border-white/25 px-5 text-sm font-medium text-foreground hover:border-white/60 hover:bg-surface-elevated transition-all duration-200"
+      >
+        {ctaLabel}
+        <ArrowRight className="h-4 w-4" />
+      </TalentTriggerButton>
     </div>
   );
 }
