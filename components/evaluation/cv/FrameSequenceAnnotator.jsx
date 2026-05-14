@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { TRACKING_SPRITES } from "@/lib/evaluation/data/cv-tracking-sprites";
 
@@ -18,12 +18,20 @@ function getNormalized(e, rect) {
 export function FrameSequenceAnnotator({ frames, annotations, onChange, width = 640, height = 360 }) {
   const W = width;
   const H = height;
+  const [imgError, setImgError] = useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
   const [currentFrame, setCurrentFrame] = useState(0);
   const [drawing, setDrawing] = useState(null);
 
   const frame = frames[currentFrame];
   const annotated = annotations[currentFrame];
   const annotatedCount = Object.keys(annotations).length;
+
+  // Reset état image quand on change de frame
+  useEffect(() => {
+    setImgError(false);
+    setImgLoaded(false);
+  }, [frame?.imagePath]);
 
   // --- Drawing handlers (mouse + touch) ---
 
@@ -121,6 +129,29 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange, width = 
         className="relative bg-[#181820] rounded-lg overflow-hidden border border-white/10 select-none mx-auto"
         style={{ aspectRatio: `${W} / ${H}`, maxHeight: "70vh", maxWidth: H > W ? "min(420px, 100%)" : "100%" }}
       >
+        {/* Image vidéo en HTML <img> — compat universelle, onError fiable */}
+        {frame?.imagePath && !imgError && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={frame.imagePath}
+            alt={`Frame ${frame.frameNumber}`}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgError(true)}
+            draggable={false}
+          />
+        )}
+        {!imgLoaded && !imgError && (
+          <div className="absolute inset-0 flex items-center justify-center text-foreground/50 text-xs">
+            Chargement…
+          </div>
+        )}
+        {imgError && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center text-red-400 text-xs gap-1 p-3 text-center">
+            <span>⚠️ Image introuvable</span>
+            <code className="text-[10px] text-red-300/70">{frame?.imagePath}</code>
+          </div>
+        )}
         <svg
           viewBox={`0 0 ${W} ${H}`}
           className="absolute inset-0 w-full h-full cursor-crosshair"
@@ -133,14 +164,6 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange, width = 
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
-          <image
-            href={frame?.imagePath}
-            x="0"
-            y="0"
-            width={W}
-            height={H}
-            preserveAspectRatio="xMidYMid slice"
-          />
 
           {/* Overlay piéton — sprite illustré (legacy : utilisé seulement si la séquence l'inclut) */}
           {frame?.personOverlay && (() => {
