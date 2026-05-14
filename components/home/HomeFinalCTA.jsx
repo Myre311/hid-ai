@@ -27,7 +27,7 @@ export function HomeFinalCTA() {
           <DualCTABlock
             eyebrow="Pour les talents"
             title="Construisez une carrière dans l'IA."
-            subtext="Missions internationales, CV basée sur scoring dynamique, formation continue."
+            subtext="Missions internationales, CV basé sur scoring dynamique, formation continue."
             variant="secondary"
             ctaSlot={
               <TalentTriggerButton className="inline-flex items-center gap-2 mt-auto self-start h-11 rounded-md px-5 text-sm font-medium transition-colors bg-black text-foreground border border-white/25 hover:border-white/60 hover:bg-surface-elevated">
