@@ -124,10 +124,14 @@ export function FrameSequenceAnnotator({ frames, annotations, onChange, width = 
         </span>
       </div>
 
-      {/* SVG canvas */}
+      {/* SVG canvas — portrait limité en largeur, paysage pleine largeur */}
       <div
         className="relative bg-[#181820] rounded-lg overflow-hidden border border-white/10 select-none mx-auto"
-        style={{ aspectRatio: `${W} / ${H}`, maxHeight: "70vh", maxWidth: H > W ? "min(420px, 100%)" : "100%" }}
+        style={{
+          width: H > W ? "min(360px, 100%)" : "100%",
+          aspectRatio: `${W} / ${H}`,
+          maxHeight: "70vh",
+        }}
       >
         {/* Image vidéo en HTML <img> — compat universelle, onError fiable */}
         {frame?.imagePath && !imgError && (
