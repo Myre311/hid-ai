@@ -12,7 +12,7 @@ import { otpSchema } from "@/lib/utils/validation";
 const RESEND_AFTER_S = 30;
 
 /**
- * VerifyForm — 6-digit OTP entry tied to the phone stored in authStore.
+ * VerifyForm — 6-digit OTP entry tied to the email stored in authStore.
  * Calls /api/auth/verify-otp; on success route directement vers /dashboard.
  *
  * Note : on n'envoie plus vers /signup/profile par défaut. L'inscription
@@ -22,7 +22,7 @@ const RESEND_AFTER_S = 30;
  */
 export function VerifyForm({ onSuccessRedirect = "/dashboard" }) {
   const router = useRouter();
-  const phone = useAuthStore((s) => s.phone);
+  const email = useAuthStore((s) => s.email);
   const branch = useAuthStore((s) => s.branch);
 
   const [code, setCode] = useState("");
@@ -41,8 +41,8 @@ export function VerifyForm({ onSuccessRedirect = "/dashboard" }) {
       setError("Code à 6 chiffres requis");
       return;
     }
-    if (!phone) {
-      setError("Téléphone manquant — recommencez l'inscription");
+    if (!email) {
+      setError("E-mail manquant — recommencez l'inscription");
       return;
     }
     setSubmitting(true);
@@ -50,18 +50,18 @@ export function VerifyForm({ onSuccessRedirect = "/dashboard" }) {
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, code: parsed.data, branch }),
+        body: JSON.stringify({ email, code: parsed.data, branch }),
       });
       const data = await res.json();
       if (!res.ok) {
         setError(data?.error ?? "Code invalide");
         toast.error("Code invalide", {
-          description: data?.error ?? "Vérifiez le code reçu par SMS.",
+          description: data?.error ?? "Vérifiez le code reçu par e-mail.",
         });
         setSubmitting(false);
         return;
       }
-      toast.success("Téléphone vérifié");
+      toast.success("E-mail vérifié");
       router.push(onSuccessRedirect);
     } catch {
       setError("Erreur réseau, réessayez.");
@@ -71,14 +71,14 @@ export function VerifyForm({ onSuccessRedirect = "/dashboard" }) {
   };
 
   const resend = async () => {
-    if (cooldown.running || resending || !phone) return;
+    if (cooldown.running || resending || !email) return;
     setResending(true);
     setError(null);
     try {
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, branch }),
+        body: JSON.stringify({ email, branch }),
       });
       const data = await res.json();
       if (!res.ok) {

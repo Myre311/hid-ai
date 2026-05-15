@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { AuthShell } from "@/components/auth/AuthShell";
-import { PhoneForm } from "@/components/auth/PhoneForm";
+import { EmailForm } from "@/components/auth/EmailForm";
 
-export const metadata = { title: "Vérification téléphone" };
+export const metadata = { title: "Vérification e-mail" };
 
-export default function PhoneSignupPage() {
+export default function EmailSignupPage() {
   return (
     <AuthShell>
       <div className="flex flex-col gap-8">
@@ -21,14 +21,14 @@ export default function PhoneSignupPage() {
             Inscription · Étape 1 sur 3
           </p>
           <h1 className="t-h3">
-            Création de compte — vérifiez votre numéro.
+            Création de compte — vérifiez votre e-mail.
           </h1>
           <p className="text-base text-muted leading-relaxed">
-            Nous envoyons un code à 6 chiffres par SMS pour confirmer votre
+            Nous envoyons un code à 6 chiffres par e-mail pour confirmer votre
             inscription. Pas de mot de passe, pas de spam.
           </p>
         </div>
-        <PhoneForm />
+        <EmailForm />
         <p className="text-sm text-muted text-center">
           Vous avez déjà un compte ?{" "}
           <Link href="/login" className="text-foreground underline-offset-4 hover:underline">

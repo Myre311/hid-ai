@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { phoneSchema, otpSchema } from "@/lib/utils/validation";
+import { authEmailSchema, otpSchema } from "@/lib/utils/validation";
 import { createServiceClient, createClient } from "@/lib/supabase/server";
 
 const bodySchema = z.object({
-  phone: phoneSchema,
+  email: authEmailSchema,
   code: otpSchema,
   branch: z.string().optional(),
 });
@@ -15,88 +15,55 @@ const DEV_BYPASS_CODE = "000000";
 const IS_PROD = process.env.NODE_ENV === "production";
 
 /**
- * Cherche une inscription_talent qui matche le téléphone, en essayant
- * plusieurs variantes (avec/sans "+", avec/sans espaces).
+ * Cherche la dernière inscription_talent associée à un email (match exact,
+ * normalisé lowercase comme à l'inscription).
  */
-async function findInscriptionByPhone(service, phone) {
-  const noPlus = phone.replace(/^\+/, "");
-  const variants = [
-    phone,
-    "+" + noPlus,
-    noPlus,
-    phone.replace(/\s+/g, ""),
-  ];
-  for (const p of variants) {
-    const { data } = await service
-      .from("inscriptions_talents")
-      .select("id, email, prenom, nom, telephone")
-      .eq("telephone", p)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (data) return data;
-  }
-  return null;
+async function findInscriptionByEmail(service, email) {
+  const { data } = await service
+    .from("inscriptions_talents")
+    .select("id, email, prenom, nom, telephone")
+    .ilike("email", email)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data || null;
 }
 
 /**
- * Crée (ou trouve) un user Supabase Auth via Admin API, puis génère un
- * magic link et verify côté serveur pour mint une session avec cookies.
- * Renvoie true si une session a été créée.
+ * Crée (ou retrouve) le user Supabase Auth via Admin API par email, génère
+ * un magic link et le vérifie côté serveur pour mint une session (cookies).
  */
-async function mintSessionForUser({ phone, email, metadata }) {
+async function mintSessionForEmail({ email, metadata }) {
   const service = createServiceClient();
 
-  // Trouver le user existant par email (auth.admin n'a pas de getByEmail direct
-  // — on liste et on filtre côté serveur).
   let authUser = null;
   try {
     const { data: list } = await service.auth.admin.listUsers({
       page: 1,
       perPage: 200,
     });
-    authUser = list?.users?.find(
-      (u) =>
-        (email && u.email === email) ||
-        (phone && (u.phone === phone || u.phone === phone.replace(/^\+/, "")))
-    );
+    authUser = list?.users?.find((u) => u.email === email);
   } catch {
     // ignored
   }
 
-  // Créer si pas existant
   if (!authUser) {
-    const createBody = email
-      ? { email, email_confirm: true, user_metadata: metadata }
-      : { phone: phone.replace(/^\+/, ""), phone_confirm: true, user_metadata: metadata };
     const { data: created, error: createErr } =
-      await service.auth.admin.createUser(createBody);
+      await service.auth.admin.createUser({
+        email,
+        email_confirm: true,
+        user_metadata: metadata,
+      });
     if (createErr) {
-      return {
-        ok: false,
-        error: `createUser failed: ${createErr.message}`,
-      };
+      return { ok: false, error: `createUser failed: ${createErr.message}` };
     }
     authUser = created.user;
   }
 
-  // Pour mint une session, on a besoin d'un email (les magic links Supabase
-  // sont email-based). Si on n'a pas d'email, on en fabrique un local.
-  let linkEmail = email || authUser?.email;
-  if (!linkEmail) {
-    linkEmail = `${phone.replace(/[^\d]/g, "")}@dev.hid-ai.local`;
-    // Met à jour l'auth user pour avoir cet email factice
-    await service.auth.admin.updateUserById(authUser.id, {
-      email: linkEmail,
-      email_confirm: true,
-    });
-  }
-
-  // Generate magic link → on récupère le hashed_token pour verifyOtp côté ssr
   const { data: linkData, error: linkErr } =
     await service.auth.admin.generateLink({
       type: "magiclink",
-      email: linkEmail,
+      email,
     });
   if (linkErr) {
     return { ok: false, error: `generateLink failed: ${linkErr.message}` };
@@ -106,7 +73,6 @@ async function mintSessionForUser({ phone, email, metadata }) {
     return { ok: false, error: "generateLink returned no token" };
   }
 
-  // verifyOtp avec le SSR client → set les cookies de session sur la response
   const ssr = createClient();
   const { error: verifyErr } = await ssr.auth.verifyOtp({
     type: "magiclink",
@@ -135,20 +101,19 @@ export async function POST(request) {
     );
   }
 
-  const { phone, code } = parsed.data;
+  const { email, code } = parsed.data;
   const service = createServiceClient();
 
   // ─── DEV BYPASS ───────────────────────────────────────────────────────
-  // En dev, "000000" mint directement une session sans Twilio ni OTP réel.
+  // En dev, "000000" mint directement une session sans email ni OTP réel.
   if (!IS_PROD && code === DEV_BYPASS_CODE) {
-    const inscription = await findInscriptionByPhone(service, phone);
-    const result = await mintSessionForUser({
-      phone,
-      email: inscription?.email || null,
+    const inscription = await findInscriptionByEmail(service, email);
+    const result = await mintSessionForEmail({
+      email,
       metadata: {
         prenom: inscription?.prenom,
         nom: inscription?.nom,
-        phone,
+        email,
         inscription_talent_id: inscription?.id,
       },
     });
@@ -164,11 +129,10 @@ export async function POST(request) {
   }
 
   // ─── FLOW NORMAL ──────────────────────────────────────────────────────
-  // Latest active code for this phone
   const { data: row, error } = await service
     .from("otp_codes")
     .select("*")
-    .eq("phone", phone)
+    .eq("email", email)
     .is("consumed_at", null)
     .order("created_at", { ascending: false })
     .limit(1)
@@ -203,15 +167,13 @@ export async function POST(request) {
     .update({ consumed_at: new Date().toISOString() })
     .eq("id", row.id);
 
-  // Mint la session Supabase (même mécanisme qu'en dev — propre)
-  const inscription = await findInscriptionByPhone(service, phone);
-  const result = await mintSessionForUser({
-    phone,
-    email: inscription?.email || null,
+  const inscription = await findInscriptionByEmail(service, email);
+  const result = await mintSessionForEmail({
+    email,
     metadata: {
       prenom: inscription?.prenom,
       nom: inscription?.nom,
-      phone,
+      email,
       inscription_talent_id: inscription?.id,
     },
   });

@@ -18,14 +18,14 @@ const OPTIONS = [
     Icon: Sparkles,
     title: "AI Specialist",
     body: "Annotation, labellisation, RLHF. Démarrez sans prérequis technique avancé. Progression débloquée par le Flow Manager.",
-    next: "/signup/phone",
+    next: "/signup/email",
   },
   {
     id: "engineer",
     Icon: Code2,
     title: "AI Engineer",
     body: "Missions techniques avancées en NLP, vision, optimisation. Passez l’évaluation du Chatbot Gatekeeper.",
-    next: "/signup/phone",
+    next: "/signup/email",
   },
 ];
 

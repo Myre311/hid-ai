@@ -49,7 +49,7 @@ export function BusinessForm() {
   const router = useRouter();
   const draft = useAuthStore((s) => s.businessDraft);
   const patch = useAuthStore((s) => s.patchBusinessDraft);
-  const setPhone = useAuthStore((s) => s.setPhone);
+  const setEmail = useAuthStore((s) => s.setEmail);
 
   const [step, setStep] = useState(0);
   const [serverError, setServerError] = useState(null);
@@ -76,7 +76,7 @@ export function BusinessForm() {
           onBack={() => setStep(0)}
           onSubmit={(values) => {
             patch(values);
-            setPhone(values.phone);
+            setEmail(values.email);
             setStep(2);
           }}
           otpSent={otpSent}
@@ -200,7 +200,7 @@ function ContactOtpStep({
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: parsed.data.phone, branch: "business" }),
+        body: JSON.stringify({ email: parsed.data.email, branch: "business" }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -226,7 +226,7 @@ function ContactOtpStep({
       const res = await fetch("/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, code: parsed.data, branch: "business" }),
+        body: JSON.stringify({ email, code: parsed.data, branch: "business" }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -241,7 +241,7 @@ function ContactOtpStep({
 
   const next = () => {
     if (!otpVerified) {
-      setError("Vérifiez votre numéro avant de continuer.");
+      setError("Vérifiez votre e-mail avant de continuer.");
       return;
     }
     onSubmit({ email, phone });
@@ -283,8 +283,15 @@ function ContactOtpStep({
       {otpSent && !otpVerified && (
         <div className="flex flex-col gap-4">
           <p className="text-sm text-muted text-center">
-            Code envoyé. Valide {expiry.display}.
+            Code envoyé par e-mail. Valide {expiry.display}.
           </p>
+          {process.env.NODE_ENV !== "production" && (
+            <p className="text-xs text-accent/85 text-center bg-accent/10 border border-accent/30 rounded-md px-3 py-2">
+              Mode dev — entrez{" "}
+              <code className="font-mono bg-black/30 px-1 py-0.5 rounded">000000</code>{" "}
+              pour bypass l&rsquo;OTP
+            </p>
+          )}
           <OtpInput
             length={6}
             value={code}
@@ -307,7 +314,7 @@ function ContactOtpStep({
 
       {otpVerified && (
         <p className="text-sm text-success">
-          Numéro vérifié. Vous pouvez continuer.
+          E-mail vérifié. Vous pouvez continuer.
         </p>
       )}
 

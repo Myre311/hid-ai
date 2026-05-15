@@ -2,34 +2,21 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import dynamic from "next/dynamic";
 import { toast } from "sonner";
 import { useAuthStore } from "@/stores/authStore";
 import { Button } from "@/components/ui/Button";
-import { phoneSchema } from "@/lib/utils/validation";
-
-const PhoneInput = dynamic(
-  () => import("react-phone-number-input").then((m) => m.default),
-  { ssr: false, loading: () => <PhoneInputSkeleton /> }
-);
-
-function PhoneInputSkeleton() {
-  return <div className="h-11 rounded-md bg-surface border border-border animate-pulse" />;
-}
+import { authEmailSchema } from "@/lib/utils/validation";
 
 /**
- * PhoneForm — collects a phone number, validates E.164 via Zod,
- * fires send-otp API, then routes to /signup/verify.
+ * EmailForm — collecte une adresse e-mail, valide, déclenche send-otp,
+ * puis route vers /signup/verify.
  */
-export function PhoneForm({
-  redirectTo = "/signup/verify",
-  defaultCountry = "CI",
-}) {
+export function EmailForm({ redirectTo = "/signup/verify" }) {
   const router = useRouter();
-  const setPhone = useAuthStore((s) => s.setPhone);
+  const setEmail = useAuthStore((s) => s.setEmail);
   const branch = useAuthStore((s) => s.branch);
 
-  const [value, setValue] = useState();
+  const [value, setValue] = useState("");
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -37,20 +24,20 @@ export function PhoneForm({
     e.preventDefault();
     setError(null);
 
-    const parsed = phoneSchema.safeParse(value);
+    const parsed = authEmailSchema.safeParse(value);
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Numéro invalide");
+      setError(parsed.error.issues[0]?.message ?? "E-mail invalide");
       return;
     }
 
     setSubmitting(true);
-    setPhone(parsed.data);
+    setEmail(parsed.data);
 
     try {
       const res = await fetch("/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone: parsed.data, branch }),
+        body: JSON.stringify({ email: parsed.data, branch }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -62,10 +49,11 @@ export function PhoneForm({
         return;
       }
       toast.success("Code envoyé", {
-        description: "Vérifiez vos SMS (ou utilisez 000000 en mode dev).",
+        description:
+          "Vérifiez votre boîte mail (ou utilisez 000000 en mode dev).",
       });
       router.push(redirectTo);
-    } catch (err) {
+    } catch {
       setError("Erreur réseau, réessayez.");
       toast.error("Erreur réseau", { description: "Réessayez." });
       setSubmitting(false);
@@ -76,28 +64,29 @@ export function PhoneForm({
     <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
       <div className="flex flex-col gap-1.5">
         <label
-          htmlFor="phone"
+          htmlFor="email"
           className="text-xs uppercase tracking-widest text-muted font-medium"
         >
-          Numéro de téléphone
+          Adresse e-mail
         </label>
-        <div className="hid-phone-input">
-          <PhoneInput
-            id="phone"
-            international
-            countryCallingCodeEditable={false}
-            defaultCountry={defaultCountry}
-            value={value}
-            onChange={setValue}
-            placeholder="+225 07 07 00 00 00"
-            aria-invalid={Boolean(error) || undefined}
-          />
-        </div>
+        <input
+          id="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="off"
+          spellCheck={false}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="vous@exemple.com"
+          aria-invalid={Boolean(error) || undefined}
+          className="h-11 rounded-md bg-surface border border-border px-3 text-sm text-foreground placeholder:text-muted-strong focus:outline-none focus:border-accent transition-colors"
+        />
         {error ? (
           <p className="text-sm text-danger">{error}</p>
         ) : (
           <p className="text-sm text-muted">
-            Format international. Vous recevrez un code à 6 chiffres par SMS.
+            Vous recevrez un code à 6 chiffres par e-mail. Pas de mot de passe.
           </p>
         )}
       </div>

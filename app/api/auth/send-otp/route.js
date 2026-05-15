@@ -1,18 +1,20 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
-import { phoneSchema } from "@/lib/utils/validation";
+import { authEmailSchema } from "@/lib/utils/validation";
 import { createServiceClient } from "@/lib/supabase/server";
-import { smsProvider } from "@/lib/sms/provider";
+import { getResend, RESEND_FROM } from "@/lib/email/resend";
+import { otpEmailTemplate } from "@/lib/email/templates/otp";
 
 const bodySchema = z.object({
-  phone: phoneSchema,
+  email: authEmailSchema,
   branch: z.string().optional(),
 });
 
 const RATE_LIMIT_WINDOW_MIN = 60;
-const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_MAX = 5;
 const OTP_TTL_SECONDS = 300;
+const OTP_TTL_MINUTES = OTP_TTL_SECONDS / 60;
 
 function genCode() {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -33,7 +35,7 @@ export async function POST(request) {
       { status: 400 }
     );
   }
-  const { phone } = parsed.data;
+  const { email } = parsed.data;
   const isProd = process.env.NODE_ENV === "production";
 
   // En dev, on bypass entièrement la table otp_codes (qui peut ne pas exister)
@@ -41,19 +43,19 @@ export async function POST(request) {
   if (!isProd) {
     // eslint-disable-next-line no-console
     console.log(
-      `[send-otp DEV] OTP factice pour ${phone} — utilisez 000000 pour bypass`
+      `[send-otp DEV] OTP factice pour ${email} — utilisez 000000 pour bypass`
     );
     return NextResponse.json({ ok: true, devHint: "Use 000000 to bypass" });
   }
 
   const supabase = createServiceClient();
 
-  // Rate limit: max 3 envois / heure / numéro
+  // Rate limit : max RATE_LIMIT_MAX envois / heure / email
   const since = new Date(Date.now() - RATE_LIMIT_WINDOW_MIN * 60_000).toISOString();
   const { count } = await supabase
     .from("otp_codes")
     .select("id", { count: "exact", head: true })
-    .eq("phone", phone)
+    .eq("email", email)
     .gte("created_at", since);
 
   if (typeof count === "number" && count >= RATE_LIMIT_MAX) {
@@ -63,11 +65,11 @@ export async function POST(request) {
     );
   }
 
-  // Invalidate previous active codes
+  // Invalide les codes actifs précédents pour cet email
   await supabase
     .from("otp_codes")
     .update({ consumed_at: new Date().toISOString() })
-    .eq("phone", phone)
+    .eq("email", email)
     .is("consumed_at", null);
 
   const code = genCode();
@@ -76,7 +78,7 @@ export async function POST(request) {
 
   const { error: insertErr } = await supabase
     .from("otp_codes")
-    .insert({ phone, code_hash: codeHash, expires_at: expiresAt });
+    .insert({ email, code_hash: codeHash, expires_at: expiresAt });
 
   if (insertErr) {
     console.error("[send-otp] insert error", insertErr);
@@ -87,22 +89,31 @@ export async function POST(request) {
   }
 
   try {
-    await smsProvider.sendSms({
-      to: phone,
-      body: `HID AI · Votre code de vérification : ${code}. Valide 5 minutes.`,
+    const { subject, html, text } = otpEmailTemplate({
+      code,
+      ttlMinutes: OTP_TTL_MINUTES,
     });
+    const resend = getResend();
+    const { error: mailErr } = await resend.emails.send({
+      from: RESEND_FROM,
+      to: email,
+      subject,
+      html,
+      text,
+    });
+    if (mailErr) {
+      console.error("[send-otp] resend error", mailErr);
+      return NextResponse.json(
+        { error: "Envoi de l'e-mail impossible, réessayez." },
+        { status: 502 }
+      );
+    }
   } catch (err) {
-    console.error("[send-otp] sms error", err);
-    // Don't leak provider errors to client
-  }
-
-  // En dev, signaler dans la console serveur le code généré + le bypass possible.
-  if (process.env.NODE_ENV !== "production") {
-    // eslint-disable-next-line no-console
-    console.log(
-      `[send-otp DEV] code généré pour ${phone}: ${code} — ou utilisez 000000 pour bypass`
+    console.error("[send-otp] email error", err);
+    return NextResponse.json(
+      { error: "Envoi de l'e-mail impossible, réessayez." },
+      { status: 502 }
     );
-    return NextResponse.json({ ok: true, devHint: "Use 000000 to bypass" });
   }
 
   return NextResponse.json({ ok: true });
