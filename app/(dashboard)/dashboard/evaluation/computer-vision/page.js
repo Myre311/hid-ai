@@ -195,14 +195,39 @@ export default function ComputerVisionPage() {
     >
       <ContextCard title="Pipeline d'annotation Computer Vision HID AI">
         <p>
-          Vous allez annoter trois types de données utilisés en production
-          pour entraîner des modèles de détection en milieu urbain :
-          (1) des <strong>bounding boxes</strong> avec attributs sur 5 scènes
-          (feux, voitures, panneau STOP, personnes, vélos), (2) un{" "}
-          <strong>polygone</strong> précis sur une vue aérienne, et (3) le{" "}
-          <strong>tracking</strong> d&rsquo;un objet sur 50 frames avec
-          occlusions. Visez un <strong>IoU &gt; 0.7</strong> et choisissez le
-          bon attribut pour chaque box.
+          Trois parties à compléter. Le score se répartit ainsi sur 100 points
+          (seuil de validation : 60) :
+        </p>
+        <ul className="mt-2 mb-3 flex flex-col gap-1.5 text-sm text-foreground/80">
+          <li>
+            <strong className="text-accent">Partie 1 — Bounding boxes (35 pts)</strong> :
+            sur chaque scène, encadrez <strong>TOUS</strong> les objets demandés
+            (il y en a souvent plusieurs : jusqu&rsquo;à 8 véhicules, 6
+            personnes…). Une box manquée fait baisser le score. Dessinez des
+            boxes <strong>serrées</strong> : un IoU de 0,7 suffit pour le crédit
+            plein, pas besoin d&rsquo;être au pixel.
+          </li>
+          <li>
+            <strong className="text-accent">Attributs (15 pts)</strong> :
+            sélectionnez le bon attribut dans la liste pour chaque box dessinée.
+          </li>
+          <li>
+            <strong className="text-accent">Partie 2 — Polygone (15 pts)</strong> :
+            tracez un contour <strong>fermé qui épouse la silhouette</strong> de
+            l&rsquo;objet. <strong>12 points ou plus</strong> = précision
+            maximale. Ni un point isolé, ni tout le cadre.
+          </li>
+          <li>
+            <strong className="text-accent">Partie 3 — Tracking (35 pts)</strong> :
+            suivez la <strong>même personne</strong> sur les{" "}
+            <strong>50 frames</strong> en redessinant sa box à chaque frame
+            (0,7 pt/frame correctement suivie). Le repère cyan sur la frame 1
+            indique qui suivre.
+          </li>
+        </ul>
+        <p className="text-xs text-foreground/55">
+          Conseil : faites les 3 parties. Le tracking pèse autant que les
+          boxes — ne le sautez pas.
         </p>
       </ContextCard>
 
@@ -246,9 +271,16 @@ export default function ComputerVisionPage() {
       {/* --- Bounding boxes mode --- */}
       {mode === MODES.boxes && (
         <div className="flex flex-col gap-4">
-          <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85">
-            <strong className="text-accent">Consigne :</strong>{" "}
-            {image.instruction}
+          <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85 space-y-1">
+            <div>
+              <strong className="text-accent">Consigne :</strong>{" "}
+              {image.instruction}
+            </div>
+            <div className="text-xs text-foreground/55">
+              Encadrez <strong>tous</strong> les objets de ce type visibles sur
+              l&rsquo;image (souvent plusieurs), box serrée, puis choisissez
+              l&rsquo;attribut de chacune ci-dessous.
+            </div>
           </div>
 
           <div
@@ -407,9 +439,17 @@ export default function ComputerVisionPage() {
       {/* --- Polygone mode --- */}
       {mode === MODES.polygon && (
         <div className="flex flex-col gap-4">
-          <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85">
-            <strong className="text-accent">Consigne :</strong>{" "}
-            {CV_POLYGON_TARGET.instruction}
+          <div className="rounded-md bg-surface border border-white/10 p-3 text-sm text-foreground/85 space-y-1">
+            <div>
+              <strong className="text-accent">Consigne :</strong>{" "}
+              {CV_POLYGON_TARGET.instruction}
+            </div>
+            <div className="text-xs text-foreground/55">
+              Cliquez point par point autour de l&rsquo;objet pour épouser sa
+              forme. Minimum {CV_POLYGON_TARGET.minPoints} points,{" "}
+              <strong>12 ou plus pour le score maximal</strong>, puis « Fermer
+              le polygone ».
+            </div>
           </div>
 
           <div
