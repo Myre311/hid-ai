@@ -13,7 +13,8 @@ export default function LoginPage() {
             Connexion.
           </h1>
           <p className="text-base text-muted leading-relaxed">
-            Entrez votre numéro. Nous envoyons un code de vérification par SMS.
+            Entrez votre adresse e-mail. Nous envoyons un code de vérification
+            par e-mail.
           </p>
         </div>
         <LoginForm />
