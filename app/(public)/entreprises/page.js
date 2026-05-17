@@ -18,7 +18,7 @@ const SERVICES = [
     content: (
       <ServiceContent
         subtitle="Données d'entraînement à grande échelle"
-        description="Annotation spécialisée, RLHF, fine-tuning supervisé. Vos pipelines de données pris en charge par des équipes certifiées sur 48 critères techniques et comportementaux. Conformité européenne par défaut."
+        description="Annotation spécialisée, RLHF, fine-tuning supervisé : vos pipelines de données sont pris en charge par des équipes certifiées, avec une conformité européenne garantie par défaut."
         subservices={[
           "Annotation (texte, image, audio, vidéo)",
           "RLHF (Reinforcement Learning from Human Feedback)",
@@ -34,7 +34,7 @@ const SERVICES = [
     content: (
       <ServiceContent
         subtitle="Vivier de talents IA certifiés"
-        description="Profils AI Specialists et AI Engineers évalués sur 48 critères techniques et comportementaux. Matching prédictif basé sur votre brief, validation KYB sous 48h."
+        description="Profils AI Specialists et AI Engineers rigoureusement évalués, matching prédictif basé sur votre brief et validation KYB sous 48h."
         subservices={[
           "AI Specialists (Annotation, Labellisation, RLHF)",
           "AI Engineers (NLP, Vision, Optimisation, Fine-tuning)",

@@ -18,7 +18,7 @@ export function EntreprisesSection() {
             </h2>
           </div>
           <p className="t-lead max-w-xl">
-Deux services complémentaires pour vos pipelines IA : production de données d&rsquo;entraînement à grande échelle, et accès direct à un vivier de talents certifiés sur 48 critères techniques et comportementaux.
+Deux services pensés pour accélérer vos pipelines IA : la génération de données d&rsquo;entraînement à grande échelle, calibrée selon vos besoins, et un accès immédiat à un vivier de talents certifiés, disponibles pour renforcer vos équipes.
           </p>
         </div>
 
