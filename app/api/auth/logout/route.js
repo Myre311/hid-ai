@@ -1,29 +1,59 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
 
 /**
  * POST /api/auth/logout
  *
- * Déclenche la déconnexion Supabase (invalide le refresh token + clear cookies)
- * puis renvoie soit :
- *  - une redirection 303 vers la home (pour les form-submit classiques)
- *  - du JSON { ok: true } (pour les appels fetch côté client avec Accept: application/json)
+ * Déconnexion Supabase fiable. Point clé : les cookies effacés par
+ * signOut() doivent être écrits sur LA réponse renvoyée. On crée donc la
+ * réponse d'abord, puis un client Supabase dont les handlers cookies
+ * écrivent sur cette réponse précise. Filet de sécurité : purge explicite
+ * de tout cookie `sb-*` restant.
  *
- * Le 303 force le navigateur à faire un GET sur / après le POST — c'est le
- * comportement attendu après une action form-submit (sinon il afficherait la
- * réponse JSON brute à l'écran).
+ *  - Accept: application/json  → { ok: true }   (appels fetch côté client)
+ *  - sinon                      → 303 vers /login (form-submit classiques)
  */
 export async function POST(request) {
-  const supabase = createClient();
-  await supabase.auth.signOut?.();
-
   const wantsJson = (request.headers.get("accept") || "")
     .toLowerCase()
     .includes("application/json");
 
-  if (wantsJson) {
-    return NextResponse.json({ ok: true });
+  const response = wantsJson
+    ? NextResponse.json({ ok: true })
+    : NextResponse.redirect(new URL("/login", request.nextUrl.origin), {
+        status: 303,
+      });
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (url && key) {
+    const supabase = createServerClient(url, key, {
+      cookies: {
+        get(name) {
+          return request.cookies.get(name)?.value;
+        },
+        set(name, value, options) {
+          response.cookies.set({ name, value, ...options });
+        },
+        remove(name, options) {
+          response.cookies.set({ name, value: "", ...options, maxAge: 0 });
+        },
+      },
+    });
+    try {
+      await supabase.auth.signOut();
+    } catch {
+      // on purge quand même les cookies ci-dessous
+    }
   }
 
-  return NextResponse.redirect(new URL("/", request.nextUrl.origin), { status: 303 });
+  // Filet de sécurité : supprime explicitement tout cookie de session sb-*
+  for (const c of request.cookies.getAll()) {
+    if (c.name.startsWith("sb-")) {
+      response.cookies.set({ name: c.name, value: "", maxAge: 0, path: "/" });
+    }
+  }
+
+  return response;
 }
