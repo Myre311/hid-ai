@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, LayoutGrid, Users, Building2, Mail, Download, ShieldCheck, History } from "lucide-react";
+import { Menu, X, LogOut, LayoutGrid, Users, Building2, Mail, Download, ShieldCheck, History } from "lucide-react";
 import { ADMIN_NAV } from "@/lib/admin/nav";
 
 // Résolution locale des icônes — Server Component ne peut pas nous passer
@@ -11,6 +11,19 @@ const ICONS = { LayoutGrid, Users, Building2, Mail, Download, ShieldCheck, Histo
 
 export default function AdminMobileDrawer({ navItems = ADMIN_NAV }) {
   const [open, setOpen] = useState(false);
+
+  const logout = async () => {
+    setOpen(false);
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+      });
+    } catch {
+      // on force la redirection quoi qu'il arrive
+    }
+    window.location.href = "/login";
+  };
 
   return (
     <>
@@ -48,7 +61,7 @@ export default function AdminMobileDrawer({ navItems = ADMIN_NAV }) {
         </button>
 
         {/* Nav */}
-        <nav className="flex flex-col gap-1">
+        <nav className="flex flex-col gap-1 flex-1 overflow-y-auto">
           {navItems.map((item) => {
             const Icon = ICONS[item.iconName];
             return (
@@ -64,6 +77,18 @@ export default function AdminMobileDrawer({ navItems = ADMIN_NAV }) {
             );
           })}
         </nav>
+
+        {/* Déconnexion — bloc distinct épinglé en bas, visible sur mobile */}
+        <div className="pt-4 mt-4 border-t border-white/10">
+          <button
+            type="button"
+            onClick={logout}
+            className="w-full inline-flex items-center justify-center gap-2.5 h-12 rounded-md border border-white/15 bg-surface text-sm font-medium text-foreground hover:bg-white/5 active:bg-white/10 transition-colors"
+          >
+            <LogOut className="h-4 w-4" />
+            Se déconnecter
+          </button>
+        </div>
       </div>
     </>
   );
