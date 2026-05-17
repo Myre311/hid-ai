@@ -3,44 +3,19 @@ import { createServiceClient } from "@/lib/supabase/server";
 
 /**
  * POST /api/inscription-talent
- * Reçoit un FormData multipart : un champ `payload` (JSON) + 3 fichiers
- * (doc_recto, doc_verso?, selfie).
- *
- * Étapes :
- *  1. Parse FormData
- *  2. Validation minimale
- *  3. Upload des fichiers dans le bucket `kyc-documents` → talent/{reference}/...
- *  4. Insert dans inscriptions_talents avec les paths
- *  5. Retourne { reference }
+ * Reçoit du JSON (le KYC n'est plus collecté ici — il se fait dans le
+ * dashboard talent). Le talent est créé en statut `kyc_pending` sans
+ * pièces ; il déposera ses documents depuis son espace, validation admin
+ * requise avant l'accès aux missions.
  */
 export async function POST(request) {
-  const formData = await request.formData().catch(() => null);
-  if (!formData) {
-    return NextResponse.json(
-      { error: "Expected multipart/form-data" },
-      { status: 400 }
-    );
-  }
-
-  const payloadStr = formData.get("payload");
-  if (!payloadStr || typeof payloadStr !== "string") {
-    return NextResponse.json(
-      { error: "Missing payload field" },
-      { status: 400 }
-    );
-  }
-
   let body;
   try {
-    body = JSON.parse(payloadStr);
+    body = await request.json();
   } catch {
-    return NextResponse.json(
-      { error: "Invalid JSON in payload" },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  // Validation
   const required = [
     "prenom",
     "nom",
@@ -51,14 +26,10 @@ export async function POST(request) {
     "ville",
     "metier",
     "niveau_etudes",
-    "doc_type",
   ];
   for (const k of required) {
     if (!body[k] || (typeof body[k] === "string" && !body[k].trim())) {
-      return NextResponse.json(
-        { error: `Missing field: ${k}` },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: `Missing field: ${k}` }, { status: 400 });
     }
   }
   if (!body.consent_cgu || !body.consent_rgpd || !body.consent_ethique) {
@@ -70,62 +41,17 @@ export async function POST(request) {
   if (!["specialist", "engineer"].includes(body.metier)) {
     return NextResponse.json({ error: "Invalid metier" }, { status: 400 });
   }
-  if (!["cni", "passeport", "permis"].includes(body.doc_type)) {
-    return NextResponse.json({ error: "Invalid doc_type" }, { status: 400 });
-  }
-
-  const docRecto = formData.get("doc_recto");
-  const docVerso = formData.get("doc_verso");
-  const selfie = formData.get("selfie");
-
-  if (!(docRecto instanceof File))
-    return NextResponse.json({ error: "doc_recto required" }, { status: 400 });
-  if (!(selfie instanceof File))
-    return NextResponse.json({ error: "selfie required" }, { status: 400 });
-  if ((body.doc_type === "cni" || body.doc_type === "permis") && !(docVerso instanceof File))
-    return NextResponse.json({ error: "doc_verso required" }, { status: 400 });
 
   const reference = generateRef();
   const supabase = createServiceClient();
 
-  // Upload helper
-  const uploadFile = async (file, label) => {
-    const ext = (file.name?.split(".").pop() || "bin").toLowerCase();
-    const path = `talent/${reference}/${label}.${ext}`;
-    const bytes = Buffer.from(await file.arrayBuffer());
-    const { error } = await supabase.storage
-      .from("kyc-documents")
-      .upload(path, bytes, {
-        contentType: file.type || "application/octet-stream",
-        upsert: false,
-      });
-    if (error) throw new Error(`upload ${label}: ${error.message}`);
-    return path;
-  };
-
-  let doc_recto_path, doc_verso_path, selfie_path;
-  try {
-    doc_recto_path = await uploadFile(docRecto, "recto");
-    if (docVerso instanceof File) {
-      doc_verso_path = await uploadFile(docVerso, "verso");
-    }
-    selfie_path = await uploadFile(selfie, "selfie");
-  } catch (err) {
-    // eslint-disable-next-line no-console
-    console.error("[/api/inscription-talent] storage error:", err);
-    return NextResponse.json(
-      { error: err.message || "Upload failed" },
-      { status: 500 }
-    );
-  }
-
   const { error } = await supabase.from("inscriptions_talents").insert({
     reference,
+    status: "kyc_pending", // KYC à déposer depuis le dashboard
     prenom: body.prenom,
     nom: body.nom,
-    // Normalisé en lowercase pour matcher la normalisation que Supabase Auth
-    // applique systématiquement aux emails (sinon mismatch case-sensitive
-    // lors des lookups dashboard / /api/evaluation/start).
+    // Normalisé lowercase pour matcher Supabase Auth (lookups dashboard /
+    // /api/evaluation/start sinon mismatch case-sensitive).
     email: (body.email || "").toLowerCase().trim(),
     telephone: body.telephone,
     date_naissance: body.date_naissance,
@@ -134,15 +60,13 @@ export async function POST(request) {
     metier: body.metier,
     niveau_etudes: body.niveau_etudes,
     competences: Array.isArray(body.competences) ? body.competences : [],
-    doc_type: body.doc_type,
-    doc_recto_path,
-    doc_verso_path: doc_verso_path || null,
-    selfie_path,
-    antecedents: body.antecedents || null,
+    doc_type: null,
+    doc_recto_path: null,
+    doc_verso_path: null,
+    selfie_path: null,
+    antecedents: null,
     modules_validated: body.modules || {},
     domaine: body.domaine || null,
-    // creneau_test_* gardé NULL : le RDV n'est plus demandé à l'inscription
-    // (le test se lance directement depuis le dashboard).
     creneau_test_date: null,
     creneau_test_time: null,
     prerequis_confirmed: Array.isArray(body.prerequis) ? body.prerequis : [],

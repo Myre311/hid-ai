@@ -17,12 +17,6 @@ const NIVEAU_LABELS = {
   autodidacte: "Autodidacte",
 };
 
-const DOC_LABELS = {
-  cni: "Carte nationale d'identité",
-  passeport: "Passeport",
-  permis: "Permis de conduire",
-};
-
 const DOMAINE_LABELS = {
   annotation: "Annotation et Labellisation",
   rlhf: "RLHF",
@@ -88,23 +82,18 @@ export function TalentStep5Activation({ data, errors, update, onEditStep }) {
         )}
       </RecapBlock>
 
-      <RecapBlock title="Vérification d'identité (KYC)" onEdit={() => onEditStep(1)}>
-        <Row label="Document" value={DOC_LABELS[data.doc_type]} />
-        <Row label="Recto" value={data.doc_recto?.name} />
-        {data.doc_verso && <Row label="Verso" value={data.doc_verso.name} />}
-        <Row label="Selfie" value={data.selfie?.name} />
-        {data.antecedents && (
-          <Row label="Antécédents" value={data.antecedents} />
-        )}
-      </RecapBlock>
-
-      <RecapBlock title="Pré-qualification" onEdit={() => onEditStep(2)}>
+      <RecapBlock title="Pré-qualification" onEdit={() => onEditStep(1)}>
         <Row label="Modules" value="3 / 3 validés" />
       </RecapBlock>
 
-      <RecapBlock title="Évaluation technique" onEdit={() => onEditStep(3)}>
+      <RecapBlock title="Évaluation technique" onEdit={() => onEditStep(2)}>
         <Row label="Domaine" value={DOMAINE_LABELS[data.domaine]} />
       </RecapBlock>
+
+      <div className="rounded-md border border-accent/30 bg-accent/5 px-4 py-3 text-sm text-foreground/80">
+        Les pièces d&rsquo;identité (KYC) se déposent depuis votre tableau de
+        bord après inscription. Elles sont requises pour accéder aux missions.
+      </div>
 
       <div className="border-t border-white/10 pt-5 flex flex-col gap-3">
         <FormCheckboxSingle

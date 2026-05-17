@@ -5,12 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FormStepper } from "@/components/forms/shared/FormStepper";
 import { FormNavigation } from "@/components/forms/shared/FormNavigation";
 import { FormConfirmation } from "@/components/forms/shared/FormConfirmation";
-import { compressImage } from "@/lib/utils/image-compress";
 import {
   TalentStep1Identification,
   validateTalentStep1,
 } from "./Step1Identification";
-import { TalentStep2KYC, validateTalentStep2 } from "./Step2KYC";
 import {
   TalentStep3MiniFormation,
   validateTalentStep3,
@@ -21,10 +19,11 @@ import {
 } from "./Step4EvaluationTechnique";
 import { TalentStep5Activation, validateTalentStep5 } from "./Step5Activation";
 
+// Le KYC (pièces d'identité) n'est plus collecté ici : il se fait dans le
+// dashboard talent (section Profil), et conditionne l'accès aux missions.
 const STORAGE_KEY = "hidai_talent_form";
 const STEPS = [
   "Identification",
-  "Vérif. KYC",
   "Pré-qualif.",
   "Évaluation",
   "Activation",
@@ -42,18 +41,12 @@ const INITIAL_DATA = {
   metier: "",
   niveau_etudes: "",
   competences: [],
-  // Step 2 (files NOT serializable in localStorage — handled separately)
-  doc_type: "",
-  doc_recto: null,
-  doc_verso: null,
-  selfie: null,
-  antecedents: "",
-  // Step 3
+  // Step 2 — Pré-qualif.
   modules: { ecosysteme: "a_demarrer", securite: "a_demarrer", orientation: "a_demarrer" },
-  // Step 4
+  // Step 3 — Évaluation
   domaine: "",
   prerequis: [],
-  // Step 5
+  // Step 4 — Activation
   consent_cgu: false,
   consent_rgpd: false,
   consent_ethique: false,
@@ -62,14 +55,10 @@ const INITIAL_DATA = {
 
 const VALIDATORS = [
   validateTalentStep1,
-  validateTalentStep2,
   validateTalentStep3,
   validateTalentStep4,
   validateTalentStep5,
 ];
-
-// Filter file fields out before localStorage serialization (File is not JSON-serializable)
-const FILE_KEYS = ["doc_recto", "doc_verso", "selfie"];
 
 export function TalentForm({ presetMetier = null, onClose }) {
   const [step, setStep] = useState(0);
@@ -93,23 +82,17 @@ export function TalentForm({ presetMetier = null, onClose }) {
           ...INITIAL_DATA,
           ...parsed,
           metier: presetMetier ?? parsed.metier ?? "",
-          // re-init file fields (browsers can't restore File from JSON)
-          doc_recto: null,
-          doc_verso: null,
-          selfie: null,
         }));
       }
     } catch {}
     setHydrated(true);
   }, [presetMetier]);
 
-  // Persist on every change (excluding file objects)
+  // Persist on every change
   useEffect(() => {
     if (!hydrated) return;
     try {
-      const serializable = { ...data };
-      FILE_KEYS.forEach((k) => delete serializable[k]);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(serializable));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     } catch {}
   }, [data, hydrated]);
 
@@ -122,42 +105,18 @@ export function TalentForm({ presetMetier = null, onClose }) {
       setSubmitting(true);
       setSubmitError(null);
       try {
-        // Le serveur attend un FormData multipart : payload JSON + fichiers
-        const payload = { ...data };
-        FILE_KEYS.forEach((k) => delete payload[k]);
-
-        // Compresse les images côté client AVANT envoi pour rester sous la
-        // limite Vercel de 4.5 MB par requête serverless. Les PDF/fichiers
-        // non-image passent inchangés.
-        const [recto, verso, selfie] = await Promise.all([
-          data.doc_recto instanceof File ? compressImage(data.doc_recto) : null,
-          data.doc_verso instanceof File ? compressImage(data.doc_verso) : null,
-          data.selfie instanceof File ? compressImage(data.selfie) : null,
-        ]);
-
-        const fd = new FormData();
-        fd.append("payload", JSON.stringify(payload));
-        if (recto) fd.append("doc_recto", recto);
-        if (verso) fd.append("doc_verso", verso);
-        if (selfie) fd.append("selfie", selfie);
-
         const res = await fetch("/api/inscription-talent", {
           method: "POST",
-          body: fd,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
         });
 
-        // Vercel peut renvoyer du texte brut (413 Request Entity Too Large) si
-        // la requête est trop lourde — on tente JSON, sinon on récupère le texte
         let json;
         try {
           json = await res.json();
         } catch {
           const text = await res.text().catch(() => "");
-          throw new Error(
-            res.status === 413
-              ? "Fichiers trop volumineux. Réessayez avec des photos plus petites."
-              : (text?.slice(0, 200) || `Erreur HTTP ${res.status}`)
-          );
+          throw new Error(text?.slice(0, 200) || `Erreur HTTP ${res.status}`);
         }
         if (!res.ok) {
           throw new Error(json.error || "Erreur serveur");
@@ -248,23 +207,20 @@ export function TalentForm({ presetMetier = null, onClose }) {
               />
             )}
             {step === 1 && (
-              <TalentStep2KYC data={data} errors={errors} update={update} />
-            )}
-            {step === 2 && (
               <TalentStep3MiniFormation
                 data={data}
                 errors={errors}
                 update={update}
               />
             )}
-            {step === 3 && (
+            {step === 2 && (
               <TalentStep4EvaluationTechnique
                 data={data}
                 errors={errors}
                 update={update}
               />
             )}
-            {step === 4 && (
+            {step === 3 && (
               <TalentStep5Activation
                 data={data}
                 errors={errors}

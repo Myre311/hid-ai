@@ -1,18 +1,13 @@
 import { redirect } from "next/navigation";
-import { User, Mail, Phone, MapPin, GraduationCap, ShieldCheck } from "lucide-react";
+import { User, Mail, Phone, MapPin, GraduationCap } from "lucide-react";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { KycUploadSection } from "@/components/dashboard/KycUploadSection";
 
 export const metadata = { title: "Profil · HID AI" };
 
 const METIER_LABELS = {
   specialist: "AI Specialist",
   engineer: "AI Engineer",
-};
-
-const DOC_LABELS = {
-  cni: "Carte nationale d'identité",
-  passeport: "Passeport",
-  permis: "Permis de conduire",
 };
 
 const NIVEAU_LABELS = {
@@ -38,7 +33,7 @@ export default async function ProfilPage() {
     const { data } = await service
       .from("inscriptions_talents")
       .select("*")
-      .eq("email", user.email)
+      .ilike("email", user.email)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -55,6 +50,14 @@ export default async function ProfilPage() {
       </div>
     );
   }
+
+  // État KYC : validé (admin) / en cours (pièces déposées) / à fournir
+  const kycState =
+    inscription.status === "validated"
+      ? "validated"
+      : inscription.doc_recto_path
+        ? "pending"
+        : "todo";
 
   return (
     <div className="flex flex-col gap-8 max-w-3xl">
@@ -89,15 +92,12 @@ export default async function ProfilPage() {
         />
       </section>
 
+      <KycUploadSection state={kycState} />
+
       <section className="rounded-lg border border-white/10 bg-surface p-5 flex flex-col gap-4">
         <h2 className="text-xs uppercase tracking-[0.18em] text-foreground/50">
           Statut
         </h2>
-        <Row
-          Icon={ShieldCheck}
-          label="Vérification d'identité"
-          value={`${DOC_LABELS[inscription.doc_type] || "—"} · documents reçus`}
-        />
         <Row
           Icon={User}
           label="Métier ciblé"
