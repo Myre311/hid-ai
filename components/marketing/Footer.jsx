@@ -151,10 +151,14 @@ export function Footer() {
         </div>
 
         <div className="mt-14 pt-8 border-t border-border flex flex-col md:flex-row md:items-center md:justify-between gap-6 text-sm text-muted">
-          <div className="flex items-center gap-3">
-            <Logo className="h-5 w-auto text-foreground" aria-label="HID AI" />
-
-            <span>© 2026 HID AI. Tous droits réservés.</span>
+          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3">
+            <div className="flex items-center gap-3">
+              <Logo className="h-5 w-auto text-foreground" aria-label="HID AI" />
+              <span>© 2026 HID AI. Tous droits réservés.</span>
+            </div>
+            <span className="text-xs text-muted-strong md:before:content-['·'] md:before:mr-3 md:before:text-muted">
+              Powered by Hidea Solution
+            </span>
           </div>
           <div className="text-center text-xs">
             <a href="mailto:contact@hid-ai.com" className="hover:text-foreground transition-colors">
