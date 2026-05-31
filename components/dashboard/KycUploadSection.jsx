@@ -71,14 +71,25 @@ export function KycUploadSection({ state }) {
       if (verso) fd.append("doc_verso", verso);
       if (selfie) fd.append("selfie", selfie);
 
-      const res = await fetch("/api/profile/kyc", { method: "POST", body: fd });
+      let res;
+      try {
+        res = await fetch("/api/profile/kyc", { method: "POST", body: fd });
+      } catch (netErr) {
+        // fetch n'a pas reçu de réponse — typiquement réseau coupé, timeout,
+        // ou body trop gros qui fait crasher la requête. Message clair en FR.
+        throw new Error(
+          "Impossible d'envoyer vos pièces. Vérifiez votre connexion internet (4G/wifi stable), réduisez la taille des photos si possible, puis réessayez."
+        );
+      }
       let json;
       try {
         json = await res.json();
       } catch {
         throw new Error(
           res.status === 413
-            ? "Fichiers trop volumineux. Réessayez avec des photos plus petites."
+            ? "Fichiers trop volumineux. Reprenez vos photos avec une qualité plus basse."
+            : res.status >= 500
+            ? "Notre serveur a rencontré un problème. Réessayez dans quelques minutes."
             : `Erreur HTTP ${res.status}`
         );
       }
