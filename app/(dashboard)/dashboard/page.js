@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { buildInitialTestRows } from "@/lib/evaluation/tests";
+import { aiNativeMaxScore } from "@/lib/evaluation/aiNativeScore";
 import { EvaluationRoadmap } from "@/components/dashboard/EvaluationRoadmap";
 import { AiNativeScoreCard } from "@/components/dashboard/AiNativeScoreCard";
 import PageTransition from "@/components/shared/PageTransition";
@@ -180,6 +181,7 @@ export default async function DashboardHome() {
           <AiNativeScoreCard
             score={session.ai_native_score}
             testResults={tests}
+            metier={inscription?.metier}
           />
         </section>
       )}
@@ -188,7 +190,7 @@ export default async function DashboardHome() {
       <section className="rounded-lg border border-white/10 bg-surface p-5 text-sm text-foreground/70">
         {activated ? (
           <span className="text-success font-medium">
-            ✓ Profil activé · Score AI-Native : {session.ai_native_score} / 1000
+            ✓ Profil activé · Score AI-Native : {session.ai_native_score} / {aiNativeMaxScore(tests)}
           </span>
         ) : allDone ? (
           <span>

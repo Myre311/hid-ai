@@ -9,6 +9,19 @@ export const dynamic = "force-dynamic";
 
 const METIER_LABELS = { specialist: "AI Specialist", engineer: "AI Engineer" };
 
+/**
+ * Construit une URL relative à /admin/talents avec uniquement les params non vides.
+ * Évite les ?q=&metier=&status= polluants.
+ */
+function buildQuery(params) {
+  const sp = new URLSearchParams();
+  for (const [k, v] of Object.entries(params)) {
+    if (v !== "" && v != null) sp.set(k, String(v));
+  }
+  const s = sp.toString();
+  return s ? `?${s}` : "";
+}
+
 export default async function AdminTalentsPage({ searchParams }) {
   const q = sanitizeSearchQuery(searchParams?.q || "");
   const metier = searchParams?.metier || "";
@@ -18,6 +31,41 @@ export default async function AdminTalentsPage({ searchParams }) {
 
   const service = createServiceClient();
 
+  // ── 1. Construit la liste des ids de talents éligibles selon `status`
+  //    pour que le count + la pagination soient corrects côté Supabase.
+  // ──────────────────────────────────────────────────────────────────
+  let restrictToIds = null; // null = pas de restriction
+
+  if (status === "non_demarre") {
+    // Antijoin : talents SANS session
+    const { data: withSession } = await service
+      .from("evaluation_sessions")
+      .select("inscription_talent_id");
+    const excludeIds = new Set(
+      (withSession || []).map((s) => s.inscription_talent_id).filter(Boolean)
+    );
+    // On stocke l'antijoin pour le passer en `.not("id", "in", ...)`
+    restrictToIds = { mode: "exclude", ids: [...excludeIds] };
+  } else if (status) {
+    // Inner-join virtuel : on collecte les inscription_talent_id avec le bon status
+    const { data: filteredSessions } = await service
+      .from("evaluation_sessions")
+      .select("inscription_talent_id")
+      .eq("status", status);
+    restrictToIds = {
+      mode: "include",
+      ids: (filteredSessions || [])
+        .map((s) => s.inscription_talent_id)
+        .filter(Boolean),
+    };
+    // Si aucun match : court-circuit (sinon `.in('id', [])` retourne tout)
+    if (restrictToIds.ids.length === 0) {
+      restrictToIds = { mode: "include", ids: ["00000000-0000-0000-0000-000000000000"] };
+    }
+  }
+
+  // ── 2. Query principale (avec filtres status + metier + recherche)
+  // ──────────────────────────────────────────────────────────────────
   let qb = service
     .from("inscriptions_talents")
     .select("id, reference, prenom, nom, email, telephone, metier, pays, created_at", {
@@ -32,11 +80,17 @@ export default async function AdminTalentsPage({ searchParams }) {
   }
   if (metier) qb = qb.eq("metier", metier);
 
-  // Filtrage par statut éval : on charge les sessions séparément si demandé.
+  if (restrictToIds?.mode === "include") {
+    qb = qb.in("id", restrictToIds.ids);
+  } else if (restrictToIds?.mode === "exclude" && restrictToIds.ids.length > 0) {
+    qb = qb.not("id", "in", `(${restrictToIds.ids.join(",")})`);
+  }
+
   qb = qb.range((page - 1) * perPage, page * perPage - 1);
   const { data: inscriptions, count } = await qb;
 
-  // Joindre les sessions pour le score / status
+  // ── 3. Fetch les sessions pour les 20 lignes paginées (score + status)
+  // ──────────────────────────────────────────────────────────────────
   const ids = (inscriptions || []).map((i) => i.id);
   let sessionsByInscription = {};
   if (ids.length > 0) {
@@ -50,8 +104,7 @@ export default async function AdminTalentsPage({ searchParams }) {
     }, {});
   }
 
-  // Filtrage status post-fetch (RLS friendly)
-  let rows = (inscriptions || []).map((i) => {
+  const rows = (inscriptions || []).map((i) => {
     const s = sessionsByInscription[i.id];
     return {
       ...i,
@@ -59,7 +112,6 @@ export default async function AdminTalentsPage({ searchParams }) {
       ai_native_score: s?.ai_native_score ?? null,
     };
   });
-  if (status) rows = rows.filter((r) => r.status === status);
 
   const totalPages = Math.max(1, Math.ceil((count || 0) / perPage));
 
@@ -68,7 +120,8 @@ export default async function AdminTalentsPage({ searchParams }) {
       <header className="flex items-end justify-between gap-3 flex-wrap">
         <div className="flex flex-col gap-1">
           <p className="text-xs uppercase tracking-[0.18em] text-foreground/40">
-            Talents · {count ?? 0} inscrits
+            Talents · {count ?? 0} inscrit{(count ?? 0) > 1 ? "s" : ""}
+            {(q || metier || status) && " (filtré)"}
           </p>
           <h1 className="t-h2-md">Liste des candidats</h1>
         </div>
@@ -121,6 +174,7 @@ export default async function AdminTalentsPage({ searchParams }) {
           >
             <option value="" className="bg-[#0A0A0B]">Tous</option>
             <option value="non_demarre" className="bg-[#0A0A0B]">Non démarré</option>
+            <option value="pending" className="bg-[#0A0A0B]">En attente</option>
             <option value="in_progress" className="bg-[#0A0A0B]">En cours</option>
             <option value="completed" className="bg-[#0A0A0B]">Complété</option>
             <option value="activated" className="bg-[#0A0A0B]">Activé</option>
@@ -132,6 +186,14 @@ export default async function AdminTalentsPage({ searchParams }) {
         >
           Filtrer
         </button>
+        {(q || metier || status) && (
+          <Link
+            href="/admin/talents"
+            className="inline-flex items-center justify-center h-10 px-4 rounded-md border border-white/15 text-xs text-foreground/70 hover:bg-white/5"
+          >
+            Réinitialiser
+          </Link>
+        )}
       </form>
 
       <div className="rounded-lg border border-white/10 bg-surface overflow-x-auto">
@@ -192,7 +254,9 @@ export default async function AdminTalentsPage({ searchParams }) {
                 </td>
                 <td className="py-3 px-4 text-right">
                   {r.ai_native_score != null ? (
-                    <span className="text-accent font-medium tabular-nums">{r.ai_native_score}</span>
+                    <span className="text-accent font-medium tabular-nums">
+                      {r.ai_native_score}<span className="text-foreground/40">/100</span>
+                    </span>
                   ) : (
                     <span className="text-foreground/30">—</span>
                   )}
@@ -221,7 +285,7 @@ export default async function AdminTalentsPage({ searchParams }) {
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <Link
               key={p}
-              href={`?${new URLSearchParams({ q, metier, status, page: String(p) }).toString()}`}
+              href={`/admin/talents${buildQuery({ q, metier, status, page: p })}`}
               className={`inline-flex h-9 min-w-9 items-center justify-center px-3 rounded-md text-xs ${
                 p === page
                   ? "bg-accent text-background"

@@ -4,6 +4,7 @@ import { FinalizeButton } from "@/components/dashboard/FinalizeButton";
 import { UpgradeEngineerButton } from "@/components/dashboard/UpgradeEngineerButton";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { SPECIALIST_UPGRADE_THRESHOLD } from "@/lib/evaluation/tests";
+import { aiNativeMaxScore } from "@/lib/evaluation/aiNativeScore";
 
 export const metadata = { title: "Évaluation · HID AI" };
 
@@ -98,7 +99,7 @@ export default async function EvaluationIndexPage() {
             </h2>
             <p className="text-xs text-foreground/55 mt-1">
               {activated
-                ? `Score AI-Native : ${session.ai_native_score} / 1000`
+                ? `Score AI-Native : ${session.ai_native_score} / ${aiNativeMaxScore(tests)}`
                 : "Cliquez sur Finaliser pour calculer votre score AI-Native et recevoir l'email d'activation."}
             </p>
           </div>

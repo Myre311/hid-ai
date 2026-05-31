@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft, FileText, Calendar, MapPin } from "lucide-react";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { TESTS } from "@/lib/evaluation/tests";
+import { aiNativeMaxScore } from "@/lib/evaluation/aiNativeScore";
 import { TalentActionsPanel } from "@/components/admin/TalentActionsPanel";
 
 export const metadata = { title: "Admin · Détail talent" };
@@ -102,7 +103,7 @@ export default async function AdminTalentDetail({ params }) {
         {session?.status === "activated" && (
           <div className="rounded-lg border border-accent/40 bg-accent/5 px-5 py-3 text-center">
             <p className="text-[10px] uppercase tracking-[0.18em] text-accent">AI-Native Score</p>
-            <p className="text-3xl font-medium text-foreground tabular-nums">{session.ai_native_score} <span className="text-sm text-foreground/40">/ 1000</span></p>
+            <p className="text-3xl font-medium text-foreground tabular-nums">{session.ai_native_score} <span className="text-sm text-foreground/40">/ {aiNativeMaxScore(tests)}</span></p>
           </div>
         )}
       </header>

@@ -13,18 +13,33 @@ export default async function AdminHome() {
     { count: totalTalents },
     { count: totalB2B },
     { count: activatedTalents },
-    { data: avgScoreData },
+    { data: scoreRows },
   ] = await Promise.all([
     service.from("inscriptions_talents").select("id", { count: "exact", head: true }),
     service.from("inscriptions_b2b").select("id", { count: "exact", head: true }),
     service.from("evaluation_sessions").select("id", { count: "exact", head: true }).eq("status", "activated"),
-    service.from("evaluation_sessions").select("ai_native_score").eq("status", "activated"),
+    // Jointure : récupère le metier du talent rattaché à chaque session
+    service
+      .from("evaluation_sessions")
+      .select("ai_native_score, inscriptions_talents(metier)")
+      .eq("status", "activated")
+      .not("ai_native_score", "is", null),
   ]);
-  const scores = (avgScoreData || []).map((s) => s.ai_native_score).filter((n) => typeof n === "number");
-  const avgScore =
-    scores.length > 0
-      ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
-      : null;
+
+  // Moyennes par metier (sur /100, ancienne formule rétro-compatible).
+  const specScores = [];
+  const engScores = [];
+  for (const row of scoreRows || []) {
+    const sc = row.ai_native_score;
+    if (typeof sc !== "number") continue;
+    const m = row.inscriptions_talents?.metier;
+    if (m === "specialist") specScores.push(sc);
+    else if (m === "engineer") engScores.push(sc);
+  }
+  const avgOf = (arr) =>
+    arr.length > 0 ? Math.round(arr.reduce((a, b) => a + b, 0) / arr.length) : null;
+  const avgSpec = avgOf(specScores);
+  const avgEng = avgOf(engScores);
 
   // 10 dernières activités (mix Talent + B2B)
   const { data: recentTalents } = await service
@@ -70,7 +85,7 @@ export default async function AdminHome() {
         <h1 className="t-h2-md">Tableau de bord admin</h1>
       </header>
 
-      <section className="grid md:grid-cols-4 gap-4">
+      <section className="grid md:grid-cols-2 lg:grid-cols-5 gap-4">
         <AdminStatsCard
           label="Candidats inscrits"
           value={totalTalents ?? 0}
@@ -83,9 +98,22 @@ export default async function AdminHome() {
           accent
         />
         <AdminStatsCard
-          label="Score AI-Native moyen"
-          value={avgScore != null ? `${avgScore}` : "—"}
-          hint={avgScore != null ? "/ 1000" : "Aucune donnée"}
+          label="Moyenne Specialists"
+          value={avgSpec != null ? `${avgSpec}` : "—"}
+          hint={
+            avgSpec != null
+              ? `/ 100 · ${specScores.length} évalué${specScores.length > 1 ? "s" : ""}`
+              : "Aucun évalué"
+          }
+        />
+        <AdminStatsCard
+          label="Moyenne Engineers"
+          value={avgEng != null ? `${avgEng}` : "—"}
+          hint={
+            avgEng != null
+              ? `/ 100 · ${engScores.length} évalué${engScores.length > 1 ? "s" : ""}`
+              : "Aucun évalué"
+          }
         />
         <AdminStatsCard
           label="Inscriptions B2B"

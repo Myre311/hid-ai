@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Briefcase, ShieldAlert, Clock } from "lucide-react";
 import { createClient, createServiceClient } from "@/lib/supabase/server";
 import EmptyState from "@/components/ui/EmptyState";
+import { aiNativeMaxScoreByMetier } from "@/lib/evaluation/aiNativeScore";
 
 export const metadata = { title: "Missions · HID AI" };
 
@@ -90,7 +91,7 @@ export default async function MissionsPage() {
           <h2 className="t-h3">Vos premières missions arrivent.</h2>
           <p className="t-lead">
             Votre profil est activé (score AI-Native :{" "}
-            <strong>{session?.ai_native_score ?? "—"} / 1000</strong>). Notre
+            <strong>{session?.ai_native_score ?? "—"} / {aiNativeMaxScoreByMetier(inscription?.metier)}</strong>). Notre
             équipe vous notifiera par email dès qu&rsquo;une mission compatible
             avec votre niveau est disponible.
           </p>
