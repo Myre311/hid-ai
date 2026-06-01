@@ -39,20 +39,46 @@ export const metadata = {
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   ),
   title: {
-    default: "HID AI — L'infrastructure humaine de l'IA, depuis l'Afrique",
+    default: "HID AI — Annotation de données IA premium par des talents africains certifiés",
     template: "%s · HID AI",
   },
   description:
-    "Hidea Solution connecte les meilleurs AI Specialists et AI Engineers du continent avec les laboratoires et entreprises qui construisent l'avenir de l'intelligence artificielle.",
+    "Plateforme d'annotation pour l'IA : computer vision, NLP, RLHF, audio, vidéo. AI Specialists et AI Engineers africains certifiés. Qualité gold-standard, livrables JSON/CSV. Audit gratuit en 24h.",
   applicationName: "HID AI",
-  authors: [{ name: "Hidea Solution" }],
+  authors: [{ name: "Major Exchanges SAS" }],
+  keywords: [
+    "annotation données IA",
+    "data labeling",
+    "RLHF",
+    "computer vision",
+    "NLP",
+    "AI Specialists",
+    "AI Engineers",
+    "fine-tuning",
+    "data annotation Africa",
+  ],
   openGraph: {
     type: "website",
     locale: "fr_FR",
     siteName: "HID AI",
-    title: "HID AI — L'infrastructure humaine de l'IA",
+    title: "HID AI — Annotation IA premium par des talents africains certifiés",
     description:
-      "Plateforme africaine d'AI Specialists et AI Engineers certifiés.",
+      "Computer vision, NLP, RLHF, audio, vidéo. AI Specialists et AI Engineers certifiés. Qualité gold-standard, audit gratuit en 24h.",
+    images: [
+      {
+        url: "/brand/hid-ai-email-header.png",
+        width: 1200,
+        height: 630,
+        alt: "HID AI — Annotation IA et talents africains certifiés",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "HID AI — Annotation IA premium",
+    description:
+      "Computer vision, NLP, RLHF, audio, vidéo. Talents africains certifiés.",
+    images: ["/brand/hid-ai-email-header.png"],
   },
   robots: { index: true, follow: true },
 };
