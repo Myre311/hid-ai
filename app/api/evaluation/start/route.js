@@ -39,10 +39,12 @@ export async function POST() {
     return NextResponse.json({ session: existing, tests }, { status: 200 });
   }
 
-  // Lie à l'inscription_talent si dispo (via email du user → inscription)
-  // Récupère aussi le `metier` pour décider du jeu de tests initial.
+  // Lie à l'inscription_talent (REQUISE depuis le fix 2026-06).
+  // Auparavant : fallback `metier = "engineer"` → créait 8 tests pour des talents
+  // qui ne s'étaient pas inscrits, ou qui s'étaient inscrits specialist.
+  // Désormais : on REFUSE de créer une session si aucune inscription n'existe.
   let inscriptionTalentId = null;
-  let metier = "engineer"; // fallback : tous les tests si pas d'inscription
+  let metier = null;
   if (user.email) {
     // ilike sans wildcard = exact match case-insensitive — Supabase lowercase
     // les emails auth alors qu'inscriptions_talents.email garde la casse saisie.
@@ -55,7 +57,7 @@ export async function POST() {
       .maybeSingle();
     if (insc) {
       inscriptionTalentId = insc.id;
-      if (insc.metier === "specialist") metier = "specialist";
+      metier = insc.metier === "engineer" ? "engineer" : "specialist";
     }
   }
   // Fallback supplémentaire : recherche par téléphone si pas trouvé par email
@@ -71,8 +73,22 @@ export async function POST() {
       .maybeSingle();
     if (insc) {
       inscriptionTalentId = insc.id;
-      if (insc.metier === "specialist") metier = "specialist";
+      metier = insc.metier === "engineer" ? "engineer" : "specialist";
     }
+  }
+
+  // Garde-fou critique : refuse si aucune inscription trouvée. Force les
+  // talents à compléter leur inscription AVANT d'accéder à l'évaluation,
+  // pour éviter les sessions orphelines / mauvais métier (audit 2026-06).
+  if (!inscriptionTalentId || !metier) {
+    return NextResponse.json(
+      {
+        error: "inscription_required",
+        message:
+          "Aucune inscription trouvée pour ce compte. Complétez votre inscription avant de démarrer l'évaluation.",
+      },
+      { status: 400 }
+    );
   }
 
   // Crée la session

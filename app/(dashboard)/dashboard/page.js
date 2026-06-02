@@ -105,8 +105,17 @@ export default async function DashboardHome() {
     tests = existingTests || [];
   }
 
-  const totalTests = tests.length || 8;
-  const completedCount = tests.filter((t) => t.status === "completed").length;
+  // Source de vérité pour le nombre attendu de tests : LE METIER de l'inscription.
+  // Auparavant on prenait tests.length, ce qui pouvait afficher "Complétez les 8 tests"
+  // à un specialist si la session avait été créée par erreur avec 8 lignes (fallback
+  // engineer dans /api/evaluation/start quand l'inscription n'était pas trouvée).
+  // Désormais : 4 pour specialist, 8 pour engineer, indépendamment du contenu DB.
+  const expectedTests = inscription?.metier === "engineer" ? 8 : 4;
+  const totalTests = expectedTests;
+  const completedCount = tests
+    .filter((t) => t.status === "completed")
+    .slice(0, expectedTests)
+    .length;
   const firstName = inscription?.prenom || "Candidat";
   const metierLabel =
     inscription?.metier === "engineer" ? "AI Engineer" : "AI Specialist";

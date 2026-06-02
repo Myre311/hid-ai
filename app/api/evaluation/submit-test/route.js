@@ -147,8 +147,13 @@ export async function POST(request) {
   let unlockedNext = false;
   let eligibleForEngineer = false; // ← le candidat CHOISIT ensuite via /api/evaluation/upgrade-engineer
 
-  // Débloque le test suivant SAUF si on est sur le 4e specialist (decision point)
-  if (passed && !(isLastSpecialistTest && onlySpecialist)) {
+  // Débloque le test suivant, MÊME SI le test courant est raté.
+  // Auparavant : `if (passed && ...)` → un talent qui rate un test était piégé,
+  // la session restait `in_progress` sans possibilité de continuer ni de finir
+  // (audit 2026-06). Désormais : on permet la progression, le score final
+  // reflètera les ratés.
+  // Exception : 4e specialist = decision point (on attend le choix upgrade engineer).
+  if (!(isLastSpecialistTest && onlySpecialist)) {
     const { data: nextRow } = await service
       .from("test_results")
       .select("id, status")
@@ -174,15 +179,22 @@ export async function POST(request) {
   }
 
   // Statut final session :
-  //  - 4 tests specialist completed (avec ou sans éligibilité engineer) → 'completed'
-  //  - 8 tests engineer completed → 'completed'
+  //  - 4 tests specialist completed → 'completed' (peu importe pass/fail)
+  //  - 8 tests engineer completed → 'completed' (peu importe pass/fail)
+  // Auparavant : exigeait que le DERNIER test soit `passed`, ce qui bloquait
+  // les talents qui ratent leur dernier test (audit 2026-06). Désormais : on
+  // se base sur le COUNT de tests completed, le score final reflète les ratés.
   const sessionUpdate = {};
-  if (passed) {
-    sessionUpdate.current_test_index = Math.min(7, testDef.order + 1);
-  }
-  const isFinalRun =
-    (isLastSpecialistTest && onlySpecialist && passed) ||
-    (isFinalEngineerTest && passed);
+  sessionUpdate.current_test_index = Math.min(7, testDef.order + 1);
+
+  // Compte les tests effectivement completed (en incluant celui qu'on vient
+  // de submitter — `allTests` n'a pas encore son nouveau statut)
+  const completedCount = (allTests || []).filter((t) =>
+    t.id === testRow.id ? true : t.status === "completed"
+  ).length;
+  const totalExpected = allTests?.length || 0;
+  const isFinalRun = totalExpected > 0 && completedCount === totalExpected;
+
   if (isFinalRun) {
     sessionUpdate.status = "completed";
     sessionUpdate.completed_at = new Date().toISOString();

@@ -185,6 +185,21 @@ export default function ComputerVisionPage() {
     (polygon.length > 0 ? 1 : 0) +
     (trackingAnnotatedCount > 0 ? 1 : 0);
 
+  // Bloque le rendu tant que la session n'est pas chargée.
+  // Auparavant : on rendait DEFAULT_GROUND_TRUTH (variante [0] de chaque slot)
+  // pendant le fetch — résultat : 2 talents voyaient les mêmes images si
+  // l'un d'eux avait une session orpheline ou un network lent (audit 2026-06).
+  // Désormais : loader explicite, on garantit que l'image affichée est toujours
+  // celle sélectionnée par hash(sessionId).
+  if (!sessionId) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <div className="w-10 h-10 border-2 border-foreground/20 border-t-accent rounded-full animate-spin" />
+        <p className="text-sm text-foreground/60">Chargement de votre session…</p>
+      </div>
+    );
+  }
+
   return (
     <TestLayout
       test={TEST}

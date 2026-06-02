@@ -24,6 +24,10 @@ const STORAGE_KEY = "hidai_b2b_form";
 const STEPS = ["Identification", "Spécifications", "Audit", "Récap"];
 
 const INITIAL_DATA = {
+  // Honeypot — DOIT rester vide. Si rempli, le serveur reject silencieusement.
+  // Off-screen + aria-hidden + tabIndex=-1 pour les vrais humains, visible
+  // pour les bots qui scannent le DOM.
+  website_hp: "",
   // Step 1
   raison_sociale: "",
   immatriculation: "",
@@ -164,6 +168,30 @@ export function B2BForm({ onClose }) {
 
   return (
     <div className="flex flex-col">
+      {/* Honeypot anti-bot : invisible visuellement, accessible aux scanners */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          left: "-9999px",
+          top: "-9999px",
+          width: "1px",
+          height: "1px",
+          overflow: "hidden",
+        }}
+      >
+        <label htmlFor="website_hp">Ne pas remplir</label>
+        <input
+          type="text"
+          id="website_hp"
+          name="website_hp"
+          tabIndex={-1}
+          autoComplete="off"
+          value={data.website_hp || ""}
+          onChange={(e) => setData((d) => ({ ...d, website_hp: e.target.value }))}
+        />
+      </div>
+
       <FormStepper
         steps={STEPS}
         current={step}

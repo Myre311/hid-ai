@@ -63,9 +63,31 @@ export default async function AdminB2BDetail({ params }) {
         <section className="rounded-lg border border-white/10 bg-surface p-5 flex flex-col gap-3">
           <h2 className="text-xs uppercase tracking-[0.18em] text-foreground/50">Société</h2>
           <Row label="Immatriculation" value={b.immatriculation} />
-          {b.site_web && (
-            <Row label="Site web" value={<a href={b.site_web} target="_blank" rel="noreferrer" className="text-accent hover:underline">{b.site_web}</a>} />
-          )}
+          {(() => {
+            // Sanitization défensive : on n'affiche le lien QUE si le scheme
+            // est http(s). Bloque les payloads anciens (javascript:, data:, …)
+            // qui pourraient encore exister en base avant le hardening API.
+            const safeUrl =
+              typeof b.site_web === "string" && /^https?:\/\//i.test(b.site_web)
+                ? b.site_web
+                : null;
+            if (!safeUrl) return null;
+            return (
+              <Row
+                label="Site web"
+                value={
+                  <a
+                    href={safeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-accent hover:underline"
+                  >
+                    {safeUrl}
+                  </a>
+                }
+              />
+            );
+          })()}
         </section>
 
         <section className="rounded-lg border border-white/10 bg-surface p-5 flex flex-col gap-3">
