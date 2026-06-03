@@ -145,38 +145,36 @@ export async function POST(request) {
     allTests.every((t) => t.test_category === "specialist");
 
   let unlockedNext = false;
-  let eligibleForEngineer = false; // ← le candidat CHOISIT ensuite via /api/evaluation/upgrade-engineer
+  // FONCTIONNALITÉ DÉSACTIVÉE (2026-06) : la bascule specialist→engineer
+  // n'existe plus côté produit. eligibleForEngineer est toujours false.
+  // Code historique de calcul de moyenne conservé en commentaire pour
+  // référence si on rouvre la fonctionnalité (voir /api/evaluation/upgrade-engineer).
+  const eligibleForEngineer = false;
 
   // Débloque le test suivant, MÊME SI le test courant est raté.
   // Auparavant : `if (passed && ...)` → un talent qui rate un test était piégé,
   // la session restait `in_progress` sans possibilité de continuer ni de finir
   // (audit 2026-06). Désormais : on permet la progression, le score final
   // reflètera les ratés.
-  // Exception : 4e specialist = decision point (on attend le choix upgrade engineer).
-  if (!(isLastSpecialistTest && onlySpecialist)) {
-    const { data: nextRow } = await service
+  // Pas d'exception "4e specialist = decision point" : un specialist n'a plus
+  // de test après le 4e (l'upgrade engineer est désactivé). nextRow sera donc
+  // naturellement null pour ces talents.
+  const { data: nextRow } = await service
+    .from("test_results")
+    .select("id, status")
+    .eq("session_id", session.id)
+    .eq("test_order", testDef.order + 1)
+    .maybeSingle();
+  if (nextRow && nextRow.status === "locked") {
+    await service
       .from("test_results")
-      .select("id, status")
-      .eq("session_id", session.id)
-      .eq("test_order", testDef.order + 1)
-      .maybeSingle();
-    if (nextRow && nextRow.status === "locked") {
-      await service
-        .from("test_results")
-        .update({ status: "available" })
-        .eq("id", nextRow.id);
-      unlockedNext = true;
-    }
+      .update({ status: "available" })
+      .eq("id", nextRow.id);
+    unlockedNext = true;
   }
 
-  // Calcule la moyenne specialist après ce submit pour signaler l'éligibilité.
-  if (passed && isLastSpecialistTest && onlySpecialist) {
-    const scores = (allTests || [])
-      .map((t) => (t.id === testRow.id ? scoreData.score : t.score))
-      .filter((s) => typeof s === "number");
-    const avg = scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : 0;
-    eligibleForEngineer = avg >= SPECIALIST_UPGRADE_THRESHOLD;
-  }
+  // (Bloc retiré : calcul de moyenne pour SPECIALIST_UPGRADE_THRESHOLD.
+  //  La fonctionnalité d'upgrade a été désactivée — voir commentaire ci-dessus.)
 
   // Statut final session :
   //  - 4 tests specialist completed → 'completed' (peu importe pass/fail)

@@ -8,21 +8,33 @@ import {
 /**
  * POST /api/evaluation/upgrade-engineer
  *
- * Le candidat (specialist) CHOISIT de basculer sur la piste Ingénieur après
- * avoir terminé ses 4 tests specialist avec une moyenne ≥ 95.
+ * ⚠️ FONCTIONNALITÉ DÉSACTIVÉE (2026-06).
  *
- * Conditions d'éligibilité :
+ * Décision produit : un AI Specialist ne peut plus basculer vers AI Engineer
+ * via la plateforme. Les 2 métiers restent distincts, choix fait à l'inscription.
+ * La route retourne désormais 410 Gone — le code conserve la logique d'origine
+ * en dessous au cas où on rouvrirait cette fonctionnalité plus tard.
+ *
+ * Logique historique conservée pour référence (ne s'exécute plus) :
  *  - L'utilisateur a une session active
  *  - La session contient exactement 4 lignes test_results, toutes specialist + completed
  *  - La moyenne des 4 scores ≥ SPECIALIST_UPGRADE_THRESHOLD (95)
- *
- * Effet :
- *  - INSERT les 4 lignes test_results engineer (nlp-finetuning, vision-edge,
- *    mlops, rag). Le 1er devient `available`.
- *  - Remet la session en 'in_progress' (elle était 'completed').
- *  - current_test_index = 4
+ *  - INSERT les 4 lignes test_results engineer (nlp-finetuning, vision-edge, mlops, rag)
+ *  - Remet la session en 'in_progress', current_test_index = 4
  */
 export async function POST() {
+  // Désactivation : refuse l'upgrade pour tous les talents.
+  return NextResponse.json(
+    {
+      error: "feature_disabled",
+      message:
+        "La bascule AI Specialist vers AI Engineer n'est plus disponible. Votre profil reste AI Specialist.",
+    },
+    { status: 410 }
+  );
+
+  // ⚠️ Code mort sous ce return — gardé volontairement pour ré-activation future.
+  // eslint-disable-next-line no-unreachable
   const userClient = createClient();
   const {
     data: { user },
