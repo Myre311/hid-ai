@@ -73,14 +73,23 @@ export default async function DashboardHome() {
     .limit(1)
     .maybeSingle();
 
-  // Auto-création si pas de session
+  // Auto-création de session : EXIGE une inscription_talents valide.
+  // Auparavant : si pas d'inscription, fallback `metier = "engineer"` →
+  // 8 tests créés pour des talents specialist ou des comptes "fantômes".
+  // Désormais : si pas d'inscription, on REDIRIGE vers /signup pour la
+  // compléter. Ne touche PAS aux sessions existantes (les talents avec
+  // une session déjà créée sautent ce bloc, peu importe leur état).
   let tests = [];
   if (!session) {
+    if (!inscription) {
+      // Talent loggué mais pas inscrit : pas de session sans inscription
+      redirect("/signup?reason=inscription_required");
+    }
     const { data: created } = await service
       .from("evaluation_sessions")
       .insert({
         user_id: user.id,
-        inscription_talent_id: inscription?.id ?? null,
+        inscription_talent_id: inscription.id, // garanti non-null après le check
         status: "in_progress",
         current_test_index: 0,
       })
@@ -88,7 +97,8 @@ export default async function DashboardHome() {
       .single();
     session = created;
     if (session) {
-      const metier = inscription?.metier === "specialist" ? "specialist" : "engineer";
+      // Metier vient TOUJOURS de l'inscription. Plus de fallback "engineer".
+      const metier = inscription.metier === "engineer" ? "engineer" : "specialist";
       const { data: createdTests } = await service
         .from("test_results")
         .insert(buildInitialTestRows(session.id, metier))

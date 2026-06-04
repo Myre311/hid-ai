@@ -132,6 +132,66 @@ export async function POST(request, { params }) {
       return NextResponse.json({ ok: true, ai_native_score: aiNativeScore });
     }
 
+    if (action === "downgrade_to_specialist") {
+      // Rétrograde un AI Engineer en AI Specialist :
+      // - UPDATE inscriptions_talents.metier = 'specialist'
+      // - DELETE les 4 test_results engineer (peu importe leur status)
+      // - Si session activée : recalcule ai_native_score sur les 4 specialist restants
+      if (talent.metier === "specialist") {
+        return NextResponse.json(
+          { error: "Talent déjà en specialist" },
+          { status: 400 }
+        );
+      }
+
+      const purge = { tests_deleted: 0, score_before: null, score_after: null };
+
+      // 1. UPDATE metier
+      await service
+        .from("inscriptions_talents")
+        .update({ metier: "specialist" })
+        .eq("id", talent.id);
+
+      // 2. DELETE tests engineer de la session (s'il y en a)
+      if (session) {
+        const { data: deletedTests } = await service
+          .from("test_results")
+          .delete()
+          .eq("session_id", session.id)
+          .eq("test_category", "engineer")
+          .select("id");
+        purge.tests_deleted = deletedTests?.length || 0;
+
+        // 3. Si session activée, recalcule le score
+        if (session.status === "activated") {
+          purge.score_before = session.ai_native_score;
+          const { data: remainingTests } = await service
+            .from("test_results")
+            .select("*")
+            .eq("session_id", session.id);
+          const { calculateAiNativeScore } = await import("@/lib/evaluation/aiNativeScore");
+          const newScore = calculateAiNativeScore(remainingTests || []);
+          purge.score_after = newScore;
+
+          await service
+            .from("evaluation_sessions")
+            .update({ ai_native_score: newScore })
+            .eq("id", session.id);
+        }
+      }
+
+      await logAdminAction({
+        ...auditBase,
+        action: "talent.downgrade_to_specialist",
+        metadata: {
+          previous_metier: talent.metier,
+          ...purge,
+        },
+      });
+
+      return NextResponse.json({ ok: true, purge });
+    }
+
     if (action === "delete_account") {
       const purge = { deleted: [], skipped: [] };
 

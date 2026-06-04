@@ -14,6 +14,7 @@ import {
   Loader2,
   ShieldCheck,
   Trash2,
+  ArrowDownToLine,
 } from "lucide-react";
 
 /**
@@ -71,6 +72,17 @@ export function TalentActionsPanel({ talent, session, currentAdminRole = "admin"
     if (
       action === "reset_session" &&
       !confirm("Confirmer le reset complet de la session ? Les test_results seront supprimés.")
+    ) {
+      return;
+    }
+    if (
+      action === "downgrade_to_specialist" &&
+      !confirm(
+        "Rétrograder ce talent en AI Specialist ?\n\n" +
+          "• Les 4 tests engineer (nlp-finetuning, vision-edge, mlops, rag) seront supprimés\n" +
+          "• Si le profil est activé, le score AI-Native sera recalculé sur les 4 tests specialist restants\n" +
+          "• Cette action est IRRÉVERSIBLE."
+      )
     ) {
       return;
     }
@@ -237,6 +249,31 @@ export function TalentActionsPanel({ talent, session, currentAdminRole = "admin"
               Supprimer définitivement
             </ActionBtn>
           </div>
+        </div>
+      )}
+
+      {/* Métier (downgrade engineer → specialist) */}
+      {talent.metier === "engineer" && (
+        <div className="flex flex-col gap-3 pt-4 border-t border-white/5">
+          <span className="text-sm text-foreground/85">
+            Métier · <span className="text-foreground/60">AI Engineer</span>
+          </span>
+          <div className="flex flex-wrap gap-2">
+            <ActionBtn
+              onClick={() =>
+                talentAction("downgrade_to_specialist", "Rétrogradé en Specialist")
+              }
+              loading={busy === "act-downgrade_to_specialist"}
+              variant="danger"
+              icon={<ArrowDownToLine className="h-3.5 w-3.5" />}
+            >
+              Rétrograder en AI Specialist
+            </ActionBtn>
+          </div>
+          <p className="text-xs text-foreground/45">
+            Supprime les 4 tests engineer, garde les 4 specialist et recalcule
+            le score si la session est activée.
+          </p>
         </div>
       )}
 
